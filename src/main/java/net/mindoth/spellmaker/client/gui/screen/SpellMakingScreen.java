@@ -2,6 +2,7 @@ package net.mindoth.spellmaker.client.gui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.client.gui.menu.RuneSlot;
 import net.mindoth.spellmaker.client.gui.menu.SpellMakingMenu;
 import net.mindoth.spellmaker.registries.ModSpellForms;
 import net.minecraft.client.Minecraft;
@@ -29,37 +30,32 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     private static final ResourceLocation TEXTURE = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spell_making_screen.png");
     private EditBox name;
     private Button craftButton;
-    private final int CRAFT_BUTTON_OFFSET_X = 39;
-    private Button dumpButton;
-    private final int DUMP_BUTTON_OFFSET_X = CRAFT_BUTTON_OFFSET_X + 18;
+    private final int CRAFT_BUTTON_OFFSET_X = 144;
+    private final int CRAFT_BUTTON_OFFSET_Y = 17;
 
-    private ModSpellForms.SpellForm spellForm;
     private final int SPELL_FORM_BUTTON_OFFSET_Y = this.menu.getTopRowHeight() + 2;
     private Button leftSpellFormButton;
-    private final int LEFT_SPELL_FORM_BUTTON_OFFSET_X = 123;
+    private final int LEFT_SPELL_FORM_BUTTON_OFFSET_X = 31;
     private Button rightSpellFormButton;
-    private final int RIGHT_SPELL_FORM_BUTTON_OFFSET_X = LEFT_SPELL_FORM_BUTTON_OFFSET_X + 37;
+    private final int RIGHT_SPELL_FORM_BUTTON_OFFSET_X = LEFT_SPELL_FORM_BUTTON_OFFSET_X + 27;
 
-    private int magnitude;
-    private final int MAGNITUDE_BUTTON_OFFSET_Y = this.menu.getTopRowHeight() + 24;
+    private final int MAGNITUDE_BUTTON_OFFSET_Y = 63;
     private Button leftMagnitudeButton;
-    private final int LEFT_MAGNITUDE_BUTTON_OFFSET_X = 123;
+    private final int LEFT_MAGNITUDE_BUTTON_OFFSET_X = 63;
     private Button rightMagnitudeButton;
-    private final int RIGHT_MAGNITUDE_BUTTON_OFFSET_X = LEFT_MAGNITUDE_BUTTON_OFFSET_X + 37;
+    private final int RIGHT_MAGNITUDE_BUTTON_OFFSET_X = LEFT_MAGNITUDE_BUTTON_OFFSET_X + 27;
 
-    private int duration;
-    private final int DURATION_BUTTON_OFFSET_Y = this.menu.getTopRowHeight() + 42;
+    private final int DURATION_BUTTON_OFFSET_Y = MAGNITUDE_BUTTON_OFFSET_Y + 18;
     private Button leftDurationButton;
-    private final int LEFT_DURATION_BUTTON_OFFSET_X = 123;
+    private final int LEFT_DURATION_BUTTON_OFFSET_X = 63;
     private Button rightDurationButton;
-    private final int RIGHT_DURATION_BUTTON_OFFSET_X = LEFT_DURATION_BUTTON_OFFSET_X + 37;
+    private final int RIGHT_DURATION_BUTTON_OFFSET_X = LEFT_DURATION_BUTTON_OFFSET_X + 27;
 
-    private int area;
-    private final int AREA_BUTTON_OFFSET_Y = this.menu.getTopRowHeight() + 60;
+    private final int AREA_BUTTON_OFFSET_Y = DURATION_BUTTON_OFFSET_Y + 18;
     private Button leftAreaButton;
-    private final int LEFT_AREA_BUTTON_OFFSET_X = 123;
+    private final int LEFT_AREA_BUTTON_OFFSET_X = 63;
     private Button rightAreaButton;
-    private final int RIGHT_AREA_BUTTON_OFFSET_X = LEFT_AREA_BUTTON_OFFSET_X + 37;
+    private final int RIGHT_AREA_BUTTON_OFFSET_X = LEFT_AREA_BUTTON_OFFSET_X + 27;
 
     public SpellMakingScreen(SpellMakingMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -75,13 +71,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     }
 
     protected void subInit() {
-        this.spellForm = ModSpellForms.CASTER_ONLY.get();
-        this.magnitude = 1;
-        this.duration = 1;
-        this.area = 1;
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
-        this.name = new EditBox(this.font, x + 17, y + 20, 142, 12, Component.translatable("container.ancientmagicks.name"));
+        this.name = new EditBox(this.font, x + 8, y + 20, 130, 12, Component.translatable("container.spellmaker.name"));
         this.name.setCanLoseFocus(false);
         this.name.setTextColor(-1);
         this.name.setTextColorUneditable(-1);
@@ -98,10 +90,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
 
     private void buildButtons(int x, int y) {
         this.craftButton = addRenderableWidget(Button.builder(Component.literal(""), this::handleCraftButton)
-                .bounds(x + this.CRAFT_BUTTON_OFFSET_X, y + this.menu.getTopRowHeight(), 16, 16)
-                .build());
-        this.dumpButton = addRenderableWidget(Button.builder(Component.literal(""), this::handleDumpButton)
-                .bounds(x + this.DUMP_BUTTON_OFFSET_X, y + this.menu.getTopRowHeight(), 16, 16)
+                .bounds(x + CRAFT_BUTTON_OFFSET_X, y + CRAFT_BUTTON_OFFSET_Y, 16, 16)
                 .build());
 
         //Arrow Buttons
@@ -133,16 +122,13 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
 
     private void handleCraftButton(Button button) {
         Slot slot = this.menu.getSlot(0);
-        if ( slot.hasItem() && this.menu.isCleanParchment(slot.getItem()) ) {
+        if ( !slot.hasItem() ) return;
+        if ( this.menu.isCleanParchment(slot.getItem()) ) {
             String string = this.name.getValue();
             if ( !slot.getItem().hasCustomHoverName() && string.equals(slot.getItem().getHoverName().getString()) ) string = "";
             if ( this.menu.craftSpell(string) ) this.name.setValue("");
         }
-    }
-
-    private void handleDumpButton(Button button) {
-        Slot slot = this.menu.getSlot(0);
-        if ( slot.hasItem() && !this.menu.isCleanParchment(slot.getItem()) ) {
+        else {
             if ( this.menu.dumpSpell() && slot.getItem().hasCustomHoverName() ) this.name.setValue(slot.getItem().getHoverName().getString());
         }
     }
@@ -150,45 +136,53 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     private void handleLeftSpellFormButton(Button button) {
         if ( !this.menu.isReadyToCraft() ) return;
         List<ModSpellForms.SpellForm> list = ModSpellForms.REGISTRY.get().getValues().stream().toList();
-        if ( this.spellForm == list.get(0) ) this.spellForm = list.get(list.size() - 1);
-        else this.spellForm = list.get(list.indexOf(this.spellForm) - 1);
+        ModSpellForms.SpellForm form = this.menu.getSpellForm();
+        if ( form == list.get(0) ) this.menu.setSpellForm(list.get(list.size() - 1));
+        else this.menu.setSpellForm(list.get(list.indexOf(form) - 1));
     }
 
     private void handleRightSpellFormButton(Button button) {
         if ( !this.menu.isReadyToCraft() ) return;
         List<ModSpellForms.SpellForm> list = ModSpellForms.REGISTRY.get().getValues().stream().toList();
-        if ( this.spellForm == list.get(list.size() - 1) ) this.spellForm = list.get(0);
-        else this.spellForm = list.get(list.indexOf(this.spellForm) + 1);
+        ModSpellForms.SpellForm form = this.menu.getSpellForm();
+        if ( form == list.get(list.size() - 1) ) this.menu.setSpellForm(list.get(0));
+        else this.menu.setSpellForm(list.get(list.indexOf(form) + 1));
     }
 
     private void handleLeftMagnitudeButton(Button button) {
-        if ( !this.menu.isReadyToCraft() ) return;
-        if ( this.magnitude > 0 ) this.magnitude--;
+        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(1).isEmpty() ) return;
+        int magnitude = this.menu.getMagnitude();
+        if ( magnitude > 0 ) this.menu.setMagnitude(magnitude - 1);
     }
 
     private void handleRightMagnitudeButton(Button button) {
-        if ( !this.menu.isReadyToCraft() ) return;
-        if ( this.magnitude < 64 ) this.magnitude++;
+        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(1).isEmpty() ) return;
+        int magnitude = this.menu.getMagnitude();
+        if ( magnitude < 64 ) this.menu.setMagnitude(magnitude + 1);
     }
 
     private void handleLeftDurationButton(Button button) {
-        if ( !this.menu.isReadyToCraft() ) return;
-        if ( this.duration > 0 ) this.duration--;
+        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(1).isEmpty() ) return;
+        int duration = this.menu.getDuration();
+        if ( duration > 0 ) this.menu.setDuration(duration - 1);
     }
 
     private void handleRightDurationButton(Button button) {
-        if ( !this.menu.isReadyToCraft() ) return;
-        if ( this.duration < 64 ) this.duration++;
+        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(1).isEmpty() ) return;
+        int duration = this.menu.getDuration();
+        if ( duration < 64 )this.menu.setDuration(duration + 1);
     }
 
     private void handleLeftAreaButton(Button button) {
-        if ( !this.menu.isReadyToCraft() ) return;
-        if ( this.area > 0 ) this.area--;
+        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(1).isEmpty() ) return;
+        int area = this.menu.getArea();
+        if ( area > 0 ) this.menu.setArea(area - 1);
     }
 
     private void handleRightAreaButton(Button button) {
-        if ( !this.menu.isReadyToCraft() ) return;
-        if ( this.area < 64 ) this.area++;
+        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(1).isEmpty() ) return;
+        int area = this.menu.getArea();
+        if ( area < 64 ) this.menu.setArea(area + 1);
     }
 
     @Override
@@ -212,7 +206,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         super.containerTick();
         this.name.tick();
         if ( this.craftButton.isFocused() ) this.craftButton.setFocused(false);
-        if ( this.dumpButton.isFocused() ) this.dumpButton.setFocused(false);
         if ( this.leftSpellFormButton.isFocused() ) this.leftSpellFormButton.setFocused(false);
         if ( this.rightSpellFormButton.isFocused() ) this.rightSpellFormButton.setFocused(false);
         if ( this.leftMagnitudeButton.isFocused() ) this.leftMagnitudeButton.setFocused(false);
@@ -250,25 +243,11 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
 
-        //Action buttons
-        if ( this.menu.isReadyToCraft() ) {
-            this.craftButton.renderTexture(graphics, TEXTURE, x + CRAFT_BUTTON_OFFSET_X, y + this.menu.getTopRowHeight(),
-                    176, 16, 16, 16, 16, 256, 256);
-            this.dumpButton.renderTexture(graphics, TEXTURE, x + DUMP_BUTTON_OFFSET_X, y + this.menu.getTopRowHeight(),
-                    176 + 16, 48, 0, 16, 16, 256, 256);
-        }
-        else {
-            this.craftButton.renderTexture(graphics, TEXTURE, x + CRAFT_BUTTON_OFFSET_X, y + this.menu.getTopRowHeight(),
-                    176, 48, 0, 16, 16, 256, 256);
-            if ( this.menu.isReadyToDump() ) {
-                this.dumpButton.renderTexture(graphics, TEXTURE, x + DUMP_BUTTON_OFFSET_X, y + this.menu.getTopRowHeight(),
-                        176 + 16, 16, 16, 16, 16, 256, 256);
-            }
-            else {
-                this.dumpButton.renderTexture(graphics, TEXTURE, x + DUMP_BUTTON_OFFSET_X, y + this.menu.getTopRowHeight(),
-                        176 + 16, 48, 0, 16, 16, 256, 256);
-            }
-        }
+        //Action button
+        this.craftButton.renderTexture(graphics, TEXTURE, x + CRAFT_BUTTON_OFFSET_X, y + CRAFT_BUTTON_OFFSET_Y,
+                this.menu.isReadyToCraft() ? 176 : 176 + 16,
+                this.menu.isReadyToCraft() || this.menu.isReadyToDump() ? 16 : 0,
+                this.menu.isReadyToCraft() || this.menu.isReadyToDump() ? 16 : 0, 16, 16, 256, 256);
 
         int arrowTxtDiff = this.menu.isReadyToCraft() ? 11 : 0;
         int arrowTxtY = this.menu.isReadyToCraft() ? 64 : 86;
@@ -295,31 +274,49 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
 
         //Spell Form icon rendering
         if ( this.menu.isReadyToCraft() ) {
-            ResourceLocation icon = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spellform/" + this.spellForm.getName() + ".png");
-            int xIcon = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 14;
+            ResourceLocation icon = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spellform/" + this.menu.getSpellForm().getName() + ".png");
+            int xIcon = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
             int yIcon = y + SPELL_FORM_BUTTON_OFFSET_Y - 2;
             ModScreen.drawTexture(icon, xIcon, yIcon, 0, 0, 16, 16, 16, 16, graphics);
-            Component name = Component.translatable("spellform.spellmaker." + this.spellForm.getName());
+            Component name = Component.translatable("spellform.spellmaker." + this.menu.getSpellForm().getName());
             if ( mouseX >= xIcon && mouseX <= xIcon + 16 && mouseY >= yIcon && mouseY <= yIcon + 16 ) {
                 graphics.fill(RenderType.guiOverlay(), xIcon, yIcon, xIcon + 16, yIcon + 16, Integer.MAX_VALUE);
                 graphics.renderTooltip(this.font, name, mouseX, mouseY);
             }
 
             //Stat number strings
-            graphics.drawCenteredString(this.font, String.valueOf(this.magnitude),
-                    x + LEFT_MAGNITUDE_BUTTON_OFFSET_X + 22, y + MAGNITUDE_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
-            graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.magnitude"),
-                    x + 68, y + MAGNITUDE_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
+            int stringOff = 35;
+            for ( int i = 0; i < this.menu.howManyRuneSlotsOpen(); i++ ) {
+                int numStringOff = 17 + i * 36;
+                if ( !this.menu.getCraftSlots().getItem(1 + i).isEmpty() ) {
+                    graphics.drawCenteredString(this.font, String.valueOf(this.menu.getMagnitude()),
+                            x + LEFT_MAGNITUDE_BUTTON_OFFSET_X + numStringOff, y + MAGNITUDE_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
+                    graphics.drawCenteredString(this.font, String.valueOf(this.menu.getDuration()),
+                            x + LEFT_DURATION_BUTTON_OFFSET_X + numStringOff, y + DURATION_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
+                    graphics.drawCenteredString(this.font, String.valueOf(this.menu.getArea()),
+                            x + LEFT_AREA_BUTTON_OFFSET_X + numStringOff, y + AREA_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
+                }
+                graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.magnitude"),
+                        x + stringOff, y + MAGNITUDE_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
+                graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.duration"),
+                        x + stringOff, y + DURATION_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
+                graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.area"),
+                        x + stringOff, y + AREA_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
+            }
+        }
+        else {
+            int xIcon = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
+            int yIcon = y + SPELL_FORM_BUTTON_OFFSET_Y - 2;
+            ModScreen.drawTexture(TEXTURE, xIcon, yIcon, 192, 0, 16, 16, 256, 256, graphics);
+        }
 
-            graphics.drawCenteredString(this.font, String.valueOf(this.duration),
-                    x + LEFT_DURATION_BUTTON_OFFSET_X + 22, y + DURATION_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
-            graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.duration"),
-                    x + 68, y + DURATION_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
-
-            graphics.drawCenteredString(this.font, String.valueOf(this.area),
-                    x + LEFT_AREA_BUTTON_OFFSET_X + 22, y + AREA_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
-            graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.area"),
-                    x + 68, y + AREA_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
+        //Locked Slots
+        for ( int i = 0; i < this.menu.slots.size(); i++ ) {
+            if ( this.menu.getSlot(i) instanceof RuneSlot slot && !slot.isOpen ) {
+                int xPos = 72 + (i - 1) * 36;
+                int u = this.getMenu().getSlot(0).hasItem() ? 176 : 192;
+                ModScreen.drawTexture(TEXTURE, x + xPos, y + this.menu.getTopRowHeight(), u, 0, 16, 16, 256, 256, graphics);
+            }
         }
     }
 

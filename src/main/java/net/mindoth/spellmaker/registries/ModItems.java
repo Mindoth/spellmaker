@@ -10,6 +10,12 @@ import net.minecraftforge.registries.RegistryObject;
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, SpellMaker.MOD_ID);
 
+    public static final RegistryObject<Item> RUNE_ESSENCE = ITEMS.register("rune_essence",
+            () -> new Item(new Item.Properties()));
+
     public static final RegistryObject<Item> PARCHMENT = ITEMS.register("parchment",
-            () -> new ParchmentItem(new Item.Properties()));
+            () -> new ParchmentItem(new Item.Properties(), 1));
+
+    public static final RegistryObject<Item> ARCANE_PARCHMENT = ITEMS.register("arcane_parchment",
+            () -> new ParchmentItem(new Item.Properties(), 2));
 }
