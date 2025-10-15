@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "spellmaker:block/spell_making_table"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "up": "spellmaker:block/spell_making_table_up",
+    "down": "spellmaker:block/spell_making_table_down",
+    "north": "spellmaker:block/spell_making_table_side",
+    "east": "spellmaker:block/spell_making_table_side",
+    "south": "spellmaker:block/spell_making_table_side",
+    "west": "spellmaker:block/spell_making_table_side",
+    "particle": "spellmaker:block/spell_making_table_side"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "itemGroup.spellmaker_tab": "Spell Maker",
+
+
+  "container.spellmaker.spell_making": "Spell Making",
+
+
+  "block.spellmaker.spell_making_table": "Spell Making Table",
+
+
+  "item.spellmaker.parchment": "Parchment",
+
+
+  "spellform.spellmaker.caster_only": "Caster only",
+  "spellform.spellmaker.by_touch": "By touch",
+  "spellform.spellmaker.single_target_at_range": "Single target at range",
+  "spellform.spellmaker.area_around_caster": "Area around caster",
+  "spellform.spellmaker.area_at_range": "Area at range",
+
+
+  "tooltip.spellmaker.magnitude": "Magnitude",
+  "tooltip.spellmaker.duration": "Duration",
+  "tooltip.spellmaker.area": "Area"
+}
