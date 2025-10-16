@@ -1,6 +1,7 @@
 package net.mindoth.spellmaker;
 
 import net.mindoth.spellmaker.item.ModCreativeTab;
+import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.registries.ModBlocks;
 import net.mindoth.spellmaker.registries.ModItems;
 import net.mindoth.spellmaker.registries.ModMenus;
@@ -40,7 +41,7 @@ public class SpellMaker {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            //ModNetwork.init();
+            ModNetwork.init();
         });
     }
 

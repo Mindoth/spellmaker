@@ -1,5 +1,6 @@
 package net.mindoth.spellmaker.client.gui.menu;
 
+import net.mindoth.spellmaker.item.RuneItem;
 import net.mindoth.spellmaker.registries.ModItems;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
@@ -16,7 +17,7 @@ public class RuneSlot extends Slot {
 
     @Override
     public boolean mayPlace(ItemStack stack) {
-        return stack.getItem() == ModItems.RUNE_ESSENCE.get() && this.isOpen;
+        return stack.getItem() instanceof RuneItem && this.isOpen;
     }
 
     @Override
