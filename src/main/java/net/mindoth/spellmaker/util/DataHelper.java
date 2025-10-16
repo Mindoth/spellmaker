@@ -6,24 +6,19 @@ import net.mindoth.spellmaker.item.RuneItem;
 import net.mindoth.spellmaker.registries.ModSpellForms;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 
-public abstract class CastingValidator {
+public abstract class DataHelper {
 
-    public static void castMagick(Entity caster, ItemStack scroll) {
-
-    }
-
-    public static String getStringFromForm(ModSpellForms.SpellForm form) {
+    public static String getStringFromForm(SpellForm form) {
         return ModSpellForms.SPELL_FORM_REGISTRY.get().getKey(form).toString();
     }
 
-    public static ModSpellForms.SpellForm getFormFromNbt(CompoundTag tag) {
+    public static SpellForm getFormFromNbt(CompoundTag tag) {
         ResourceLocation key = new ResourceLocation(tag.getString(ParchmentItem.NBT_KEY_SPELL_FORM));
         return ModSpellForms.SPELL_FORM_REGISTRY.get().getValue(key);
     }

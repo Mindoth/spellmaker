@@ -2,13 +2,13 @@ package net.mindoth.spellmaker.client.gui.screen;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.client.gui.menu.RuneSlot;
 import net.mindoth.spellmaker.client.gui.menu.SpellMakingMenu;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.registries.ModSpellForms;
-import net.mindoth.spellmaker.util.CastingValidator;
+import net.mindoth.spellmaker.util.DataHelper;
+import net.mindoth.spellmaker.util.SpellForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -145,24 +145,24 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     private void handleLeftSpellFormButton(Button button) {
         if ( !this.menu.isReadyToMake() ) return;
         CompoundTag tag = new CompoundTag();
-        List<ModSpellForms.SpellForm> list = ModSpellForms.SPELL_FORM_REGISTRY.get().getValues().stream().toList();
-        ModSpellForms.SpellForm form = this.menu.getSpellForm();
-        ModSpellForms.SpellForm newForm;
+        List<SpellForm> list = ModSpellForms.SPELL_FORM_REGISTRY.get().getValues().stream().toList();
+        SpellForm form = this.menu.getSpellForm();
+        SpellForm newForm;
         if ( form == list.get(0) ) newForm = list.get(list.size() - 1);
         else newForm = list.get(list.indexOf(form) - 1);
-        tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, CastingValidator.getStringFromForm(newForm));
+        tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(newForm));
         this.menu.editSpellForm(tag);
     }
 
     private void handleRightSpellFormButton(Button button) {
         if ( !this.menu.isReadyToMake() ) return;
         CompoundTag tag = new CompoundTag();
-        List<ModSpellForms.SpellForm> list = ModSpellForms.SPELL_FORM_REGISTRY.get().getValues().stream().toList();
-        ModSpellForms.SpellForm form = this.menu.getSpellForm();
-        ModSpellForms.SpellForm newForm;
+        List<SpellForm> list = ModSpellForms.SPELL_FORM_REGISTRY.get().getValues().stream().toList();
+        SpellForm form = this.menu.getSpellForm();
+        SpellForm newForm;
         if ( form == list.get(list.size() - 1) ) newForm = list.get(0);
         else newForm = list.get(list.indexOf(form) + 1);
-        tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, CastingValidator.getStringFromForm(newForm));
+        tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(newForm));
         this.menu.editSpellForm(tag);
     }
 

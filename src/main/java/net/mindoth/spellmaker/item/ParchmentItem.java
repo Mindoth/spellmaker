@@ -1,6 +1,7 @@
 package net.mindoth.spellmaker.item;
 
-import net.mindoth.spellmaker.util.CastingValidator;
+import net.mindoth.spellmaker.util.DataHelper;
+import net.mindoth.spellmaker.util.SpellForm;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -9,6 +10,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class ParchmentItem extends Item {
     private final int size;
@@ -32,7 +36,17 @@ public class ParchmentItem extends Item {
         InteractionResultHolder<ItemStack> result = InteractionResultHolder.fail(player.getItemInHand(hand));
         if ( !level.isClientSide ) {
             ItemStack stack = player.getItemInHand(hand);
-            if ( stack.hasTag() && stack.getTag().contains(NBT_KEY_SPELL_FORM) ) CastingValidator.castMagick(player, stack);
+            if ( stack.hasTag() && stack.getTag().contains(NBT_KEY_SPELL_FORM) ) {
+                LinkedHashMap<RuneItem, List<Integer>> map = new LinkedHashMap<>();
+                List<Integer> magnitudes = DataHelper.getStatsFromString(stack.getTag().getString(NBT_KEY_SPELL_MAGNITUDES));
+                List<Integer> durations = DataHelper.getStatsFromString(stack.getTag().getString(NBT_KEY_SPELL_DURATIONS));
+                for ( int i = 0; i < DataHelper.getSpellStackFromScroll(stack).size(); i++ ) {
+                    ItemStack itemStack = DataHelper.getSpellStackFromScroll(stack).get(i);
+                    if ( itemStack.getItem() instanceof RuneItem rune ) map.put(rune, Arrays.asList(magnitudes.get(i), durations.get(i)));
+                }
+                SpellForm form = DataHelper.getFormFromNbt(stack.getTag());
+                form.castMagick(player, map);
+            }
         }
         return result;
     }

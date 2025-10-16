@@ -7,7 +7,8 @@ import net.mindoth.spellmaker.network.*;
 import net.mindoth.spellmaker.registries.ModBlocks;
 import net.mindoth.spellmaker.registries.ModMenus;
 import net.mindoth.spellmaker.registries.ModSpellForms;
-import net.mindoth.spellmaker.util.CastingValidator;
+import net.mindoth.spellmaker.util.DataHelper;
+import net.mindoth.spellmaker.util.SpellForm;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
@@ -84,8 +85,8 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         dataInit();
     }
 
-    private ModSpellForms.SpellForm spellForm;
-    public ModSpellForms.SpellForm getSpellForm() {
+    private SpellForm spellForm;
+    public SpellForm getSpellForm() {
         return this.spellForm;
     }
     private List<Integer> magnitude;
@@ -164,13 +165,13 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             if ( !level.isClientSide ) {
                 if ( isReadyToDump() ) {
                     ItemStack stack = this.craftSlots.getItem(0);
-                    List<ItemStack> list = CastingValidator.getSpellStackFromScroll(stack);
+                    List<ItemStack> list = DataHelper.getSpellStackFromScroll(stack);
                     //List<String> dataList = CastingValidator.getDataListFromScroll(stack);
                     for ( int i = 0; i < this.slots.size(); i++ ) {
                         if ( i == 0 ) {
                             editSpellForm(stack.getTag());
-                            editSpellStats((byte)0, CastingValidator.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES)));
-                            editSpellStats((byte)1, CastingValidator.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS)));
+                            editSpellStats((byte)0, DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES)));
+                            editSpellStats((byte)1, DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS)));
 
                             cleanScroll(stack);
                         }
@@ -216,10 +217,10 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                 }
             }
             CompoundTag tag = scroll.getOrCreateTag();
-            tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, CastingValidator.getStringFromForm(this.spellForm));
-            tag.putString(ParchmentItem.NBT_KEY_SPELL_RUNES, CastingValidator.getStringFromSpellStack(runeStackList));
-            tag.putString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES, CastingValidator.getStringFromStats(this.magnitude));
-            tag.putString(ParchmentItem.NBT_KEY_SPELL_DURATIONS, CastingValidator.getStringFromStats(this.duration));
+            tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(this.spellForm));
+            tag.putString(ParchmentItem.NBT_KEY_SPELL_RUNES, DataHelper.getStringFromSpellStack(runeStackList));
+            tag.putString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES, DataHelper.getStringFromStats(this.magnitude));
+            tag.putString(ParchmentItem.NBT_KEY_SPELL_DURATIONS, DataHelper.getStringFromStats(this.duration));
             //tag.putString(ParchmentItem.NBT_KEY_DATA_STRING, effectData.toString());
 
                 /*StringBuilder spellCode = new StringBuilder();
@@ -276,20 +277,20 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             }
             if ( level.isClientSide && isReadyToDump() ) {
                 editSpellForm(stack.getTag());
-                editSpellStats((byte)0, CastingValidator.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES)));
-                editSpellStats((byte)1, CastingValidator.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS)));
+                editSpellStats((byte)0, DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES)));
+                editSpellStats((byte)1, DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS)));
             }
         });
     }
 
     public void editSpellForm(CompoundTag tag) {
-        this.spellForm = CastingValidator.getFormFromNbt(tag);
+        this.spellForm = DataHelper.getFormFromNbt(tag);
         ModNetwork.sendToServer(new PacketEditSpellForm(tag));
     }
 
     public void processSpellFormEditing(CompoundTag tag) {
         this.access.execute((level, pos) -> {
-            if ( !level.isClientSide ) this.spellForm = CastingValidator.getFormFromNbt(tag);
+            if ( !level.isClientSide ) this.spellForm = DataHelper.getFormFromNbt(tag);
         });
     }
 
