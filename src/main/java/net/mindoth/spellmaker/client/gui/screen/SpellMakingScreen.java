@@ -1,5 +1,6 @@
 package net.mindoth.spellmaker.client.gui.screen;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.client.gui.menu.RuneSlot;
@@ -30,32 +31,28 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     private static final ResourceLocation TEXTURE = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spell_making_screen.png");
     private EditBox name;
     private Button craftButton;
-    private final int CRAFT_BUTTON_OFFSET_X = 144;
-    private final int CRAFT_BUTTON_OFFSET_Y = 17;
+    private final int CRAFT_BUTTON_OFFSET_X = 152;
+    private final int CRAFT_BUTTON_OFFSET_Y = 18;
 
-    private final int SPELL_FORM_BUTTON_OFFSET_Y = this.menu.getTopRowHeight() + 2;
+    private final int SPELL_FORM_BUTTON_OFFSET_Y = 46;
     private Button leftSpellFormButton;
-    private final int LEFT_SPELL_FORM_BUTTON_OFFSET_X = 31;
+    private final int LEFT_SPELL_FORM_BUTTON_OFFSET_X = 26;
     private Button rightSpellFormButton;
     private final int RIGHT_SPELL_FORM_BUTTON_OFFSET_X = LEFT_SPELL_FORM_BUTTON_OFFSET_X + 27;
 
-    private final int MAGNITUDE_BUTTON_OFFSET_Y = 63;
-    private Button leftMagnitudeButton;
-    private final int LEFT_MAGNITUDE_BUTTON_OFFSET_X = 63;
-    private Button rightMagnitudeButton;
+    private final int maxSlots = 3;
+
+    private List<Button> magnitudeListLeft = Lists.newArrayList();
+    private List<Button> magnitudeListRight = Lists.newArrayList();
+    private final int MAGNITUDE_BUTTON_OFFSET_Y = 64;
+    private final int LEFT_MAGNITUDE_BUTTON_OFFSET_X = 71;
     private final int RIGHT_MAGNITUDE_BUTTON_OFFSET_X = LEFT_MAGNITUDE_BUTTON_OFFSET_X + 27;
 
-    private final int DURATION_BUTTON_OFFSET_Y = MAGNITUDE_BUTTON_OFFSET_Y + 18;
-    private Button leftDurationButton;
-    private final int LEFT_DURATION_BUTTON_OFFSET_X = 63;
-    private Button rightDurationButton;
+    private List<Button> durationListLeft = Lists.newArrayList();
+    private List<Button> durationListRight = Lists.newArrayList();
+    private final int DURATION_BUTTON_OFFSET_Y = 64;
+    private final int LEFT_DURATION_BUTTON_OFFSET_X = LEFT_MAGNITUDE_BUTTON_OFFSET_X + 54;
     private final int RIGHT_DURATION_BUTTON_OFFSET_X = LEFT_DURATION_BUTTON_OFFSET_X + 27;
-
-    private final int AREA_BUTTON_OFFSET_Y = DURATION_BUTTON_OFFSET_Y + 18;
-    private Button leftAreaButton;
-    private final int LEFT_AREA_BUTTON_OFFSET_X = 63;
-    private Button rightAreaButton;
-    private final int RIGHT_AREA_BUTTON_OFFSET_X = LEFT_AREA_BUTTON_OFFSET_X + 27;
 
     public SpellMakingScreen(SpellMakingMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -73,7 +70,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     protected void subInit() {
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
-        this.name = new EditBox(this.font, x + 8, y + 20, 130, 12, Component.translatable("container.spellmaker.name"));
+        this.name = new EditBox(this.font, x + 8, y + 20, 138, 12, Component.translatable("container.spellmaker.name"));
         this.name.setCanLoseFocus(false);
         this.name.setTextColor(-1);
         this.name.setTextColorUneditable(-1);
@@ -100,24 +97,26 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         this.rightSpellFormButton = addRenderableWidget(Button.builder(Component.literal(""), this::handleRightSpellFormButton)
                 .bounds(x + RIGHT_SPELL_FORM_BUTTON_OFFSET_X, y + SPELL_FORM_BUTTON_OFFSET_Y, 7, 11)
                 .build());
-        this.leftMagnitudeButton = addRenderableWidget(Button.builder(Component.literal(""), this::handleLeftMagnitudeButton)
-                .bounds(x + LEFT_MAGNITUDE_BUTTON_OFFSET_X, y + MAGNITUDE_BUTTON_OFFSET_Y, 7, 11)
-                .build());
-        this.rightMagnitudeButton = addRenderableWidget(Button.builder(Component.literal(""), this::handleRightMagnitudeButton)
-                .bounds(x + RIGHT_MAGNITUDE_BUTTON_OFFSET_X, y + MAGNITUDE_BUTTON_OFFSET_Y, 7, 11)
-                .build());
-        this.leftDurationButton = addRenderableWidget(Button.builder(Component.literal(""), this::handleLeftDurationButton)
-                .bounds(x + LEFT_DURATION_BUTTON_OFFSET_X, y + DURATION_BUTTON_OFFSET_Y, 7, 11)
-                .build());
-        this.rightDurationButton = addRenderableWidget(Button.builder(Component.literal(""), this::handleRightDurationButton)
-                .bounds(x + RIGHT_DURATION_BUTTON_OFFSET_X, y + DURATION_BUTTON_OFFSET_Y, 7, 11)
-                .build());
-        this.leftAreaButton = addRenderableWidget(Button.builder(Component.literal(""), this::handleLeftAreaButton)
-                .bounds(x + LEFT_AREA_BUTTON_OFFSET_X, y + AREA_BUTTON_OFFSET_Y, 7, 11)
-                .build());
-        this.rightAreaButton = addRenderableWidget(Button.builder(Component.literal(""), this::handleRightAreaButton)
-                .bounds(x + RIGHT_AREA_BUTTON_OFFSET_X, y + AREA_BUTTON_OFFSET_Y, 7, 11)
-                .build());
+        for ( int i = 0; i < this.maxSlots; i++ ) {
+            this.magnitudeListLeft.add(addRenderableWidget(Button.builder(Component.literal(""), this::handleLeftMagnitudeButton)
+                    .bounds(x + LEFT_MAGNITUDE_BUTTON_OFFSET_X, y + MAGNITUDE_BUTTON_OFFSET_Y + 18 * i, 7, 11)
+                    .build()));
+        }
+        for ( int i = 0; i < this.maxSlots; i++ ) {
+            this.magnitudeListRight.add(addRenderableWidget(Button.builder(Component.literal(""), this::handleRightMagnitudeButton)
+                    .bounds(x + RIGHT_MAGNITUDE_BUTTON_OFFSET_X, y + MAGNITUDE_BUTTON_OFFSET_Y + 18 * i, 7, 11)
+                    .build()));
+        }
+        for ( int i = 0; i < this.maxSlots; i++ ) {
+            this.durationListLeft.add(addRenderableWidget(Button.builder(Component.literal(""), this::handleLeftDurationButton)
+                    .bounds(x + LEFT_DURATION_BUTTON_OFFSET_X, y + DURATION_BUTTON_OFFSET_Y + 18 * i, 7, 11)
+                    .build()));
+        }
+        for ( int i = 0; i < this.maxSlots; i++ ) {
+            this.durationListRight.add(addRenderableWidget(Button.builder(Component.literal(""), this::handleRightDurationButton)
+                    .bounds(x + RIGHT_DURATION_BUTTON_OFFSET_X, y + DURATION_BUTTON_OFFSET_Y + 18 * i, 7, 11)
+                    .build()));
+        }
     }
 
     private void handleCraftButton(Button button) {
@@ -150,39 +149,31 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     }
 
     private void handleLeftMagnitudeButton(Button button) {
-        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(1).isEmpty() ) return;
-        int magnitude = this.menu.getMagnitude();
-        if ( magnitude > 0 ) this.menu.setMagnitude(magnitude - 1);
+        int index = this.magnitudeListLeft.indexOf(button);
+        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(index + 1).isEmpty() ) return;
+        int magnitude = this.menu.getMagnitude().get(index);
+        if ( magnitude > 0 ) this.menu.setMagnitude(index, magnitude - 1);
     }
 
     private void handleRightMagnitudeButton(Button button) {
-        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(1).isEmpty() ) return;
-        int magnitude = this.menu.getMagnitude();
-        if ( magnitude < 64 ) this.menu.setMagnitude(magnitude + 1);
+        int index = this.magnitudeListRight.indexOf(button);
+        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(index + 1).isEmpty() ) return;
+        int magnitude = this.menu.getMagnitude().get(index);
+        if ( magnitude < 64 ) this.menu.setMagnitude(index, magnitude + 1);
     }
 
     private void handleLeftDurationButton(Button button) {
-        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(1).isEmpty() ) return;
-        int duration = this.menu.getDuration();
-        if ( duration > 0 ) this.menu.setDuration(duration - 1);
+        int index = this.durationListLeft.indexOf(button);
+        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(index + 1).isEmpty() ) return;
+        int duration = this.menu.getDuration().get(index);
+        if ( duration > 0 ) this.menu.setDuration(index, duration - 1);
     }
 
     private void handleRightDurationButton(Button button) {
-        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(1).isEmpty() ) return;
-        int duration = this.menu.getDuration();
-        if ( duration < 64 )this.menu.setDuration(duration + 1);
-    }
-
-    private void handleLeftAreaButton(Button button) {
-        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(1).isEmpty() ) return;
-        int area = this.menu.getArea();
-        if ( area > 0 ) this.menu.setArea(area - 1);
-    }
-
-    private void handleRightAreaButton(Button button) {
-        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(1).isEmpty() ) return;
-        int area = this.menu.getArea();
-        if ( area < 64 ) this.menu.setArea(area + 1);
+        int index = this.durationListRight.indexOf(button);
+        if ( !this.menu.isReadyToCraft() || this.menu.getCraftSlots().getItem(index + 1).isEmpty() ) return;
+        int duration = this.menu.getDuration().get(index);
+        if ( duration < 64 )this.menu.setDuration(index, duration + 1);
     }
 
     @Override
@@ -208,12 +199,18 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         if ( this.craftButton.isFocused() ) this.craftButton.setFocused(false);
         if ( this.leftSpellFormButton.isFocused() ) this.leftSpellFormButton.setFocused(false);
         if ( this.rightSpellFormButton.isFocused() ) this.rightSpellFormButton.setFocused(false);
-        if ( this.leftMagnitudeButton.isFocused() ) this.leftMagnitudeButton.setFocused(false);
-        if ( this.rightMagnitudeButton.isFocused() ) this.rightMagnitudeButton.setFocused(false);
-        if ( this.leftDurationButton.isFocused() ) this.leftDurationButton.setFocused(false);
-        if ( this.rightDurationButton.isFocused() ) this.rightDurationButton.setFocused(false);
-        if ( this.leftAreaButton.isFocused() ) this.leftAreaButton.setFocused(false);
-        if ( this.rightAreaButton.isFocused() ) this.rightAreaButton.setFocused(false);
+        for ( Button button : this.magnitudeListLeft ) {
+            if ( button.isFocused() ) button.setFocused(false);
+        }
+        for ( Button button : this.magnitudeListRight ) {
+            if ( button.isFocused() ) button.setFocused(false);
+        }
+        for ( Button button : this.durationListLeft ) {
+            if ( button.isFocused() ) button.setFocused(false);
+        }
+        for ( Button button : this.durationListRight ) {
+            if ( button.isFocused() ) button.setFocused(false);
+        }
     }
 
     @Override
@@ -235,13 +232,22 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTicks);
-        this.name.render(graphics, mouseX, mouseY, partialTicks);
-        renderTooltip(graphics, mouseX, mouseY);
+
+        int screenX = minecraft.getWindow().getGuiScaledWidth() / 2;
+        int screenY = minecraft.getWindow().getGuiScaledHeight() / 2;
+
+        renderBackground(graphics);
+        ModScreen.drawTexture(TEXTURE, screenX - 88, screenY - 106, 0, 0, 176, 211, 256, 256, graphics);
 
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
+
+        graphics.drawString(this.font, this.title, x + this.titleLabelX, y + this.titleLabelY, 4210752, false);
+        graphics.drawString(this.font, this.playerInventoryTitle, x + this.inventoryLabelX, y + this.inventoryLabelY, 4210752, false);
+
+        this.name.render(graphics, mouseX, mouseY, partialTicks);
+        renderTooltip(graphics, mouseX, mouseY);
 
         //Action button
         this.craftButton.renderTexture(graphics, TEXTURE, x + CRAFT_BUTTON_OFFSET_X, y + CRAFT_BUTTON_OFFSET_Y,
@@ -249,28 +255,44 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                 this.menu.isReadyToCraft() || this.menu.isReadyToDump() ? 16 : 0,
                 this.menu.isReadyToCraft() || this.menu.isReadyToDump() ? 16 : 0, 16, 16, 256, 256);
 
-        int arrowTxtDiff = this.menu.isReadyToCraft() ? 11 : 0;
-        int arrowTxtY = this.menu.isReadyToCraft() ? 64 : 86;
+        int formArrowTxtDiff = this.menu.isReadyToCraft() ? 11 : 0;
+        int formArrowTxtY = this.menu.isReadyToCraft() ? 64 : 86;
 
         //Spell Form buttons
         this.leftSpellFormButton.renderTexture(graphics, TEXTURE, x + LEFT_SPELL_FORM_BUTTON_OFFSET_X, y + SPELL_FORM_BUTTON_OFFSET_Y,
-                176, arrowTxtY, arrowTxtDiff, 7, 11, 256, 256);
+                176, formArrowTxtY, formArrowTxtDiff, 7, 11, 256, 256);
         this.rightSpellFormButton.renderTexture(graphics, TEXTURE, x + RIGHT_SPELL_FORM_BUTTON_OFFSET_X, y + SPELL_FORM_BUTTON_OFFSET_Y,
-                183, arrowTxtY, arrowTxtDiff, 7, 11, 256, 256);
+                183, formArrowTxtY, formArrowTxtDiff, 7, 11, 256, 256);
 
         //Stat buttons
-        this.leftMagnitudeButton.renderTexture(graphics, TEXTURE, x + LEFT_MAGNITUDE_BUTTON_OFFSET_X, y + MAGNITUDE_BUTTON_OFFSET_Y,
-                176, arrowTxtY, arrowTxtDiff, 7, 11, 256, 256);
-        this.rightMagnitudeButton.renderTexture(graphics, TEXTURE, x + RIGHT_MAGNITUDE_BUTTON_OFFSET_X, y + MAGNITUDE_BUTTON_OFFSET_Y,
-                183, arrowTxtY, arrowTxtDiff, 7, 11, 256, 256);
-        this.leftDurationButton.renderTexture(graphics, TEXTURE, x + LEFT_DURATION_BUTTON_OFFSET_X, y + DURATION_BUTTON_OFFSET_Y,
-                176, arrowTxtY, arrowTxtDiff, 7, 11, 256, 256);
-        this.rightDurationButton.renderTexture(graphics, TEXTURE, x + RIGHT_DURATION_BUTTON_OFFSET_X, y + DURATION_BUTTON_OFFSET_Y,
-                183, arrowTxtY, arrowTxtDiff, 7, 11, 256, 256);
-        this.leftAreaButton.renderTexture(graphics, TEXTURE, x + LEFT_AREA_BUTTON_OFFSET_X, y + AREA_BUTTON_OFFSET_Y,
-                176, arrowTxtY, arrowTxtDiff, 7, 11, 256, 256);
-        this.rightAreaButton.renderTexture(graphics, TEXTURE, x + RIGHT_AREA_BUTTON_OFFSET_X, y + AREA_BUTTON_OFFSET_Y,
-                183, arrowTxtY, arrowTxtDiff, 7, 11, 256, 256);
+        for ( int i = 0; i < this.magnitudeListLeft.size(); i++ ) {
+            Button button = this.magnitudeListLeft.get(i);
+            int statArrowTxtDiff = this.menu.isReadyToCraft() && !this.menu.getCraftSlots().getItem(1 + i).isEmpty() ? 11 : 0;
+            int statArrowTxtY = this.menu.isReadyToCraft() && !this.menu.getCraftSlots().getItem(1 + i).isEmpty() ? 64 : 86;
+            button.renderTexture(graphics, TEXTURE, x + LEFT_MAGNITUDE_BUTTON_OFFSET_X, y + MAGNITUDE_BUTTON_OFFSET_Y + 18 * i,
+                    176, statArrowTxtY, statArrowTxtDiff, 7, 11, 256, 256);
+        }
+        for ( int i = 0; i < this.magnitudeListRight.size(); i++ ) {
+            Button button = this.magnitudeListRight.get(i);
+            int statArrowTxtDiff = this.menu.isReadyToCraft() && !this.menu.getCraftSlots().getItem(1 + i).isEmpty() ? 11 : 0;
+            int statArrowTxtY = this.menu.isReadyToCraft() && !this.menu.getCraftSlots().getItem(1 + i).isEmpty() ? 64 : 86;
+            button.renderTexture(graphics, TEXTURE, x + RIGHT_MAGNITUDE_BUTTON_OFFSET_X, y + MAGNITUDE_BUTTON_OFFSET_Y + 18 * i,
+                    183, statArrowTxtY, statArrowTxtDiff, 7, 11, 256, 256);
+        }
+        for ( int i = 0; i < this.durationListLeft.size(); i++ ) {
+            Button button = this.durationListLeft.get(i);
+            int statArrowTxtDiff = this.menu.isReadyToCraft() && !this.menu.getCraftSlots().getItem(1 + i).isEmpty() ? 11 : 0;
+            int statArrowTxtY = this.menu.isReadyToCraft() && !this.menu.getCraftSlots().getItem(1 + i).isEmpty() ? 64 : 86;
+            button.renderTexture(graphics, TEXTURE, x + LEFT_DURATION_BUTTON_OFFSET_X, y + DURATION_BUTTON_OFFSET_Y + 18 * i,
+                    176, statArrowTxtY, statArrowTxtDiff, 7, 11, 256, 256);
+        }
+        for ( int i = 0; i < this.durationListRight.size(); i++ ) {
+            Button button = this.durationListRight.get(i);
+            int statArrowTxtDiff = this.menu.isReadyToCraft() && !this.menu.getCraftSlots().getItem(1 + i).isEmpty() ? 11 : 0;
+            int statArrowTxtY = this.menu.isReadyToCraft() && !this.menu.getCraftSlots().getItem(1 + i).isEmpty() ? 64 : 86;
+            button.renderTexture(graphics, TEXTURE, x + RIGHT_DURATION_BUTTON_OFFSET_X, y + DURATION_BUTTON_OFFSET_Y + 18 * i,
+                    183, statArrowTxtY, statArrowTxtDiff, 7, 11, 256, 256);
+        }
 
         //Spell Form icon rendering
         if ( this.menu.isReadyToCraft() ) {
@@ -283,26 +305,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                 graphics.fill(RenderType.guiOverlay(), xIcon, yIcon, xIcon + 16, yIcon + 16, Integer.MAX_VALUE);
                 graphics.renderTooltip(this.font, name, mouseX, mouseY);
             }
-
-            //Stat number strings
-            int stringOff = 35;
-            for ( int i = 0; i < this.menu.howManyRuneSlotsOpen(); i++ ) {
-                int numStringOff = 17 + i * 36;
-                if ( !this.menu.getCraftSlots().getItem(1 + i).isEmpty() ) {
-                    graphics.drawCenteredString(this.font, String.valueOf(this.menu.getMagnitude()),
-                            x + LEFT_MAGNITUDE_BUTTON_OFFSET_X + numStringOff, y + MAGNITUDE_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
-                    graphics.drawCenteredString(this.font, String.valueOf(this.menu.getDuration()),
-                            x + LEFT_DURATION_BUTTON_OFFSET_X + numStringOff, y + DURATION_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
-                    graphics.drawCenteredString(this.font, String.valueOf(this.menu.getArea()),
-                            x + LEFT_AREA_BUTTON_OFFSET_X + numStringOff, y + AREA_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
-                }
-                graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.magnitude"),
-                        x + stringOff, y + MAGNITUDE_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
-                graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.duration"),
-                        x + stringOff, y + DURATION_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
-                graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.area"),
-                        x + stringOff, y + AREA_BUTTON_OFFSET_Y - 7 + this.font.lineHeight, 16777215);
-            }
         }
         else {
             int xIcon = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
@@ -310,23 +312,70 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             ModScreen.drawTexture(TEXTURE, xIcon, yIcon, 192, 0, 16, 16, 256, 256, graphics);
         }
 
+        //Stat number strings
+        if ( this.menu.isReadyToCraft() ) {
+            int stringX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 62;
+            int stringY = y + SPELL_FORM_BUTTON_OFFSET_Y;
+            graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.magnitude"),
+                    stringX, stringY - 7 + this.font.lineHeight, 16777215);
+            graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.duration"),
+                    stringX + 54, stringY - 7 + this.font.lineHeight, 16777215);
+
+            for ( int i = 0; i < this.menu.howManyRuneSlotsOpen(); i++ ) {
+                if ( !this.menu.getCraftSlots().getItem(1 + i).isEmpty() ) {
+                    int numOffY = 18 * i;
+                    graphics.drawCenteredString(this.font, String.valueOf(this.menu.getMagnitude().get(i)),
+                            x + LEFT_MAGNITUDE_BUTTON_OFFSET_X + 17, y + MAGNITUDE_BUTTON_OFFSET_Y - 7 + this.font.lineHeight + numOffY, 16777215);
+                    graphics.drawCenteredString(this.font, String.valueOf(this.menu.getDuration().get(i)),
+                            x + LEFT_DURATION_BUTTON_OFFSET_X + 17, y + DURATION_BUTTON_OFFSET_Y - 7 + this.font.lineHeight + numOffY, 16777215);
+                }
+            }
+        }
+        //Stat name plate
+        if ( !this.menu.isReadyToCraft() ) {
+            int boxX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 35;
+            int boxY = y + SPELL_FORM_BUTTON_OFFSET_Y - 3;
+            for ( int i = 0; i < 2; i++ ) {
+                ModScreen.drawTexture(TEXTURE, boxX + 54 * i, boxY, 194, 97, 54, 18, 256, 256, graphics);
+            }
+        }
+        //Magnitude plate
+        int magX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 53;
+        int magY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
+        for ( int i = 0; i < this.maxSlots; i++ ) {
+            if ( this.menu.getCraftSlots().getItem(1 + i).isEmpty() || !this.menu.isReadyToCraft() ) {
+                ModScreen.drawTexture(TEXTURE, magX, magY + 18 * i, 176, 97, 18, 18, 256, 256, graphics);
+            }
+        }
+        //Duration plate
+        int durX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 107;
+        int durY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
+        for ( int i = 0; i < this.maxSlots; i++ ) {
+            if ( this.menu.getCraftSlots().getItem(1 + i).isEmpty() || !this.menu.isReadyToCraft() ) {
+                ModScreen.drawTexture(TEXTURE, durX, durY + 18 * i, 176, 97, 18, 18, 256, 256, graphics);
+            }
+        }
+
         //Locked Slots
+        int off = 1;
         for ( int i = 0; i < this.menu.slots.size(); i++ ) {
-            if ( this.menu.getSlot(i) instanceof RuneSlot slot && !slot.isOpen ) {
-                int xPos = 72 + (i - 1) * 36;
-                int u = this.getMenu().getSlot(0).hasItem() ? 176 : 192;
-                ModScreen.drawTexture(TEXTURE, x + xPos, y + this.menu.getTopRowHeight(), u, 0, 16, 16, 256, 256, graphics);
+            if ( this.menu.getSlot(i) instanceof RuneSlot slot ) {
+                int xPos = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
+                int yPos = y + SPELL_FORM_BUTTON_OFFSET_Y - 2 + 18 * off;
+                int u = this.menu.isReadyToCraft() ? 176 : 192;
+                if ( !slot.isOpen ) ModScreen.drawTexture(TEXTURE, xPos, yPos, u, 0, 16, 16, 256, 256, graphics);
+                off++;
             }
         }
     }
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        /*RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
-        guiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
+        guiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);*/
     }
 }

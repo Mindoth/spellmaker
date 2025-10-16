@@ -14,9 +14,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class SpellMakingMenu extends AbstractContainerMenu {
@@ -28,15 +28,6 @@ public class SpellMakingMenu extends AbstractContainerMenu {
     private static final int INV_SLOT_END = 30;
     private static final int USE_ROW_SLOT_START = 30;
     private static final int USE_ROW_SLOT_END = 39;
-
-    private static final int TOP_ROW_HEIGHT = 39;
-    public int getTopRowHeight() {
-        return TOP_ROW_HEIGHT;
-    }
-    private static final int BOTTOM_ROW_HEIGHT = 52 + 9;
-    public int getBottomRowHeight() {
-        return BOTTOM_ROW_HEIGHT;
-    }
 
     private final Container craftSlots = new SimpleContainer(4) {
         @Override
@@ -63,23 +54,23 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         this.player = playerInventory.player;
 
         //Parchment Slot
-        this.addSlot(new ParchmentSlot(this.craftSlots, 0, 12, TOP_ROW_HEIGHT));
+        this.addSlot(new ParchmentSlot(this.craftSlots, 0, 8, 44));
 
         //Rune slots
         for ( int i = 0; i < 3; ++i ) {
-            this.addSlot(new RuneSlot(this.craftSlots, 1 + i, 72 + i * 36, TOP_ROW_HEIGHT, !this.craftSlots.getItem(0).isEmpty()));
+            this.addSlot(new RuneSlot(this.craftSlots, 1 + i, 35, 62 + i * 18, !this.craftSlots.getItem(0).isEmpty()));
         }
 
         //Player inventory
         for ( int i = 0; i < 3; ++i ) {
             for ( int j = 0; j < 9; ++j ) {
-                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 68 + BOTTOM_ROW_HEIGHT + i * 18));
+                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 129 + i * 18));
             }
         }
 
         //Player hotbar
         for ( int i = 0; i < 9; ++i ) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 126 + BOTTOM_ROW_HEIGHT));
+            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 187));
         }
 
         dataInit();
@@ -92,33 +83,25 @@ public class SpellMakingMenu extends AbstractContainerMenu {
     public void setSpellForm(ModSpellForms.SpellForm form) {
         this.spellForm = form;
     }
-    private int magnitude;
-    public int getMagnitude() {
+    private List<Integer> magnitude;
+    public List<Integer> getMagnitude() {
         return this.magnitude;
     }
-    public void setMagnitude(int magnitude) {
-        this.magnitude = magnitude;
+    public void setMagnitude(int index, int magnitude) {
+        this.magnitude.set(index, magnitude);
     }
-    private int duration;
-    public int getDuration() {
+    private List<Integer> duration;
+    public List<Integer> getDuration() {
         return this.duration;
     }
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-    private int area;
-    public int getArea() {
-        return this.area;
-    }
-    public void setArea(int area) {
-        this.area = area;
+    public void setDuration(int index, int duration) {
+        this.duration.set(index, duration);
     }
 
     public void dataInit() {
         setSpellForm(ModSpellForms.CASTER_ONLY.get());
-        setMagnitude(1);
-        setDuration(1);
-        setArea(1);
+        this.magnitude = Arrays.asList(1, 1, 1);
+        this.duration = Arrays.asList(1, 1, 1);
     }
 
     public boolean isCleanParchment(ItemStack stack) {
@@ -193,10 +176,13 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                 }
                 dataInit();
             }
-            /*if ( level.isClientSide && isReadyToDump() ) {
-                List<Item> tempList = ParchmentItem.getScrollComboList(stack);
-                for ( int i = 0; i < tempList.size(); i++ ) editColorCode(i, tempList.get(i));
-            }*/
+            for ( int i = 0; i < this.slots.size(); i++ ) {
+                Slot slot = this.slots.get(i);
+                if ( slot instanceof RuneSlot && !slot.hasItem() ) {
+                    setMagnitude(i - 1, 1);
+                    setDuration(i - 1, 1);
+                }
+            }
         });
     }
 
