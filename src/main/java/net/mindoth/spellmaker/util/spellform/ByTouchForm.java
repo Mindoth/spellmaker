@@ -2,23 +2,23 @@ package net.mindoth.spellmaker.util.spellform;
 
 import net.mindoth.shadowizardlib.event.ShadowEvents;
 import net.mindoth.spellmaker.item.RuneItem;
-import net.mindoth.spellmaker.util.*;
+import net.mindoth.spellmaker.util.DimVec3;
+import net.mindoth.spellmaker.util.MultiBlockHitResult;
+import net.mindoth.spellmaker.util.MultiEntityHitResult;
+import net.mindoth.spellmaker.util.SpellForm;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.function.BiPredicate;
 
 public class ByTouchForm extends SpellForm {
     public ByTouchForm(String name) {
@@ -27,8 +27,7 @@ public class ByTouchForm extends SpellForm {
 
     @Override
     public void castMagick(Entity caster, LinkedHashMap<RuneItem, List<Integer>> map) {
-
-        Entity target = getPointedEntity(caster.getEyePosition(), caster.getLookAngle(), caster, caster.level(), 4.5F, 0.25F, true, null);
+        Entity target = getPointedEntity(caster.getEyePosition(), caster.getLookAngle(), caster, caster.level(), 4.5F, 0.25F, true);
         if ( target != null ) {
             for ( RuneItem rune : map.keySet() ) {
                 rune.effectOnEntity(map.get(rune), new MultiEntityHitResult(caster, Collections.singletonList(target), new DimVec3(caster.position(), caster.level())));
@@ -36,12 +35,8 @@ public class ByTouchForm extends SpellForm {
         }
         else {
             MultiBlockHitResult mResult = getPOVHitResult(caster.getEyePosition(), caster.getLookAngle(), caster, caster.level(), ClipContext.Fluid.SOURCE_ONLY, 4.5F);
-            if ( !caster.level().getBlockState(mResult.getBlocks().get(0)).isAir() ) {
+            if ( !mResult.getPos().getLevel().getBlockState(mResult.getBlocks().get(0)).isAir() ) {
                 for ( RuneItem rune : map.keySet() ) rune.effectOnBlock(map.get(rune), mResult);
-            }
-            else {
-                Vec3 end = ShadowEvents.getPoint(caster.getEyePosition(), caster.getLookAngle(), caster, caster.level(), 4.5F, 0, false, true, true, false);
-                for ( RuneItem rune : map.keySet() ) rune.effectOnPos(map.get(rune), new DimVec3(end, caster.level()));
             }
         }
     }
@@ -54,7 +49,7 @@ public class ByTouchForm extends SpellForm {
                 Collections.singletonList(result.getBlockPos()), new DimVec3(result.getLocation(), level));
     }
 
-    private Entity getPointedEntity(Vec3 position, Vec3 direction, Entity caster, Level level, float range, float error, boolean stopsAtSolid, @Nullable BiPredicate<Entity, Entity> filter) {
+    private Entity getPointedEntity(Vec3 position, Vec3 direction, Entity caster, Level level, float range, float error, boolean stopsAtSolid) {
         Vec3 center = position.add(direction.multiply(range, range, range));
         Entity returnEntity = null;
         double playerX = position.x();
@@ -78,7 +73,7 @@ public class ByTouchForm extends SpellForm {
             Entity target = null;
             double lowestSoFar = Double.MAX_VALUE;
             for ( Entity closestSoFar : targets ) {
-                if ( filter == null || filter.test(caster, closestSoFar) ) {
+                if ( closestSoFar instanceof LivingEntity ) {
                     double testDistance = closestSoFar.distanceToSqr(center);
                     if ( testDistance < lowestSoFar ) target = closestSoFar;
                 }

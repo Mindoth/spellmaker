@@ -3,6 +3,7 @@ package net.mindoth.spellmaker.registries;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.RuneItem;
+import net.mindoth.spellmaker.item.rune.ExcavateRuneItem;
 import net.mindoth.spellmaker.item.rune.FireRuneItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
@@ -24,5 +25,8 @@ public class ModItems {
 
     //Runes
     public static final RegistryObject<Item> FIRE_RUNE = ITEMS.register("fire_rune",
-            () -> new FireRuneItem(new Item.Properties()));
+            () -> new FireRuneItem(new Item.Properties(), true, true));
+
+    public static final RegistryObject<Item> EXCAVATE_RUNE = ITEMS.register("excavate_rune",
+            () -> new ExcavateRuneItem(new Item.Properties(), true, false));
 }

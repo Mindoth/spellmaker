@@ -16,8 +16,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import java.util.List;
 
 public class FireRuneItem extends RuneItem {
-    public FireRuneItem(Properties pProperties) {
-        super(pProperties);
+    public FireRuneItem(Properties pProperties, boolean hasMagnitude, boolean hasDuration) {
+        super(pProperties, hasMagnitude, hasDuration);
     }
 
     @Override
@@ -46,8 +46,8 @@ public class FireRuneItem extends RuneItem {
                     BlockState blockState1 = BaseFireBlock.getState(level, blockPos1);
                     level.setBlock(blockPos1, blockState1, 11);
                 }
-                else level.setBlock(blockPos, blockState.setValue(BlockStateProperties.LIT, Boolean.valueOf(true)), 11);
             }
+            else level.setBlock(blockPos, blockState.setValue(BlockStateProperties.LIT, Boolean.valueOf(true)), 11);
         }
     }
 }

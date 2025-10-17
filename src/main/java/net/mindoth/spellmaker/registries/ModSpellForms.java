@@ -13,7 +13,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Supplier;
 
-public abstract class ModSpellForms {
+public class ModSpellForms {
     public static final ResourceKey<Registry<SpellForm>> SPELL_FORM_REGISTRY_KEY = ResourceKey.createRegistryKey(new ResourceLocation(SpellMaker.MOD_ID, "spell_forms"));
     public static final DeferredRegister<SpellForm> SPELL_FORMS = DeferredRegister.create(SPELL_FORM_REGISTRY_KEY, SpellMaker.MOD_ID);
     public static final Supplier<IForgeRegistry<SpellForm>> SPELL_FORM_REGISTRY = SPELL_FORMS.makeRegistry(() -> new RegistryBuilder<SpellForm>().disableSaving().disableOverrides());

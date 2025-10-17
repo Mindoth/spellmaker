@@ -6,7 +6,7 @@ import net.minecraft.world.entity.Entity;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class SpellForm {
+public abstract class SpellForm {
     private final String name;
     public String getName() {
         return this.name;

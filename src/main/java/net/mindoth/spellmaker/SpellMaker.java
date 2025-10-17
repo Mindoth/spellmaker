@@ -2,10 +2,7 @@ package net.mindoth.spellmaker;
 
 import net.mindoth.spellmaker.item.ModCreativeTab;
 import net.mindoth.spellmaker.network.ModNetwork;
-import net.mindoth.spellmaker.registries.ModBlocks;
-import net.mindoth.spellmaker.registries.ModItems;
-import net.mindoth.spellmaker.registries.ModMenus;
-import net.mindoth.spellmaker.registries.ModSpellForms;
+import net.mindoth.spellmaker.registries.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
@@ -32,6 +29,7 @@ public class SpellMaker {
         ModCreativeTab.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
+        ModEntities.ENTITIES.register(modEventBus);
         ModMenus.MENUS.register(modEventBus);
         ModSpellForms.SPELL_FORMS.register(modEventBus);
         //KEEP THESE LAST
