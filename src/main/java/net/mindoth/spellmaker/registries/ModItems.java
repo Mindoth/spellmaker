@@ -26,14 +26,14 @@ public class ModItems {
 
     //Runes
     public static final RegistryObject<Item> EXCAVATE_RUNE = ITEMS.register("excavate_rune",
-            () -> new ExcavateRuneItem(new Item.Properties(), true, false));
+            () -> new ExcavateRuneItem(new Item.Properties(), true, false, 1, 2, 0));
 
     public static final RegistryObject<Item> FIRE_RUNE = ITEMS.register("fire_rune",
-            () -> new FireRuneItem(new Item.Properties(), true, true));
+            () -> new FireRuneItem(new Item.Properties(), true, true, 1, 1, 1));
 
     public static final RegistryObject<Item> FROST_RUNE = ITEMS.register("frost_rune",
-            () -> new FrostRuneItem(new Item.Properties(), true, true));
+            () -> new FrostRuneItem(new Item.Properties(), true, true, 2, 1, 2));
 
     public static final RegistryObject<Item> SHOCK_RUNE = ITEMS.register("shock_rune",
-            () -> new ShockRuneItem(new Item.Properties(), true, true));
+            () -> new ShockRuneItem(new Item.Properties(), true, true, 3, 1, 3));
 }

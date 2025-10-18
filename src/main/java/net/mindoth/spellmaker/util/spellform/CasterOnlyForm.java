@@ -16,8 +16,8 @@ import static net.mindoth.shadowizardlib.event.ShadowEvents.defaultStats;
 import static net.mindoth.shadowizardlib.event.ShadowEvents.getParticleColor;
 
 public class CasterOnlyForm extends SpellForm {
-    public CasterOnlyForm(String name) {
-        super(name);
+    public CasterOnlyForm(String name, int cost) {
+        super(name, cost);
     }
 
     @Override

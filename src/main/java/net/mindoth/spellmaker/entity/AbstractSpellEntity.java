@@ -95,7 +95,7 @@ public abstract class AbstractSpellEntity extends Projectile {
     }
 
     protected boolean hitFilter(Entity target) {
-        return true;
+        return target instanceof LivingEntity;
     }
 
     protected HitResult getHitResult(Vec3 pStartVec, Entity pProjectile, Predicate<Entity> pFilter, Vec3 pEndVecOffset, Level pLevel) {
@@ -199,7 +199,7 @@ public abstract class AbstractSpellEntity extends Projectile {
     }
 
     public float getSpeed() {
-        return 1.6F;
+        return 1.0F;
     }
 
     public int getLife() {

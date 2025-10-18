@@ -15,10 +15,26 @@ public abstract class RuneItem extends Item {
     public boolean getHasDuration() {
         return this.hasDuration;
     }
-    public RuneItem(Properties pProperties, boolean hasMagnitude, boolean hasDuration) {
+    private final int cost;
+    public int getCost() {
+        return this.cost;
+    }
+    private final int magnitudeMultiplier;
+    public int getMagnitudeMultiplier() {
+        return this.magnitudeMultiplier;
+    }
+    private final int durationMultiplier;
+    public int getDurationMultiplier() {
+        return this.durationMultiplier;
+    }
+
+    public RuneItem(Properties pProperties, boolean hasMagnitude, boolean hasDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
         super(pProperties);
         this.hasMagnitude = hasMagnitude;
         this.hasDuration = hasDuration;
+        this.cost = cost;
+        this.magnitudeMultiplier = magnitudeMultiplier;
+        this.durationMultiplier = durationMultiplier;
     }
 
     public void effectOnEntity(List<Integer> stats, MultiEntityHitResult result) {

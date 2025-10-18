@@ -7,12 +7,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public abstract class SpellForm {
+
     private final String name;
     public String getName() {
         return this.name;
     }
-    public SpellForm(String name) {
+    private final int cost;
+    public int getCost() {
+        return this.cost;
+    }
+
+    public SpellForm(String name, int cost) {
         this.name = name;
+        this.cost = cost;
     }
 
     public void castMagick(Entity caster, LinkedHashMap<RuneItem, List<Integer>> map) {

@@ -171,7 +171,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             if ( !level.isClientSide ) {
                 if ( isReadyToDump() ) {
                     ItemStack stack = this.craftSlots.getItem(0);
-                    List<ItemStack> list = DataHelper.getSpellStackFromScroll(stack);
+                    List<ItemStack> list = DataHelper.getSpellStackFromTag(stack.getTag());
                     for ( int i = 0; i < this.slots.size(); i++ ) {
                         if ( i == 0 ) {
                             this.spellForm = DataHelper.getFormFromNbt(stack.getTag());

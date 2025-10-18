@@ -10,6 +10,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public abstract class DataHelper {
@@ -33,8 +35,8 @@ public abstract class DataHelper {
         return stringBuilder.toString();
     }
 
-    public static List<ItemStack> getSpellStackFromScroll(ItemStack scroll) {
-        String stringList = scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_RUNES);
+    public static List<ItemStack> getSpellStackFromTag(CompoundTag tag) {
+        String stringList = tag.getString(ParchmentItem.NBT_KEY_SPELL_RUNES);
         List<ItemStack> list = Lists.newArrayList();
         for ( String string : List.of(stringList.split(",")) ) {
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(string));
@@ -42,6 +44,17 @@ public abstract class DataHelper {
             if ( stack.getItem() instanceof RuneItem || stack.isEmpty() ) list.add(stack);
         }
         return list;
+    }
+
+    public static LinkedHashMap<RuneItem, List<Integer>> createMapFromTag(CompoundTag tag) {
+        LinkedHashMap<RuneItem, List<Integer>> map = new LinkedHashMap<>();
+        List<Integer> magnitudes = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
+        List<Integer> durations = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
+        for ( int i = 0; i < DataHelper.getSpellStackFromTag(tag).size(); i++ ) {
+            ItemStack itemStack = DataHelper.getSpellStackFromTag(tag).get(i);
+            if ( itemStack.getItem() instanceof RuneItem rune ) map.put(rune, Arrays.asList(magnitudes.get(i), durations.get(i)));
+        }
+        return map;
     }
 
     public static List<RuneItem> getRuneListFromString(String stringList) {

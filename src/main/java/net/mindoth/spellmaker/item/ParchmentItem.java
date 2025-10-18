@@ -4,6 +4,7 @@ import net.mindoth.spellmaker.registries.ModSpellForms;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.SpellForm;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -41,8 +42,10 @@ public class ParchmentItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flagIn) {
         if ( stack.hasTag() && stack.getTag().contains(NBT_KEY_SPELL_FORM) ) {
-            String form = ModSpellForms.SPELL_FORM_REGISTRY.get().getValue(new ResourceLocation(stack.getTag().getString(NBT_KEY_SPELL_FORM))).getName();
-            tooltip.add(Component.translatable("spellform.spellmaker." + form).withStyle(ChatFormatting.GRAY));
+            SpellForm form = ModSpellForms.SPELL_FORM_REGISTRY.get().getValue(new ResourceLocation(stack.getTag().getString(NBT_KEY_SPELL_FORM)));
+            int cost = calculateSpellCost(form, DataHelper.createMapFromTag(stack.getTag()));
+            tooltip.add(Component.translatable("tooltip.spellmaker.cost").append(Component.literal("" + cost)).withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("spellform.spellmaker." + form.getName()).withStyle(ChatFormatting.GRAY));
             if ( stack.getTag().contains(NBT_KEY_SPELL_RUNES) ) {
                 List<RuneItem> list = DataHelper.getRuneListFromString(stack.getTag().getString(NBT_KEY_SPELL_RUNES));
                 for ( RuneItem rune : list ) {
@@ -52,6 +55,18 @@ public class ParchmentItem extends Item {
             }
         }
         super.appendHoverText(stack, world, tooltip, flagIn);
+    }
+
+    public int calculateSpellCost(SpellForm form, LinkedHashMap<RuneItem, List<Integer>> map) {
+        int totalCost = form.getCost();
+        for ( RuneItem rune : map.keySet() ) {
+            int cost = rune.getCost();
+            List<Integer> stats = map.get(rune);
+            if ( rune.getHasMagnitude() ) cost += stats.get(0) * rune.getMagnitudeMultiplier();
+            if ( rune.getHasDuration() ) cost += stats.get(1) * rune.getDurationMultiplier();
+            totalCost += cost;
+        }
+        return totalCost;
     }
 
     @Override
@@ -67,15 +82,8 @@ public class ParchmentItem extends Item {
         if ( !level.isClientSide ) {
             ItemStack stack = player.getItemInHand(hand);
             if ( stack.hasTag() && stack.getTag().contains(NBT_KEY_SPELL_FORM) ) {
-                LinkedHashMap<RuneItem, List<Integer>> map = new LinkedHashMap<>();
-                List<Integer> magnitudes = DataHelper.getStatsFromString(stack.getTag().getString(NBT_KEY_SPELL_MAGNITUDES));
-                List<Integer> durations = DataHelper.getStatsFromString(stack.getTag().getString(NBT_KEY_SPELL_DURATIONS));
-                for ( int i = 0; i < DataHelper.getSpellStackFromScroll(stack).size(); i++ ) {
-                    ItemStack itemStack = DataHelper.getSpellStackFromScroll(stack).get(i);
-                    if ( itemStack.getItem() instanceof RuneItem rune ) map.put(rune, Arrays.asList(magnitudes.get(i), durations.get(i)));
-                }
                 SpellForm form = DataHelper.getFormFromNbt(stack.getTag());
-                form.castMagick(player, map);
+                form.castMagick(player, DataHelper.createMapFromTag(stack.getTag()));
             }
         }
         return result;

@@ -22,15 +22,15 @@ import java.util.*;
 import static net.mindoth.shadowizardlib.event.ShadowEvents.*;
 
 public class AreaAroundCasterForm extends SpellForm {
-    public AreaAroundCasterForm(String name) {
-        super(name);
+    public AreaAroundCasterForm(String name, int cost) {
+        super(name, cost);
     }
 
     @Override
     public void castMagick(Entity caster, LinkedHashMap<RuneItem, List<Integer>> map) {
         Level level = caster.level();
         AABB box = caster.getBoundingBox().inflate(1.0D, 0.0D, 1.0D);
-        for ( Entity entity : level.getEntities(null, box).stream().filter((entity -> entity instanceof LivingEntity)).toList() ) {
+        for ( Entity entity : level.getEntities(caster, box).stream().filter((entity -> entity instanceof LivingEntity)).toList() ) {
             for ( RuneItem rune : map.keySet() ) {
                 rune.effectOnEntity(map.get(rune), new MultiEntityHitResult(caster, Collections.singletonList(entity), new DimVec3(entity.position(), entity.level())));
             }
@@ -39,7 +39,8 @@ public class AreaAroundCasterForm extends SpellForm {
         for ( int x = caster.getBlockX() -1; x < caster.getBlockX() + 2; x++ ) {
             for ( int y = caster.getBlockY(); y < caster.getBlockY() + 2; y++ ) {
                 for ( int z = caster.getBlockZ() - 1; z < caster.getBlockZ() + 2; z++ ) {
-                    blocks.add(new BlockPos(x, y, z));
+                    BlockPos newPos = new BlockPos(x, y, z);
+                    if ( !newPos.equals(caster.getOnPos()) && !newPos.equals(caster.getOnPos().above()) ) blocks.add(newPos);
                 }
             }
         }

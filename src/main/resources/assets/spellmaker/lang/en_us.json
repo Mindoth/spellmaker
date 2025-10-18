@@ -28,6 +28,7 @@
   "effect.spellmaker.paralysis": "Paralysis",
 
 
+  "tooltip.spellmaker.cost": "Cost: ",
   "tooltip.spellmaker.magnitude": "Magnitude",
   "tooltip.spellmaker.duration": "Duration",
   "tooltip.spellmaker.area": "Area"

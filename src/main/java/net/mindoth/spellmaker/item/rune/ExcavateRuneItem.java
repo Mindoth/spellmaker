@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class ExcavateRuneItem extends RuneItem {
-    public ExcavateRuneItem(Properties pProperties, boolean hasMagnitude, boolean hasDuration) {
-        super(pProperties, hasMagnitude, hasDuration);
+    public ExcavateRuneItem(Properties pProperties, boolean hasMagnitude, boolean hasDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
+        super(pProperties, hasMagnitude, hasDuration, cost, magnitudeMultiplier, durationMultiplier);
     }
 
     @Override

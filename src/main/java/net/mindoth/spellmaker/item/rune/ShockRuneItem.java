@@ -10,8 +10,8 @@ import net.minecraft.world.entity.LivingEntity;
 import java.util.List;
 
 public class ShockRuneItem extends RuneItem {
-    public ShockRuneItem(Properties pProperties, boolean hasMagnitude, boolean hasDuration) {
-        super(pProperties, hasMagnitude, hasDuration);
+    public ShockRuneItem(Properties pProperties, boolean hasMagnitude, boolean hasDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
+        super(pProperties, hasMagnitude, hasDuration, cost, magnitudeMultiplier, durationMultiplier);
     }
 
     @Override
