@@ -44,6 +44,14 @@ public abstract class DataHelper {
         return list;
     }
 
+    public static List<RuneItem> getRuneListFromString(String stringList) {
+        List<RuneItem> list = Lists.newArrayList();
+        for ( String string : List.of(stringList.split(",")) ) {
+            if ( ForgeRegistries.ITEMS.getValue(new ResourceLocation(string)) instanceof RuneItem rune ) list.add(rune);
+        }
+        return list;
+    }
+
     public static String getStringFromStats(List<Integer> list) {
         StringBuilder stringBuilder = new StringBuilder();
         for ( int i = 0; i < list.size(); i++ ) {

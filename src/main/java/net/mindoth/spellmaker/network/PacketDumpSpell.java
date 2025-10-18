@@ -23,7 +23,7 @@ public class PacketDumpSpell {
         context.enqueueWork(() -> {
             if ( context.getSender() != null ) {
                 ServerPlayer player = context.getSender();
-                if ( player.containerMenu instanceof SpellMakingMenu ) ((SpellMakingMenu)player.containerMenu).processDumping();
+                if ( player.containerMenu instanceof SpellMakingMenu menu ) menu.processDumping();
             }
         });
     }

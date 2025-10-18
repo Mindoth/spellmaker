@@ -1,0 +1,28 @@
+package net.mindoth.spellmaker.item.rune;
+
+import net.mindoth.spellmaker.item.RuneItem;
+import net.mindoth.spellmaker.util.MultiEntityHitResult;
+import net.minecraft.world.entity.Entity;
+
+import java.util.List;
+
+public class FrostRuneItem extends RuneItem {
+    public FrostRuneItem(Properties pProperties, boolean hasMagnitude, boolean hasDuration) {
+        super(pProperties, hasMagnitude, hasDuration);
+    }
+
+    @Override
+    public void effectOnEntity(List<Integer> stats, MultiEntityHitResult result) {
+        for ( Entity entity : result.getEntities() ) {
+            if ( !entity.isAttackable() || !entity.isAlive() || !entity.canFreeze() ) return;
+            int magnitude = stats.get(0);
+            if ( magnitude > 0 ) entity.hurt(entity.damageSources().freeze(), magnitude);
+            int duration = stats.get(1);
+            int freezeTicks = duration * 20;
+            if ( entity.getTicksFrozen() > 0 && entity.getTicksFrozen() < freezeTicks ) {
+                freezeTicks = entity.getTicksFrozen() + (freezeTicks - entity.getTicksFrozen());
+            }
+            if ( freezeTicks > 0 ) entity.setTicksFrozen(freezeTicks * 4);
+        }
+    }
+}

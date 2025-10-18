@@ -24,8 +24,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class SpellMakingMenu extends AbstractContainerMenu {
@@ -81,10 +83,13 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         for ( int i = 0; i < 9; ++i ) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 187));
         }
-
         dataInit();
     }
 
+    private List<SpellForm> formList;
+    public List<SpellForm> getFormList() {
+        return this.formList;
+    }
     private SpellForm spellForm;
     public SpellForm getSpellForm() {
         return this.spellForm;
@@ -99,7 +104,8 @@ public class SpellMakingMenu extends AbstractContainerMenu {
     }
 
     public void dataInit() {
-        this.spellForm = ModSpellForms.CASTER_ONLY.get();
+        this.formList = Arrays.asList(ModSpellForms.CASTER_ONLY.get(), ModSpellForms.BY_TOUCH.get(), ModSpellForms.SINGLE_TARGET_AT_RANGE.get(), ModSpellForms.AREA_AROUND_CASTER.get(), ModSpellForms.AREA_AT_RANGE.get());
+        this.spellForm = this.formList.get(0);
         this.magnitude = Arrays.asList(0, 0, 0);
         this.duration = Arrays.asList(0, 0, 0);
     }
@@ -108,7 +114,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         return !stack.isEmpty() && stack.getItem() instanceof ParchmentItem && (!stack.hasTag() || !stack.getTag().contains(ParchmentItem.NBT_KEY_SPELL_FORM));
     }
 
-    private void cleanScroll(ItemStack scroll) {
+    private void cleanScroll(Level level, ItemStack scroll) {
         ItemStack stack = scroll.copy();
         if ( stack.hasCustomHoverName() ) stack.resetHoverName();
         if ( stack.hasTag() ) {
@@ -119,7 +125,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             if ( tag.contains(ParchmentItem.NBT_KEY_SPELL_DURATIONS) ) tag.remove(ParchmentItem.NBT_KEY_SPELL_DURATIONS);
             if ( stack.getTag().isEmpty() ) stack.setTag(null);
         }
-        setSlotContent(0, stack);
+        setSlotContent(level, 0, stack);
     }
 
     public boolean isReadyToMake() {
@@ -141,7 +147,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                     ItemStack stack = assemble(this.craftSlots);
                     if ( name == null || Util.isBlank(name) ) stack.resetHoverName();
                     else stack.setHoverName(Component.literal(name));
-                    setSlotContent(0, stack);
+                    setSlotContent(level, 0, stack);
                 }
             }
         });
@@ -168,17 +174,16 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                     List<ItemStack> list = DataHelper.getSpellStackFromScroll(stack);
                     for ( int i = 0; i < this.slots.size(); i++ ) {
                         if ( i == 0 ) {
-                            editSpellForm(stack.getTag());
-                            editSpellStats((byte)0, DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES)));
-                            editSpellStats((byte)1, DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS)));
-
-                            cleanScroll(stack);
+                            this.spellForm = DataHelper.getFormFromNbt(stack.getTag());
+                            this.magnitude = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
+                            this.duration = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
+                            cleanScroll(level, stack);
                         }
                         else {
                             Slot slot = this.slots.get(i);
                             if ( slot instanceof RuneSlot ) {
                                 ItemStack rune = list.get(i - 1);
-                                setSlotContent(i, rune);
+                                setSlotContent(level, i, rune);
                             }
                         }
                     }
@@ -187,7 +192,6 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         });
     }
 
-    //TODO: add encodeable
     public ItemStack assemble(Container container) {
         ItemStack scroll = this.craftSlots.getItem(0).copy();
         List<ItemStack> runeStackList = Lists.newArrayList();
@@ -212,11 +216,13 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         return SharedConstants.filterText(string).length() <= 50 ? SharedConstants.filterText(string) : null;
     }
 
-    private void setSlotContent(int slot, ItemStack stack) {
-        ServerPlayer serverplayer = (ServerPlayer)this.player;
-        this.craftSlots.setItem(slot, stack);
-        this.setRemoteSlot(slot, stack);
-        serverplayer.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, this.incrementStateId(), slot, stack));
+    private void setSlotContent(Level level, int slot, ItemStack stack) {
+        if ( !level.isClientSide ) {
+            ServerPlayer serverplayer = (ServerPlayer)this.player;
+            this.craftSlots.setItem(slot, stack);
+            this.setRemoteSlot(slot, stack);
+            serverplayer.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, this.incrementStateId(), slot, stack));
+        }
     }
 
     public int howManyRuneSlotsOpen() {
@@ -243,7 +249,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                     if ( slot instanceof RuneSlot runeSlot ) {
                         if ( !level.isClientSide && !runeSlot.getItem().isEmpty() ) {
                             if ( stack.isEmpty() ) quickMoveStack(this.player, runeSlot.index);
-                            else setSlotContent(runeSlot.getSlotIndex(), ItemStack.EMPTY);
+                            else setSlotContent(level, runeSlot.getSlotIndex(), ItemStack.EMPTY);
                         }
                         if ( runeSlot.isOpen ) runeSlot.isOpen = false;
                     }

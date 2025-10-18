@@ -12,8 +12,10 @@
   "item.spellmaker.parchment": "Parchment",
   "item.spellmaker.arcane_parchment": "Arcane Parchment",
 
-  "item.spellmaker.fire_rune": "Fire Rune",
   "item.spellmaker.excavate_rune": "Excavate Rune",
+  "item.spellmaker.fire_rune": "Fire Rune",
+  "item.spellmaker.frost_rune": "Frost Rune",
+  "item.spellmaker.shock_rune": "Shock Rune",
 
 
   "spellform.spellmaker.caster_only": "Caster only",
@@ -21,6 +23,9 @@
   "spellform.spellmaker.single_target_at_range": "Single target at range",
   "spellform.spellmaker.area_around_caster": "Area around caster",
   "spellform.spellmaker.area_at_range": "Area at range",
+
+
+  "effect.spellmaker.paralysis": "Paralysis",
 
 
   "tooltip.spellmaker.magnitude": "Magnitude",

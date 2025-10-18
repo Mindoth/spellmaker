@@ -146,7 +146,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     private void handleLeftSpellFormButton(Button button) {
         if ( !this.menu.isReadyToMake() ) return;
         CompoundTag tag = new CompoundTag();
-        List<SpellForm> list = ModSpellForms.SPELL_FORM_REGISTRY.get().getValues().stream().toList();
+        List<SpellForm> list = this.menu.getFormList();
         SpellForm form = this.menu.getSpellForm();
         SpellForm newForm;
         if ( form == list.get(0) ) newForm = list.get(list.size() - 1);
@@ -158,7 +158,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     private void handleRightSpellFormButton(Button button) {
         if ( !this.menu.isReadyToMake() ) return;
         CompoundTag tag = new CompoundTag();
-        List<SpellForm> list = ModSpellForms.SPELL_FORM_REGISTRY.get().getValues().stream().toList();
+        List<SpellForm> list = this.menu.getFormList();
         SpellForm form = this.menu.getSpellForm();
         SpellForm newForm;
         if ( form == list.get(list.size() - 1) ) newForm = list.get(0);

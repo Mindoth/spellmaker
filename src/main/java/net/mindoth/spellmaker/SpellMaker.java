@@ -30,6 +30,7 @@ public class SpellMaker {
         ModItems.ITEMS.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
         ModEntities.ENTITIES.register(modEventBus);
+        ModEffects.EFFECTS.register(modEventBus);
         ModMenus.MENUS.register(modEventBus);
         ModSpellForms.SPELL_FORMS.register(modEventBus);
         //KEEP THESE LAST
