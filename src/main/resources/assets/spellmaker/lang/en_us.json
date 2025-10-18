@@ -12,6 +12,8 @@
   "item.spellmaker.parchment": "Parchment",
   "item.spellmaker.arcane_parchment": "Arcane Parchment",
 
+  "item.spellmaker.spell_book": "Spell Book",
+
   "item.spellmaker.excavate_rune": "Excavate Rune",
   "item.spellmaker.fire_rune": "Fire Rune",
   "item.spellmaker.frost_rune": "Frost Rune",
@@ -28,7 +30,9 @@
   "effect.spellmaker.paralysis": "Paralysis",
 
 
+  "tooltip.spellmaker.book_owner": "Owner: ",
   "tooltip.spellmaker.cost": "Cost: ",
+  "tooltip.spellmaker.form": "Form: ",
   "tooltip.spellmaker.magnitude": "Magnitude",
   "tooltip.spellmaker.duration": "Duration",
   "tooltip.spellmaker.area": "Area"

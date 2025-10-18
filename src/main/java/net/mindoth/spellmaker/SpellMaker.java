@@ -33,6 +33,7 @@ public class SpellMaker {
         ModEffects.EFFECTS.register(modEventBus);
         ModMenus.MENUS.register(modEventBus);
         ModSpellForms.SPELL_FORMS.register(modEventBus);
+        ModRecipes.SERIALIZERS.register(modEventBus);
         //KEEP THESE LAST
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);

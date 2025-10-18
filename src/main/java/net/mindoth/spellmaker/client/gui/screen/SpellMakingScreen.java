@@ -81,7 +81,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         this.name.setTextColor(-1);
         this.name.setTextColorUneditable(-1);
         this.name.setBordered(true);
-        this.name.setMaxLength(50);
+        this.name.setMaxLength(12);
         //this.name.setResponder(this::onNameChanged);
         this.name.setValue("");
         this.addWidget(this.name);

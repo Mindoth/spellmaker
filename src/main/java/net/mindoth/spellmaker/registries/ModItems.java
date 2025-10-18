@@ -2,6 +2,7 @@ package net.mindoth.spellmaker.registries;
 
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.ParchmentItem;
+import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.item.rune.ExcavateRuneItem;
 import net.mindoth.spellmaker.item.rune.FireRuneItem;
 import net.mindoth.spellmaker.item.rune.FrostRuneItem;
@@ -24,6 +25,10 @@ public class ModItems {
 
     public static final RegistryObject<Item> ARCANE_PARCHMENT = ITEMS.register("arcane_parchment",
             () -> new ParchmentItem(new Item.Properties(), 2));
+
+    //Equipment
+    public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book",
+            () -> new SpellBookItem(new Item.Properties()));
 
     //Runes
     public static final RegistryObject<Item> EXCAVATE_RUNE = ITEMS.register("excavate_rune",

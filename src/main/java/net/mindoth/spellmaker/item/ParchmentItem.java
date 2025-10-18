@@ -38,14 +38,19 @@ public class ParchmentItem extends Item {
     public static final String NBT_KEY_SPELL_MAGNITUDES = "sm_spell_magnitudes";
     public static final String NBT_KEY_SPELL_DURATIONS = "sm_spell_durations";
 
+    public static final String NBT_KEY_SPELL_NAME = "sm_spell_name";
+    public static final String NBT_KEY_PAPER_TIER = "sm_paper_tier";
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flagIn) {
         if ( stack.hasTag() && stack.getTag().contains(NBT_KEY_SPELL_FORM) ) {
             SpellForm form = ModSpellForms.SPELL_FORM_REGISTRY.get().getValue(new ResourceLocation(stack.getTag().getString(NBT_KEY_SPELL_FORM)));
             int cost = calculateSpellCost(form, DataHelper.createMapFromTag(stack.getTag()));
-            tooltip.add(Component.translatable("tooltip.spellmaker.cost").append(Component.literal("" + cost)).withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable("spellform.spellmaker." + form.getName()).withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("tooltip.spellmaker.cost")
+                    .append(Component.literal("" + cost)).withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("tooltip.spellmaker.form").withStyle(ChatFormatting.GRAY)
+                    .append(Component.translatable("spellform.spellmaker." + form.getName()).withStyle(ChatFormatting.GRAY)));
             if ( stack.getTag().contains(NBT_KEY_SPELL_RUNES) ) {
                 List<RuneItem> list = DataHelper.getRuneListFromString(stack.getTag().getString(NBT_KEY_SPELL_RUNES));
                 for ( RuneItem rune : list ) {
@@ -91,7 +96,7 @@ public class ParchmentItem extends Item {
     }
 
     //ONLY FOR TESTING
-    @Override
+    /*@Override
     @Nonnull
     public InteractionResultHolder<ItemStack> use(Level level, Player player, @Nonnull InteractionHand hand) {
         InteractionResultHolder<ItemStack> result = InteractionResultHolder.fail(player.getItemInHand(hand));
@@ -103,5 +108,5 @@ public class ParchmentItem extends Item {
             }
         }
         return result;
-    }
+    }*/
 }

@@ -33,6 +33,33 @@ public class ModNetwork {
 
         CHANNEL = net;
 
+        //Spell Book
+        net.messageBuilder(PacketOpenSpellBook.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(PacketOpenSpellBook::new)
+                .encoder(PacketOpenSpellBook::encode)
+                .consumerMainThread(PacketOpenSpellBook::handle)
+                .add();
+
+        net.messageBuilder(PacketRemoveSpellFromBook.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(PacketRemoveSpellFromBook::new)
+                .encoder(PacketRemoveSpellFromBook::encode)
+                .consumerMainThread(PacketRemoveSpellFromBook::handle)
+                .add();
+
+        net.messageBuilder(PacketReorderSpellBook.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(PacketReorderSpellBook::new)
+                .encoder(PacketReorderSpellBook::encode)
+                .consumerMainThread(PacketReorderSpellBook::handle)
+                .add();
+
+        net.messageBuilder(PacketUpdateBookData.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(PacketUpdateBookData::new)
+                .encoder(PacketUpdateBookData::encode)
+                .consumerMainThread(PacketUpdateBookData::handle)
+                .add();
+
+
+        //Spell Making
         net.messageBuilder(PacketEditSpellForm.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(PacketEditSpellForm::new)
                 .encoder(PacketEditSpellForm::encode)
