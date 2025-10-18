@@ -3,6 +3,7 @@ package net.mindoth.spellmaker.item.rune;
 import net.mindoth.spellmaker.item.RuneItem;
 import net.mindoth.spellmaker.util.MultiBlockHitResult;
 import net.mindoth.spellmaker.util.MultiEntityHitResult;
+import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -16,8 +17,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import java.util.List;
 
 public class FireRuneItem extends RuneItem {
-    public FireRuneItem(Properties pProperties, boolean hasMagnitude, boolean hasDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
-        super(pProperties, hasMagnitude, hasDuration, cost, magnitudeMultiplier, durationMultiplier);
+    public FireRuneItem(Properties pProperties, SpellColor color, boolean hasMagnitude, boolean hasDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
+        super(pProperties, color, hasMagnitude, hasDuration, cost, magnitudeMultiplier, durationMultiplier);
     }
 
     @Override

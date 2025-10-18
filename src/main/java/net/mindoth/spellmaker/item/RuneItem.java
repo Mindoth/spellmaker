@@ -2,11 +2,16 @@ package net.mindoth.spellmaker.item;
 
 import net.mindoth.spellmaker.util.MultiBlockHitResult;
 import net.mindoth.spellmaker.util.MultiEntityHitResult;
+import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.world.item.Item;
 
 import java.util.List;
 
 public abstract class RuneItem extends Item {
+    private final SpellColor color;
+    public SpellColor getColor() {
+        return this.color;
+    }
     private final boolean hasMagnitude;
     public boolean getHasMagnitude() {
         return this.hasMagnitude;
@@ -28,8 +33,9 @@ public abstract class RuneItem extends Item {
         return this.durationMultiplier;
     }
 
-    public RuneItem(Properties pProperties, boolean hasMagnitude, boolean hasDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
+    public RuneItem(Properties pProperties, SpellColor color, boolean hasMagnitude, boolean hasDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
         super(pProperties);
+        this.color = color;
         this.hasMagnitude = hasMagnitude;
         this.hasDuration = hasDuration;
         this.cost = cost;

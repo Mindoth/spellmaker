@@ -57,7 +57,7 @@ public class ParchmentItem extends Item {
         super.appendHoverText(stack, world, tooltip, flagIn);
     }
 
-    public int calculateSpellCost(SpellForm form, LinkedHashMap<RuneItem, List<Integer>> map) {
+    public static int calculateSpellCost(SpellForm form, LinkedHashMap<RuneItem, List<Integer>> map) {
         int totalCost = form.getCost();
         for ( RuneItem rune : map.keySet() ) {
             int cost = rune.getCost();
@@ -67,6 +67,22 @@ public class ParchmentItem extends Item {
             totalCost += cost;
         }
         return totalCost;
+    }
+
+    public static RuneItem getHighestCostRune(LinkedHashMap<RuneItem, List<Integer>> map) {
+        RuneItem state = null;
+        int highestCost = 0;
+        for ( RuneItem rune : map.keySet() ) {
+            int cost = rune.getCost();
+            List<Integer> stats = map.get(rune);
+            if ( rune.getHasMagnitude() ) cost += stats.get(0) * rune.getMagnitudeMultiplier();
+            if ( rune.getHasDuration() ) cost += stats.get(1) * rune.getDurationMultiplier();
+            if ( cost > highestCost ) {
+                highestCost = cost;
+                state = rune;
+            }
+        }
+        return state;
     }
 
     @Override

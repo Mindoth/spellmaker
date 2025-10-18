@@ -1,5 +1,6 @@
 package net.mindoth.spellmaker.util.spellform;
 
+import net.mindoth.spellmaker.entity.AbstractSpellEntity;
 import net.mindoth.spellmaker.entity.ProjectileSpellSingleEntity;
 import net.mindoth.spellmaker.item.RuneItem;
 import net.mindoth.spellmaker.util.SpellForm;
@@ -18,6 +19,10 @@ public class SingleTargetAtRangeForm extends SpellForm {
     public void castMagick(Entity caster, LinkedHashMap<RuneItem, List<Integer>> map) {
         Level level = caster.level();
         ProjectileSpellSingleEntity projectile = new ProjectileSpellSingleEntity(level, caster, map);
+        projectile.getEntityData().set(AbstractSpellEntity.RED, (int)Math.floor(getColorStats(map).get("red")));
+        projectile.getEntityData().set(AbstractSpellEntity.GREEN, (int)Math.floor(getColorStats(map).get("green")));
+        projectile.getEntityData().set(AbstractSpellEntity.BLUE, (int)Math.floor(getColorStats(map).get("blue")));
+        projectile.getEntityData().set(AbstractSpellEntity.TYPE, (int)Math.floor(getColorStats(map).get("type")));
         projectile.setNoGravity(true);
         projectile.setPos(caster.getEyePosition());
         projectile.shoot(caster.getLookAngle().x, caster.getLookAngle().y, caster.getLookAngle().z, projectile.getSpeed(), 0.0F);

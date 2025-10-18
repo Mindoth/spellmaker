@@ -1,7 +1,7 @@
 package net.mindoth.spellmaker.entity;
 
 import net.mindoth.shadowizardlib.client.particle.ember.EmberParticleProvider;
-import net.mindoth.shadowizardlib.client.particle.ember.ParticleColor;
+import net.mindoth.shadowizardlib.event.LightEvents;
 import net.mindoth.shadowizardlib.event.ShadowEvents;
 import net.mindoth.spellmaker.item.RuneItem;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -46,6 +46,7 @@ public abstract class AbstractSpellEntity extends Projectile {
         this.map = map;
     }
 
+    //TODO: Properly put these into entityData
     protected Entity caster;
     protected LinkedHashMap<RuneItem, List<Integer>> map;
 
@@ -138,10 +139,6 @@ public abstract class AbstractSpellEntity extends Projectile {
         }
     }
 
-    protected int getRenderType() {
-        return 1;
-    }
-
     protected void doClientTickEffects() {
         if ( isRemoved() ) return;
         if ( !level().isClientSide ) return;
@@ -160,7 +157,7 @@ public abstract class AbstractSpellEntity extends Projectile {
                 double vecX = new Random().nextDouble(variable - -variable) + -variable;
                 double vecY = new Random().nextDouble(variable - -variable) + -variable;
                 double vecZ = new Random().nextDouble(variable - -variable) + -variable;
-                world.addParticle(EmberParticleProvider.createData(getParticleColor(), 0.1F, 8, false, getRenderType()),
+                world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(getParticleStats()), 0.1F, 8, false, LightEvents.getParticleType(getParticleStats())),
                         pos.x + d5 * (double) j / 4.0D, pos.y + d6 * (double) j / 4.0D, pos.z + d1 * (double) j / 4.0D,
                         vecX * speed, vecY * speed, vecZ * speed);
             }
@@ -190,12 +187,13 @@ public abstract class AbstractSpellEntity extends Projectile {
         this.discard();
     }
 
-    public ParticleColor getParticleColor() {
+    public HashMap<String, Float> getParticleStats() {
         HashMap<String, Float> map = new HashMap<>();
         map.put("red", (float)this.entityData.get(RED));
         map.put("green", (float)this.entityData.get(GREEN));
         map.put("blue", (float)this.entityData.get(BLUE));
-        return ShadowEvents.getParticleColor(map);
+        map.put("type", (float)this.entityData.get(TYPE));
+        return map;
     }
 
     public float getSpeed() {
@@ -213,6 +211,7 @@ public abstract class AbstractSpellEntity extends Projectile {
     public static final EntityDataAccessor<Integer> RED = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> GREEN = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> BLUE = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.INT);
 
     public static final EntityDataAccessor<String> RUNE_LIST = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> STATS = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.STRING);
@@ -223,6 +222,7 @@ public abstract class AbstractSpellEntity extends Projectile {
         this.entityData.set(RED, compound.getInt("red"));
         this.entityData.set(GREEN, compound.getInt("green"));
         this.entityData.set(BLUE, compound.getInt("blue"));
+        this.entityData.set(TYPE, compound.getInt("type"));
 
         this.entityData.set(RUNE_LIST, compound.getString("rune_list"));
         this.entityData.set(STATS, compound.getString("stats"));
@@ -234,6 +234,7 @@ public abstract class AbstractSpellEntity extends Projectile {
         compound.putInt("red", this.entityData.get(RED));
         compound.putInt("green", this.entityData.get(GREEN));
         compound.putInt("blue", this.entityData.get(BLUE));
+        compound.putInt("type", this.entityData.get(TYPE));
 
         compound.putString("rune_list", this.entityData.get(RUNE_LIST));
         compound.putString("stats", this.entityData.get(STATS));
@@ -244,6 +245,7 @@ public abstract class AbstractSpellEntity extends Projectile {
         this.entityData.define(RED, -1);
         this.entityData.define(GREEN, -1);
         this.entityData.define(BLUE, -1);
+        this.entityData.define(TYPE, 1);
 
         this.entityData.define(RUNE_LIST, "");
         this.entityData.define(STATS, "");
