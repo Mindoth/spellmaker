@@ -1,15 +1,15 @@
 package net.mindoth.spellmaker.item.rune;
 
+import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.item.RuneItem;
-import net.mindoth.spellmaker.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.world.entity.Entity;
 
 import java.util.List;
 
 public class FrostRuneItem extends RuneItem {
-    public FrostRuneItem(Properties pProperties, SpellColor color, boolean hasMagnitude, boolean hasDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
-        super(pProperties, color, hasMagnitude, hasDuration, cost, magnitudeMultiplier, durationMultiplier);
+    public FrostRuneItem(Properties pProperties, SpellColor color, int maxMagnitude, int maxDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
+        super(pProperties, color, maxMagnitude, maxDuration, cost, magnitudeMultiplier, durationMultiplier);
     }
 
     @Override

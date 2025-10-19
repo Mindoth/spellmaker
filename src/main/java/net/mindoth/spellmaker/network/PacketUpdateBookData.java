@@ -49,8 +49,7 @@ public class PacketUpdateBookData {
                     if ( ItemStack.isSameItemSameTags(player.getOffhandItem(), this.book) && !(player.getMainHandItem().getItem() instanceof SpellBookItem) ) book = player.getOffhandItem();
                     else book = player.getInventory().getItem(player.getInventory().findSlotMatchingItem(this.book));
                     CompoundTag newTag = SpellBookItem.constructBook(this.book, this.scrollList).getTag();
-                    if (newTag.contains(SpellBookItem.NBT_KEY_BOOK_SLOT) ) newTag.remove(SpellBookItem.NBT_KEY_BOOK_SLOT);
-                    newTag.putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, this.index);
+                    if ( this.index != newTag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) ) newTag.putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, this.index);
                     book.setTag(newTag);
                 }
             }

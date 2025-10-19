@@ -1,9 +1,9 @@
 package net.mindoth.spellmaker.util.spellform;
 
 import net.mindoth.shadowizardlib.event.LightEvents;
+import net.mindoth.shadowizardlib.util.DimVec3;
+import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.item.RuneItem;
-import net.mindoth.spellmaker.util.DimVec3;
-import net.mindoth.spellmaker.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.util.SpellForm;
 import net.minecraft.world.entity.Entity;
 

@@ -40,16 +40,10 @@ public class ModNetwork {
                 .consumerMainThread(PacketOpenSpellBook::handle)
                 .add();
 
-        net.messageBuilder(PacketRemoveSpellFromBook.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(PacketRemoveSpellFromBook::new)
-                .encoder(PacketRemoveSpellFromBook::encode)
-                .consumerMainThread(PacketRemoveSpellFromBook::handle)
-                .add();
-
-        net.messageBuilder(PacketReorderSpellBook.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(PacketReorderSpellBook::new)
-                .encoder(PacketReorderSpellBook::encode)
-                .consumerMainThread(PacketReorderSpellBook::handle)
+        net.messageBuilder(PacketRemoveScrollFromBook.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(PacketRemoveScrollFromBook::new)
+                .encoder(PacketRemoveScrollFromBook::encode)
+                .consumerMainThread(PacketRemoveScrollFromBook::handle)
                 .add();
 
         net.messageBuilder(PacketUpdateBookData.class, id(), NetworkDirection.PLAY_TO_SERVER)

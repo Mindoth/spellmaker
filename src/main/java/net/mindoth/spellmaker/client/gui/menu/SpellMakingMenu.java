@@ -34,11 +34,11 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
     private static final int RESULT_SLOT = 0;
     private static final int CRAFT_SLOT_START = 0;
-    private static final int CRAFT_SLOT_END = 3;
-    private static final int INV_SLOT_START = 3;
-    private static final int INV_SLOT_END = 30;
-    private static final int USE_ROW_SLOT_START = 30;
-    private static final int USE_ROW_SLOT_END = 39;
+    private static final int CRAFT_SLOT_END = 4;
+    private static final int INV_SLOT_START = 4;
+    private static final int INV_SLOT_END = 31;
+    private static final int USE_ROW_SLOT_START = 31;
+    private static final int USE_ROW_SLOT_END = 40;
 
     private final Container craftSlots = new SimpleContainer(4) {
         @Override
@@ -231,11 +231,11 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         return count;
     }
 
+    //TODO: Make stats reset for a row when a rune is removed
     @Override
     public void slotsChanged(Container pInventory) {
         this.access.execute((level, pos) -> {
-            ItemStack stack = this.craftSlots.getItem(0);
-            //Placed clean parchment
+            ItemStack stack = getCraftSlots().getItem(0);
             if ( isCleanParchment(stack) ) {
                 final int slotsToOpen = ((ParchmentItem)stack.getItem()).getSize();
                 for ( Slot slot : this.slots ) {
@@ -243,7 +243,6 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                     if ( slot instanceof RuneSlot runeSlot && !runeSlot.isOpen ) runeSlot.isOpen = true;
                 }
             }
-            //Removed parchment
             else {
                 for ( Slot slot : this.slots ) {
                     if ( slot instanceof RuneSlot runeSlot ) {
@@ -255,10 +254,12 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                     }
                 }
             }
-            if ( level.isClientSide && isReadyToDump() ) {
-                editSpellForm(stack.getTag());
-                editSpellStats((byte)0, DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES)));
-                editSpellStats((byte)1, DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS)));
+            if ( level.isClientSide ) {
+                if ( isReadyToDump() ) {
+                    editSpellForm(stack.getTag());
+                    editSpellStats((byte)0, DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES)));
+                    editSpellStats((byte)1, DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS)));
+                }
             }
         });
     }
@@ -289,17 +290,19 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         });
     }
 
-    //TODO: weird item moving from inventory to hotbar
     @Override
-    public ItemStack quickMoveStack(Player pPlayer, int pIndex) {
+    public ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemStack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(pIndex);
+        Slot slot = this.slots.get(index);
         if ( slot != null && slot.hasItem() ) {
             ItemStack stack = slot.getItem();
             itemStack = stack.copy();
-            if ( pIndex >= CRAFT_SLOT_END && pIndex < USE_ROW_SLOT_END ) {
+            if ( index == 0 ) {
+                if ( !this.moveItemStackTo(stack, INV_SLOT_START, USE_ROW_SLOT_END, true) ) return ItemStack.EMPTY;
+            }
+            else if ( index >= INV_SLOT_START && index < USE_ROW_SLOT_END ) {
                 if ( !this.moveItemStackTo(stack, CRAFT_SLOT_START, CRAFT_SLOT_END, false) ) {
-                    if ( pIndex < INV_SLOT_END ) {
+                    if ( index < INV_SLOT_END ) {
                         if ( !this.moveItemStackTo(stack, USE_ROW_SLOT_START, USE_ROW_SLOT_END, false) ) return ItemStack.EMPTY;
                     }
                     else if ( !this.moveItemStackTo(stack, INV_SLOT_START, INV_SLOT_END, false) ) return ItemStack.EMPTY;
@@ -312,8 +315,8 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
             if ( stack.getCount() == itemStack.getCount() ) return ItemStack.EMPTY;
 
-            slot.onTake(pPlayer, stack);
-            if ( pIndex == RESULT_SLOT ) pPlayer.drop(stack, false);
+            slot.onTake(player, stack);
+            if ( index == RESULT_SLOT ) player.drop(stack, false);
         }
         return itemStack;
     }

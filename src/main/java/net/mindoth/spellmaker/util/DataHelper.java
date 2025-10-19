@@ -47,14 +47,26 @@ public abstract class DataHelper {
     }
 
     public static LinkedHashMap<RuneItem, List<Integer>> createMapFromTag(CompoundTag tag) {
-        LinkedHashMap<RuneItem, List<Integer>> map = new LinkedHashMap<>();
+        List<RuneItem> runeList = DataHelper.getRuneListFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_RUNES));
         List<Integer> magnitudes = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
         List<Integer> durations = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
-        for ( int i = 0; i < DataHelper.getSpellStackFromTag(tag).size(); i++ ) {
-            ItemStack itemStack = DataHelper.getSpellStackFromTag(tag).get(i);
-            if ( itemStack.getItem() instanceof RuneItem rune ) map.put(rune, Arrays.asList(magnitudes.get(i), durations.get(i)));
-        }
+        return createMapFromLists(runeList, magnitudes, durations);
+    }
+
+    public static LinkedHashMap<RuneItem, List<Integer>> createMapFromLists(List<RuneItem> runeList, List<Integer> magnitudes, List<Integer> durations) {
+        LinkedHashMap<RuneItem, List<Integer>> map = new LinkedHashMap<>();
+        for ( int i = 0; i < runeList.size(); i++ ) map.put(runeList.get(i), Arrays.asList(magnitudes.get(i), durations.get(i)));
         return map;
+    }
+
+    public static String getStringFromRuneList(List<RuneItem> list) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for ( int i = 0; i < list.size(); i++ ) {
+            Item item = list.get(i);
+            if ( i > 0 ) stringBuilder.append(",");
+            stringBuilder.append(ForgeRegistries.ITEMS.getKey(item).toString());
+        }
+        return stringBuilder.toString();
     }
 
     public static List<RuneItem> getRuneListFromString(String stringList) {

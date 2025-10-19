@@ -5,8 +5,7 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.network.ModNetwork;
-import net.mindoth.spellmaker.network.PacketRemoveSpellFromBook;
-import net.mindoth.spellmaker.network.PacketReorderSpellBook;
+import net.mindoth.spellmaker.network.PacketRemoveScrollFromBook;
 import net.mindoth.spellmaker.network.PacketUpdateBookData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -31,7 +30,9 @@ public class SpellBookScreen extends ModScreen {
     private static final ResourceLocation TEXTURE = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spell_book_screen.png");
 
     private final ItemStack book;
-    private int selectedSlot;
+    private int getSelectedSlot() {
+        return this.book.getTag().getInt(SpellBookItem.NBT_KEY_BOOK_SLOT);
+    }
     private List<ItemStack> itemList = Lists.newArrayList();
     private final List<ItemStack> scrollList;
     private List<List<ItemStack>> pageList;
@@ -65,13 +66,18 @@ public class SpellBookScreen extends ModScreen {
         this.scrollList = SpellBookItem.getScrollListFromBook(this.book.getOrCreateTag());
         this.scrollList.removeIf(ItemStack::isEmpty);
         createPages(false);
-        if ( this.book.hasTag() && this.book.getTag().contains(SpellBookItem.NBT_KEY_BOOK_SLOT) ) this.selectedSlot = this.book.getTag().getInt(SpellBookItem.NBT_KEY_BOOK_SLOT);
-        else this.selectedSlot = -1;
     }
 
     public static void open(ItemStack stack, int spreadNumber) {
         Minecraft MINECRAFT = Minecraft.getInstance();
         if ( !(MINECRAFT.screen instanceof SpellBookScreen) ) MINECRAFT.setScreen(new SpellBookScreen(stack, spreadNumber));
+    }
+
+    public static int getNewSlotFromScrollRemoval(int oldSlot, int bookSlot) {
+        int newSlot = oldSlot;
+        if ( oldSlot == bookSlot ) newSlot = -1;
+        else if ( oldSlot < bookSlot ) newSlot = bookSlot - 1;
+        return newSlot;
     }
 
     private boolean isFirstPage() {
@@ -111,10 +117,6 @@ public class SpellBookScreen extends ModScreen {
     }
 
     private void buildButtons(int x, int y) {
-        if ( this.selectedSlot >= this.scrollList.size() ) {
-            this.selectedSlot = -1;
-            ModNetwork.sendToServer(new PacketUpdateBookData(this.book, this.scrollList, this.selectedSlot));
-        }
         this.slotButtonList = Lists.newArrayList();
         this.selectButtonList = Lists.newArrayList();
         this.swapButtonMap = new HashMap<>();
@@ -179,8 +181,8 @@ public class SpellBookScreen extends ModScreen {
     private void handleSelectButton(Button button) {
         if ( !this.selectButtonList.contains(button) ) return;
         int index = this.selectButtonList.indexOf(button) + ((2 * this.maxColumns * this.maxRows) * (this.spreadNumber));
-        this.selectedSlot = index;
-        ModNetwork.sendToServer(new PacketUpdateBookData(this.book, this.scrollList, this.selectedSlot));
+        ModNetwork.sendToServer(new PacketUpdateBookData(this.book, this.scrollList, index));
+        this.book.getTag().putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, index);
     }
 
     private void handleSelectButtonVisibility() {
@@ -198,8 +200,12 @@ public class SpellBookScreen extends ModScreen {
         Item item = stack.getItem();
         if ( item instanceof ParchmentItem ) {
             int index = this.scrollList.indexOf(stack);
-            ModNetwork.sendToServer(new PacketRemoveSpellFromBook(this.book, this.scrollList, index));
+            ModNetwork.sendToServer(new PacketRemoveScrollFromBook(this.book, this.scrollList, index));
             this.scrollList.remove(index);
+
+            int newSlot = getNewSlotFromScrollRemoval(index, getSelectedSlot());
+            this.book.getTag().putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, newSlot);
+
             createPages(true);
             this.clearWidgets();
             buildButtons(minecraft.getWindow().getGuiScaledWidth() / 2, minecraft.getWindow().getGuiScaledHeight() / 2);
@@ -241,19 +247,26 @@ public class SpellBookScreen extends ModScreen {
         if ( stack.isEmpty() ) return;
         if ( stack.getItem() instanceof ParchmentItem ) {
             int index = this.scrollList.indexOf(stack);
-            ModNetwork.sendToServer(new PacketReorderSpellBook(this.book, this.scrollList, index, isUp));
+            int newSlot = getSelectedSlot();
 
             ItemStack first = this.scrollList.get(index).copy();
             ItemStack second;
             if ( isUp ) {
                 second = this.scrollList.get(index - 1).copy();
                 this.scrollList.set(index - 1, first);
+                if ( index == getSelectedSlot() ) newSlot = getSelectedSlot() - 1;
+                else if ( index == getSelectedSlot() - 1 ) newSlot = getSelectedSlot();
             }
             else {
                 second = this.scrollList.get(index + 1).copy();
                 this.scrollList.set(index + 1, first);
+                if ( index == getSelectedSlot() ) newSlot = getSelectedSlot() + 1;
+                else if ( index == getSelectedSlot() + 1 ) newSlot = getSelectedSlot();
             }
             this.scrollList.set(index, second);
+
+            ModNetwork.sendToServer(new PacketUpdateBookData(this.book, this.scrollList, newSlot));
+            this.book.getTag().putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, newSlot);
 
             createPages(true);
             this.clearWidgets();
@@ -333,8 +346,7 @@ public class SpellBookScreen extends ModScreen {
                         }
                         //Selected Spell
                         if ( !spellSelected && !this.book.isEmpty() && this.book.hasTag() && this.book.getTag().contains(SpellBookItem.NBT_KEY_BOOK_SLOT) ) {
-                            int slot = this.selectedSlot;
-                            if ( slot > -1 && slot < this.itemList.size() && stack == this.scrollList.get(slot) ) {
+                            if ( getSelectedSlot() > -1 && getSelectedSlot() < this.itemList.size() && stack == this.scrollList.get(getSelectedSlot()) ) {
                                 drawTexture(TEXTURE, xPos + 19, yPos - 3, 163, 180, 83, 22, 280, 202, graphics);
                                 spellSelected = true;
                             }

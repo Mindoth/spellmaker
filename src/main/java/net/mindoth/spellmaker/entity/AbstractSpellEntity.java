@@ -4,6 +4,7 @@ import net.mindoth.shadowizardlib.client.particle.ember.EmberParticleProvider;
 import net.mindoth.shadowizardlib.event.LightEvents;
 import net.mindoth.shadowizardlib.event.ShadowEvents;
 import net.mindoth.spellmaker.item.RuneItem;
+import net.mindoth.spellmaker.util.DataHelper;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -39,16 +40,6 @@ public abstract class AbstractSpellEntity extends Projectile {
     public AbstractSpellEntity(EntityType<? extends AbstractSpellEntity> entityType, Level level) {
         super(entityType, level);
     }
-
-    public AbstractSpellEntity(EntityType<? extends AbstractSpellEntity> entityType, Level pLevel, Entity caster, LinkedHashMap<RuneItem, List<Integer>> map) {
-        super(entityType, pLevel);
-        this.caster = caster;
-        this.map = map;
-    }
-
-    //TODO: Properly put these into entityData
-    protected Entity caster;
-    protected LinkedHashMap<RuneItem, List<Integer>> map;
 
     @Override
     public void tick() {
@@ -196,6 +187,13 @@ public abstract class AbstractSpellEntity extends Projectile {
         return map;
     }
 
+    public LinkedHashMap<RuneItem, List<Integer>> getMap() {
+        List<RuneItem> runeList = DataHelper.getRuneListFromString(this.entityData.get(RUNE_LIST));
+        List<Integer> magnitudes = DataHelper.getStatsFromString(this.entityData.get(MAGNITUDES));
+        List<Integer> durations = DataHelper.getStatsFromString(this.entityData.get(DURATIONS));
+        return DataHelper.createMapFromLists(runeList, magnitudes, durations);
+    }
+
     public float getSpeed() {
         return 1.0F;
     }
@@ -214,7 +212,8 @@ public abstract class AbstractSpellEntity extends Projectile {
     public static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.INT);
 
     public static final EntityDataAccessor<String> RUNE_LIST = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.STRING);
-    public static final EntityDataAccessor<String> STATS = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String> MAGNITUDES = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String> DURATIONS = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.STRING);
 
     @Override
     public void load(CompoundTag compound) {
@@ -225,7 +224,8 @@ public abstract class AbstractSpellEntity extends Projectile {
         this.entityData.set(TYPE, compound.getInt("type"));
 
         this.entityData.set(RUNE_LIST, compound.getString("rune_list"));
-        this.entityData.set(STATS, compound.getString("stats"));
+        this.entityData.set(MAGNITUDES, compound.getString("magnitudes"));
+        this.entityData.set(DURATIONS, compound.getString("durations"));
     }
 
     @Override
@@ -237,7 +237,8 @@ public abstract class AbstractSpellEntity extends Projectile {
         compound.putInt("type", this.entityData.get(TYPE));
 
         compound.putString("rune_list", this.entityData.get(RUNE_LIST));
-        compound.putString("stats", this.entityData.get(STATS));
+        compound.putString("magnitudes", this.entityData.get(MAGNITUDES));
+        compound.putString("durations", this.entityData.get(DURATIONS));
     }
 
     @Override
@@ -248,7 +249,8 @@ public abstract class AbstractSpellEntity extends Projectile {
         this.entityData.define(TYPE, 1);
 
         this.entityData.define(RUNE_LIST, "");
-        this.entityData.define(STATS, "");
+        this.entityData.define(MAGNITUDES, "");
+        this.entityData.define(DURATIONS, "");
     }
 
     @Override

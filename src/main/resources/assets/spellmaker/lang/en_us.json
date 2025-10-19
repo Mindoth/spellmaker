@@ -30,9 +30,10 @@
   "effect.spellmaker.paralysis": "Paralysis",
 
 
+  "tooltip.spellmaker.make": "Make Spell",
+  "tooltip.spellmaker.dump": "Edit Spell",
   "tooltip.spellmaker.book_owner": "Owner: ",
   "tooltip.spellmaker.cost": "Cost: ",
-  "tooltip.spellmaker.form": "Form: ",
   "tooltip.spellmaker.magnitude": "Magnitude",
   "tooltip.spellmaker.duration": "Duration",
   "tooltip.spellmaker.area": "Area"

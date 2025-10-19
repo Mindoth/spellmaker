@@ -1,8 +1,8 @@
 package net.mindoth.spellmaker.item.rune;
 
+import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.item.RuneItem;
 import net.mindoth.spellmaker.registries.ModEffects;
-import net.mindoth.spellmaker.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -11,8 +11,8 @@ import net.minecraft.world.entity.LivingEntity;
 import java.util.List;
 
 public class ShockRuneItem extends RuneItem {
-    public ShockRuneItem(Properties pProperties, SpellColor color, boolean hasMagnitude, boolean hasDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
-        super(pProperties, color, hasMagnitude, hasDuration, cost, magnitudeMultiplier, durationMultiplier);
+    public ShockRuneItem(Properties pProperties, SpellColor color, int maxMagnitude, int maxDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
+        super(pProperties, color, maxMagnitude, maxDuration, cost, magnitudeMultiplier, durationMultiplier);
     }
 
     @Override

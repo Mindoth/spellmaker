@@ -1,14 +1,11 @@
 package net.mindoth.spellmaker.util.spellform;
 
 import com.google.common.collect.Lists;
-import net.mindoth.shadowizardlib.client.particle.ember.ParticleColor;
 import net.mindoth.shadowizardlib.event.LightEvents;
-import net.mindoth.shadowizardlib.network.PacketSendCustomParticles;
-import net.mindoth.shadowizardlib.network.ShadowNetwork;
+import net.mindoth.shadowizardlib.util.DimVec3;
+import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
+import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.item.RuneItem;
-import net.mindoth.spellmaker.util.DimVec3;
-import net.mindoth.spellmaker.util.MultiBlockHitResult;
-import net.mindoth.spellmaker.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.util.SpellForm;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,11 +13,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
-
-import static net.mindoth.shadowizardlib.event.ShadowEvents.*;
 
 public class AreaAroundCasterForm extends SpellForm {
     public AreaAroundCasterForm(String name, int cost) {

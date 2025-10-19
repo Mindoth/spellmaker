@@ -32,14 +32,14 @@ public class ModItems {
 
     //Runes
     public static final RegistryObject<Item> EXCAVATE_RUNE = ITEMS.register("excavate_rune",
-            () -> new ExcavateRuneItem(new Item.Properties(), SpellColor.GREEN, true, false, 1, 2, 0));
+            () -> new ExcavateRuneItem(new Item.Properties(), SpellColor.GREEN, 5, 0, 1, 2, 0));
 
     public static final RegistryObject<Item> FIRE_RUNE = ITEMS.register("fire_rune",
-            () -> new FireRuneItem(new Item.Properties(), SpellColor.YELLOW, true, true, 1, 1, 1));
+            () -> new FireRuneItem(new Item.Properties(), SpellColor.YELLOW, 64, 64, 1, 1, 1));
 
     public static final RegistryObject<Item> FROST_RUNE = ITEMS.register("frost_rune",
-            () -> new FrostRuneItem(new Item.Properties(), SpellColor.BLUE, true, true, 2, 1, 2));
+            () -> new FrostRuneItem(new Item.Properties(), SpellColor.BLUE, 64, 64, 2, 1, 2));
 
     public static final RegistryObject<Item> SHOCK_RUNE = ITEMS.register("shock_rune",
-            () -> new ShockRuneItem(new Item.Properties(), SpellColor.BLUE, true, true, 3, 1, 3));
+            () -> new ShockRuneItem(new Item.Properties(), SpellColor.BLUE, 64, 64, 3, 1, 3));
 }

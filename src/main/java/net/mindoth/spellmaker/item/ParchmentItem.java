@@ -4,12 +4,8 @@ import net.mindoth.spellmaker.registries.ModSpellForms;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.SpellForm;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -17,9 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -49,13 +43,12 @@ public class ParchmentItem extends Item {
             int cost = calculateSpellCost(form, DataHelper.createMapFromTag(stack.getTag()));
             tooltip.add(Component.translatable("tooltip.spellmaker.cost")
                     .append(Component.literal("" + cost)).withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable("tooltip.spellmaker.form").withStyle(ChatFormatting.GRAY)
-                    .append(Component.translatable("spellform.spellmaker." + form.getName()).withStyle(ChatFormatting.GRAY)));
+            tooltip.add(Component.translatable("spellform.spellmaker." + form.getName()).withStyle(ChatFormatting.GRAY));
             if ( stack.getTag().contains(NBT_KEY_SPELL_RUNES) ) {
                 List<RuneItem> list = DataHelper.getRuneListFromString(stack.getTag().getString(NBT_KEY_SPELL_RUNES));
                 for ( RuneItem rune : list ) {
                     String name = new ItemStack(rune).getHoverName().getString();
-                    tooltip.add(Component.literal(name).withStyle(ChatFormatting.GRAY));
+                    tooltip.add(Component.literal(" ").append(Component.literal(name).withStyle(ChatFormatting.GRAY)));
                 }
             }
         }
@@ -67,8 +60,8 @@ public class ParchmentItem extends Item {
         for ( RuneItem rune : map.keySet() ) {
             int cost = rune.getCost();
             List<Integer> stats = map.get(rune);
-            if ( rune.getHasMagnitude() ) cost += stats.get(0) * rune.getMagnitudeMultiplier();
-            if ( rune.getHasDuration() ) cost += stats.get(1) * rune.getDurationMultiplier();
+            if ( rune.getMaxMagnitude() > 0 ) cost += stats.get(0) * rune.getMagnitudeMultiplier();
+            if ( rune.getMaxDuration() > 0 ) cost += stats.get(1) * rune.getDurationMultiplier();
             totalCost += cost;
         }
         return totalCost;
@@ -80,8 +73,8 @@ public class ParchmentItem extends Item {
         for ( RuneItem rune : map.keySet() ) {
             int cost = rune.getCost();
             List<Integer> stats = map.get(rune);
-            if ( rune.getHasMagnitude() ) cost += stats.get(0) * rune.getMagnitudeMultiplier();
-            if ( rune.getHasDuration() ) cost += stats.get(1) * rune.getDurationMultiplier();
+            if ( rune.getMaxMagnitude() > 0 ) cost += stats.get(0) * rune.getMagnitudeMultiplier();
+            if ( rune.getMaxDuration() > 0 ) cost += stats.get(1) * rune.getDurationMultiplier();
             if ( cost > highestCost ) {
                 highestCost = cost;
                 state = rune;

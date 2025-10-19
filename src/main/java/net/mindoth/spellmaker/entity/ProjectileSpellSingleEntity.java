@@ -1,10 +1,10 @@
 package net.mindoth.spellmaker.entity;
 
+import net.mindoth.shadowizardlib.util.DimVec3;
+import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
+import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.item.RuneItem;
 import net.mindoth.spellmaker.registries.ModEntities;
-import net.mindoth.spellmaker.util.DimVec3;
-import net.mindoth.spellmaker.util.MultiBlockHitResult;
-import net.mindoth.spellmaker.util.MultiEntityHitResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
@@ -21,23 +21,19 @@ public class ProjectileSpellSingleEntity extends AbstractSpellEntity {
         super(entityType, level);
     }
 
-    public ProjectileSpellSingleEntity(Level level, Entity caster, LinkedHashMap<RuneItem, List<Integer>> map) {
-        super(ModEntities.SPELL_PROJECTILE_SINGLE.get(), level, caster, map);
+    public ProjectileSpellSingleEntity(Level level) {
+        super(ModEntities.SPELL_PROJECTILE_SINGLE.get(), level);
     }
 
     @Override
     protected void doMobEffects(EntityHitResult result) {
-        if ( this.map != null ) {
-            MultiEntityHitResult mResult = new MultiEntityHitResult(result.getEntity(), Collections.singletonList(result.getEntity()), new DimVec3(this.position(), level()));
-            for ( RuneItem rune : this.map.keySet() ) rune.effectOnEntity(this.map.get(rune), mResult);
-        }
+        MultiEntityHitResult mResult = new MultiEntityHitResult(this, Collections.singletonList(result.getEntity()), new DimVec3(this.position(), level()));
+        for ( RuneItem rune : getMap().keySet() ) rune.effectOnEntity(getMap().get(rune), mResult);
     }
 
     @Override
     protected void doBlockEffects(BlockHitResult result) {
-        if ( this.map != null ) {
-            MultiBlockHitResult mResult = new MultiBlockHitResult(result.getDirection(), result.isInside(), Collections.singletonList(result.getBlockPos()), new DimVec3(result.getLocation(), level()));
-            for ( RuneItem rune : this.map.keySet() ) rune.effectOnBlock(this.map.get(rune), mResult);
-        }
+        MultiBlockHitResult mResult = new MultiBlockHitResult(result.getDirection(), result.isInside(), Collections.singletonList(result.getBlockPos()), new DimVec3(result.getLocation(), level()));
+        for ( RuneItem rune : getMap().keySet() ) rune.effectOnBlock(getMap().get(rune), mResult);
     }
 }

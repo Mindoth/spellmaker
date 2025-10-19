@@ -1,7 +1,7 @@
 package net.mindoth.spellmaker.item;
 
-import net.mindoth.spellmaker.util.MultiBlockHitResult;
-import net.mindoth.spellmaker.util.MultiEntityHitResult;
+import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
+import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.world.item.Item;
 
@@ -12,13 +12,13 @@ public abstract class RuneItem extends Item {
     public SpellColor getColor() {
         return this.color;
     }
-    private final boolean hasMagnitude;
-    public boolean getHasMagnitude() {
-        return this.hasMagnitude;
+    private final int maxMagnitude;
+    public int getMaxMagnitude() {
+        return this.maxMagnitude;
     }
-    private final boolean hasDuration;
-    public boolean getHasDuration() {
-        return this.hasDuration;
+    private final int maxDuration;
+    public int getMaxDuration() {
+        return this.maxDuration;
     }
     private final int cost;
     public int getCost() {
@@ -33,11 +33,11 @@ public abstract class RuneItem extends Item {
         return this.durationMultiplier;
     }
 
-    public RuneItem(Properties pProperties, SpellColor color, boolean hasMagnitude, boolean hasDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
+    public RuneItem(Properties pProperties, SpellColor color, int maxMagnitude, int maxDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
         super(pProperties);
         this.color = color;
-        this.hasMagnitude = hasMagnitude;
-        this.hasDuration = hasDuration;
+        this.maxMagnitude = maxMagnitude;
+        this.maxDuration = maxDuration;
         this.cost = cost;
         this.magnitudeMultiplier = magnitudeMultiplier;
         this.durationMultiplier = durationMultiplier;

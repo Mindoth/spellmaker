@@ -1,8 +1,8 @@
 package net.mindoth.spellmaker.item.rune;
 
 import com.mojang.authlib.GameProfile;
+import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.spellmaker.item.RuneItem;
-import net.mindoth.spellmaker.util.MultiBlockHitResult;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class ExcavateRuneItem extends RuneItem {
-    public ExcavateRuneItem(Properties pProperties, SpellColor color, boolean hasMagnitude, boolean hasDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
-        super(pProperties, color, hasMagnitude, hasDuration, cost, magnitudeMultiplier, durationMultiplier);
+    public ExcavateRuneItem(Properties pProperties, SpellColor color, int maxMagnitude, int maxDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
+        super(pProperties, color, maxMagnitude, maxDuration, cost, magnitudeMultiplier, durationMultiplier);
     }
 
     @Override
