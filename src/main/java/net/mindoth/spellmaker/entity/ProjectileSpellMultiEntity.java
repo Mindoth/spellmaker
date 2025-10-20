@@ -22,7 +22,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
 
@@ -37,7 +40,7 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
     @Override
     protected void doMobEffects(EntityHitResult result) {
         Level level = level();
-        AABB box = this.getBoundingBox().inflate(1.4D, 1.4D, 1.4D);
+        AABB box = this.getBoundingBox().inflate(1.4D, 1.4D, 1.4D).move(result.getEntity().getBoundingBox().getCenter().subtract(this.getBoundingBox().getCenter()));
         List<Entity> list = new ArrayList<>(level.getEntities(this, box).stream().filter((entity -> entity instanceof LivingEntity)).toList());
         if ( !list.contains(result.getEntity()) ) list.add(result.getEntity());
         for ( RuneItem rune : getMap().keySet() ) {
@@ -108,8 +111,21 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
                 double vecX = new Random().nextDouble(variable - -variable) + -variable;
                 double vecY = new Random().nextDouble(variable - -variable) + -variable;
                 double vecZ = new Random().nextDouble(variable - -variable) + -variable;
-                world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(getParticleStats()), 0.5F, 8, false, LightEvents.getParticleType(getParticleStats())),
-                        pos.x + d5 * (double) j / 4.0D, pos.y + d6 * (double) j / 4.0D, pos.z + d1 * (double) j / 4.0D,
+                for ( int i = 0; i < 2; i++ ) {
+                    float particleSize = Math.min(0.8F, (0.8F * 0.1F) * this.tickCount);
+                    float sphereSize = 0.8F / 4;
+                    float randX = (float)((Math.random() * (sphereSize - (-sphereSize))) + (-sphereSize));
+                    float randY = (float)((Math.random() * (sphereSize - (-sphereSize))) + (-sphereSize));
+                    float randZ = (float)((Math.random() * (sphereSize - (-sphereSize))) + (-sphereSize));
+                    int life = 4;
+                    world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(getParticleStats()), particleSize, life, true, LightEvents.getParticleType(getParticleStats())), true,
+                            pos.x + randX + d5 * (double)j / 4.0D, pos.y + randY + d6 * (double)j / 4.0D, pos.z + randZ + d1 * (double)j / 4.0D,
+                            0, 0, 0);
+                }
+                float particleSize = 0.25F;
+                int life = 1 + new Random().nextInt(11);
+                world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(getParticleStats()), particleSize, life, true, LightEvents.getParticleType(getParticleStats())), true,
+                        pos.x, pos.y, pos.z,
                         vecX * speed, vecY * speed, vecZ * speed);
             }
         }

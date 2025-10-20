@@ -14,8 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class AreaAtRangeForm extends SpellForm {
-    public AreaAtRangeForm(String name, int cost) {
-        super(name, cost);
+    public AreaAtRangeForm(int cost) {
+        super(cost);
     }
 
     @Override

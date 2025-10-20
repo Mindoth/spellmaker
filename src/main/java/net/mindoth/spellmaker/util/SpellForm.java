@@ -3,6 +3,8 @@ package net.mindoth.spellmaker.util;
 import net.mindoth.shadowizardlib.event.LightEvents;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.RuneItem;
+import net.mindoth.spellmaker.registries.ModSpellForms;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 import java.util.HashMap;
@@ -11,17 +13,15 @@ import java.util.List;
 
 public abstract class SpellForm {
 
-    private final String name;
     public String getName() {
-        return this.name;
+        return ModSpellForms.SPELL_FORM_REGISTRY.get().getKey(this).getPath();
     }
     private final int cost;
     public int getCost() {
         return this.cost;
     }
 
-    public SpellForm(String name, int cost) {
-        this.name = name;
+    public SpellForm(int cost) {
         this.cost = cost;
     }
 

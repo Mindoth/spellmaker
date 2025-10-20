@@ -30,6 +30,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: Maybe show casting cost while editing spell?
 @OnlyIn(Dist.CLIENT)
 public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> implements ContainerListener {
 

@@ -17,8 +17,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import java.util.List;
 
 public class FireRuneItem extends RuneItem {
-    public FireRuneItem(Properties pProperties, SpellColor color, int maxMagnitude, int maxDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
-        super(pProperties, color, maxMagnitude, maxDuration, cost, magnitudeMultiplier, durationMultiplier);
+    public FireRuneItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier) {
+        super(pProperties, color, cost, maxMagnitude, magnitudeMultiplier, maxDuration, durationMultiplier);
     }
 
     @Override

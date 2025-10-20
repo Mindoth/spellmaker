@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -256,12 +257,14 @@ public class SpellBookScreen extends ModScreen {
                 this.scrollList.set(index - 1, first);
                 if ( index == getSelectedSlot() ) newSlot = getSelectedSlot() - 1;
                 else if ( index == getSelectedSlot() - 1 ) newSlot = getSelectedSlot();
+                else if ( index == getSelectedSlot() + 1 ) newSlot = getSelectedSlot() + 1;
             }
             else {
                 second = this.scrollList.get(index + 1).copy();
                 this.scrollList.set(index + 1, first);
                 if ( index == getSelectedSlot() ) newSlot = getSelectedSlot() + 1;
                 else if ( index == getSelectedSlot() + 1 ) newSlot = getSelectedSlot();
+                else if ( index == getSelectedSlot() - 1 ) newSlot = getSelectedSlot() - 1;
             }
             this.scrollList.set(index, second);
 
@@ -423,5 +426,18 @@ public class SpellBookScreen extends ModScreen {
         for ( Button button : this.upSwapButtonList ) if ( button.isFocused() ) button.setFocused(false);
         for ( Button button : this.downSwapButtonList ) if ( button.isFocused() ) button.setFocused(false);
         for ( Button button : this.selectButtonList ) if ( button.isFocused() ) button.setFocused(false);
+    }
+
+    @Override
+    public boolean keyPressed(int key, int scanCode, int modifiers) {
+        Minecraft instance = Minecraft.getInstance();
+        if ( instance.player != null ) {
+            Player player = instance.player;
+            if ( key == instance.options.keyInventory.getKey().getValue() ) {
+                player.closeContainer();
+                return true;
+            }
+        }
+        return super.keyPressed(key, scanCode, modifiers);
     }
 }

@@ -8,8 +8,8 @@ import net.minecraft.world.entity.Entity;
 import java.util.List;
 
 public class FrostRuneItem extends RuneItem {
-    public FrostRuneItem(Properties pProperties, SpellColor color, int maxMagnitude, int maxDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
-        super(pProperties, color, maxMagnitude, maxDuration, cost, magnitudeMultiplier, durationMultiplier);
+    public FrostRuneItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier) {
+        super(pProperties, color, cost, maxMagnitude, magnitudeMultiplier, maxDuration, durationMultiplier);
     }
 
     @Override

@@ -11,8 +11,8 @@ import net.minecraft.world.entity.LivingEntity;
 import java.util.List;
 
 public class ShockRuneItem extends RuneItem {
-    public ShockRuneItem(Properties pProperties, SpellColor color, int maxMagnitude, int maxDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
-        super(pProperties, color, maxMagnitude, maxDuration, cost, magnitudeMultiplier, durationMultiplier);
+    public ShockRuneItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier) {
+        super(pProperties, color, cost, maxMagnitude, magnitudeMultiplier, maxDuration, durationMultiplier);
     }
 
     @Override

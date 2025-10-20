@@ -17,8 +17,8 @@ import net.minecraft.world.phys.AABB;
 import java.util.*;
 
 public class AreaAroundCasterForm extends SpellForm {
-    public AreaAroundCasterForm(String name, int cost) {
-        super(name, cost);
+    public AreaAroundCasterForm(int cost) {
+        super(cost);
     }
 
     @Override

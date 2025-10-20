@@ -12,8 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class CasterOnlyForm extends SpellForm {
-    public CasterOnlyForm(String name, int cost) {
-        super(name, cost);
+    public CasterOnlyForm(int cost) {
+        super(cost);
     }
 
     @Override

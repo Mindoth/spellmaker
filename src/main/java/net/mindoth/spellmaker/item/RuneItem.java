@@ -12,34 +12,34 @@ public abstract class RuneItem extends Item {
     public SpellColor getColor() {
         return this.color;
     }
-    private final int maxMagnitude;
-    public int getMaxMagnitude() {
-        return this.maxMagnitude;
-    }
-    private final int maxDuration;
-    public int getMaxDuration() {
-        return this.maxDuration;
-    }
     private final int cost;
     public int getCost() {
         return this.cost;
     }
+    private final int maxMagnitude;
+    public int getMaxMagnitude() {
+        return this.maxMagnitude;
+    }
     private final int magnitudeMultiplier;
     public int getMagnitudeMultiplier() {
         return this.magnitudeMultiplier;
+    }
+    private final int maxDuration;
+    public int getMaxDuration() {
+        return this.maxDuration;
     }
     private final int durationMultiplier;
     public int getDurationMultiplier() {
         return this.durationMultiplier;
     }
 
-    public RuneItem(Properties pProperties, SpellColor color, int maxMagnitude, int maxDuration, int cost, int magnitudeMultiplier, int durationMultiplier) {
+    public RuneItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier) {
         super(pProperties);
         this.color = color;
-        this.maxMagnitude = maxMagnitude;
-        this.maxDuration = maxDuration;
         this.cost = cost;
+        this.maxMagnitude = maxMagnitude;
         this.magnitudeMultiplier = magnitudeMultiplier;
+        this.maxDuration = maxDuration;
         this.durationMultiplier = durationMultiplier;
     }
 

@@ -3,8 +3,7 @@ package net.mindoth.spellmaker.item;
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.network.PacketOpenSpellBook;
-import net.mindoth.spellmaker.util.DataHelper;
-import net.mindoth.spellmaker.util.SpellForm;
+import net.mindoth.spellmaker.registries.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -56,19 +55,10 @@ public class SpellBookItem extends Item implements DyeableMagickItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, @Nonnull InteractionHand handIn) {
         InteractionResultHolder<ItemStack> result = InteractionResultHolder.fail(player.getItemInHand(handIn));
         if ( !level.isClientSide && player instanceof ServerPlayer serverPlayer ) {
-            ItemStack book = player.getItemInHand(handIn);
-            if ( player.isCrouching() ) {
+            if ( !serverPlayer.isHolding(ModItems.STAFF.get()) ) {
+                ItemStack book = player.getItemInHand(handIn);
                 handleSignature(serverPlayer, book);
                 ModNetwork.sendToPlayer(new PacketOpenSpellBook(book, 0), serverPlayer);
-            }
-            else {
-                if ( book.hasTag() && book.getTag().contains(NBT_KEY_BOOK_SLOT) && book.getTag().getInt(NBT_KEY_BOOK_SLOT) >= 0 ) {
-                    ItemStack scroll = getActiveScrollFromBook(book);
-                    if ( scroll != null ) {
-                        SpellForm form = DataHelper.getFormFromNbt(scroll.getTag());
-                        form.castMagick(player, DataHelper.createMapFromTag(scroll.getTag()));
-                    }
-                }
             }
         }
         return result;
@@ -175,12 +165,24 @@ public class SpellBookItem extends Item implements DyeableMagickItem {
     }
 
     public static void addSpellTagsToBook(CompoundTag bookTag, String string, String key) {
-        if ( !bookTag.contains(key) ) bookTag.putString(key, string);
-        else {
+        if ( bookTag.contains(key) ) {
             String spellList = bookTag.getString(key) + ";" + string;
             bookTag.remove(key);
             bookTag.putString(key, spellList);
         }
+        else bookTag.putString(key, string);
+    }
+
+    public static ItemStack getSpellBookSlot(Player player) {
+        ItemStack offHand = player.getOffhandItem();
+        if ( offHand.getItem() instanceof SpellBookItem && offHand.hasTag() && offHand.getTag().contains(NBT_KEY_BOOK_FORMS)
+                && !offHand.getTag().getString(NBT_KEY_BOOK_FORMS).isEmpty() ) return offHand;
+        for ( int i = 0; i <= player.getInventory().getContainerSize(); i++ ) {
+            ItemStack slot = player.getInventory().getItem(i);
+            if ( slot.getItem() instanceof SpellBookItem && slot.hasTag() && slot.getTag().contains(NBT_KEY_BOOK_FORMS)
+                    && !slot.getTag().getString(NBT_KEY_BOOK_FORMS).isEmpty() ) return slot;
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override

@@ -21,8 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ByTouchForm extends SpellForm {
-    public ByTouchForm(String name, int cost) {
-        super(name, cost);
+    public ByTouchForm(int cost) {
+        super(cost);
     }
 
     @Override

@@ -41,6 +41,7 @@ public class ParchmentItem extends Item {
         if ( stack.hasTag() && stack.getTag().contains(NBT_KEY_SPELL_FORM) ) {
             SpellForm form = ModSpellForms.SPELL_FORM_REGISTRY.get().getValue(new ResourceLocation(stack.getTag().getString(NBT_KEY_SPELL_FORM)));
             int cost = calculateSpellCost(form, DataHelper.createMapFromTag(stack.getTag()));
+            tooltip.add(Component.literal(""));
             tooltip.add(Component.translatable("tooltip.spellmaker.cost")
                     .append(Component.literal("" + cost)).withStyle(ChatFormatting.GRAY));
             tooltip.add(Component.translatable("spellform.spellmaker." + form.getName()).withStyle(ChatFormatting.GRAY));
@@ -56,9 +57,9 @@ public class ParchmentItem extends Item {
     }
 
     public static int calculateSpellCost(SpellForm form, LinkedHashMap<RuneItem, List<Integer>> map) {
-        int totalCost = form.getCost();
+        int totalCost = 0;
         for ( RuneItem rune : map.keySet() ) {
-            int cost = rune.getCost();
+            int cost = rune.getCost() + form.getCost();
             List<Integer> stats = map.get(rune);
             if ( rune.getMaxMagnitude() > 0 ) cost += stats.get(0) * rune.getMagnitudeMultiplier();
             if ( rune.getMaxDuration() > 0 ) cost += stats.get(1) * rune.getDurationMultiplier();

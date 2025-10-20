@@ -13,8 +13,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class SingleTargetAtRangeForm extends SpellForm {
-    public SingleTargetAtRangeForm(String name, int cost) {
-        super(name, cost);
+    public SingleTargetAtRangeForm(int cost) {
+        super(cost);
     }
 
     @Override

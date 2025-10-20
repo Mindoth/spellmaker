@@ -148,7 +148,8 @@ public abstract class AbstractSpellEntity extends Projectile {
                 double vecX = new Random().nextDouble(variable - -variable) + -variable;
                 double vecY = new Random().nextDouble(variable - -variable) + -variable;
                 double vecZ = new Random().nextDouble(variable - -variable) + -variable;
-                world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(getParticleStats()), 0.1F, 8, false, LightEvents.getParticleType(getParticleStats())),
+                int life = 8;
+                world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(getParticleStats()), 0.1F, life, false, LightEvents.getParticleType(getParticleStats())),
                         pos.x + d5 * (double) j / 4.0D, pos.y + d6 * (double) j / 4.0D, pos.z + d1 * (double) j / 4.0D,
                         vecX * speed, vecY * speed, vecZ * speed);
             }
@@ -203,7 +204,8 @@ public abstract class AbstractSpellEntity extends Projectile {
     }
 
     public float getGravity() {
-        return 0.03F;
+        //return 0.03F;
+        return 0.015F;
     }
 
     public static final EntityDataAccessor<Integer> RED = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.INT);

@@ -3,6 +3,7 @@ package net.mindoth.spellmaker.registries;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
+import net.mindoth.spellmaker.item.StaffItem;
 import net.mindoth.spellmaker.item.rune.ExcavateRuneItem;
 import net.mindoth.spellmaker.item.rune.FireRuneItem;
 import net.mindoth.spellmaker.item.rune.FrostRuneItem;
@@ -27,19 +28,22 @@ public class ModItems {
             () -> new ParchmentItem(new Item.Properties(), 2));
 
     //Equipment
+    public static final RegistryObject<Item> STAFF = ITEMS.register("staff",
+            () -> new StaffItem(new Item.Properties().durability(512)));
+
     public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book",
             () -> new SpellBookItem(new Item.Properties()));
 
     //Runes
     public static final RegistryObject<Item> EXCAVATE_RUNE = ITEMS.register("excavate_rune",
-            () -> new ExcavateRuneItem(new Item.Properties(), SpellColor.GREEN, 5, 0, 1, 2, 0));
+            () -> new ExcavateRuneItem(new Item.Properties(), SpellColor.GREEN, 5, 5, 2, 0, 0));
 
     public static final RegistryObject<Item> FIRE_RUNE = ITEMS.register("fire_rune",
-            () -> new FireRuneItem(new Item.Properties(), SpellColor.YELLOW, 64, 64, 1, 1, 1));
+            () -> new FireRuneItem(new Item.Properties(), SpellColor.GOLD, 1, 64, 1, 64, 1));
 
     public static final RegistryObject<Item> FROST_RUNE = ITEMS.register("frost_rune",
-            () -> new FrostRuneItem(new Item.Properties(), SpellColor.BLUE, 64, 64, 2, 1, 2));
+            () -> new FrostRuneItem(new Item.Properties(), SpellColor.AQUA, 2, 64, 1, 64, 1));
 
     public static final RegistryObject<Item> SHOCK_RUNE = ITEMS.register("shock_rune",
-            () -> new ShockRuneItem(new Item.Properties(), SpellColor.BLUE, 64, 64, 3, 1, 3));
+            () -> new ShockRuneItem(new Item.Properties(), SpellColor.DARK_BLUE, 3, 64, 1, 64, 5));
 }
