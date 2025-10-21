@@ -4,10 +4,7 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.item.StaffItem;
-import net.mindoth.spellmaker.item.rune.ExcavateRuneItem;
-import net.mindoth.spellmaker.item.rune.FireRuneItem;
-import net.mindoth.spellmaker.item.rune.FrostRuneItem;
-import net.mindoth.spellmaker.item.rune.ShockRuneItem;
+import net.mindoth.spellmaker.item.rune.*;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
@@ -46,4 +43,7 @@ public class ModItems {
 
     public static final RegistryObject<Item> SHOCK_RUNE = ITEMS.register("shock_rune",
             () -> new ShockRuneItem(new Item.Properties(), SpellColor.DARK_BLUE, 3, 64, 1, 64, 5));
+
+    public static final RegistryObject<Item> SLEEP_RUNE = ITEMS.register("sleep_rune",
+            () -> new SleepRuneItem(new Item.Properties(), SpellColor.DARK_PURPLE, 3, 0, 0, 64, 4));
 }

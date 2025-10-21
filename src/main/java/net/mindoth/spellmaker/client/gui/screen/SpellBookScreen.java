@@ -75,10 +75,9 @@ public class SpellBookScreen extends ModScreen {
     }
 
     public static int getNewSlotFromScrollRemoval(int oldSlot, int bookSlot) {
-        int newSlot = oldSlot;
-        if ( oldSlot == bookSlot ) newSlot = -1;
-        else if ( oldSlot < bookSlot ) newSlot = bookSlot - 1;
-        return newSlot;
+        if ( oldSlot == bookSlot ) return -1;
+        else if ( oldSlot < bookSlot ) return bookSlot - 1;
+        else return bookSlot;
     }
 
     private boolean isFirstPage() {

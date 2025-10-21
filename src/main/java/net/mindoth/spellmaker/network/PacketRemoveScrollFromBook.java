@@ -60,7 +60,6 @@ public class PacketRemoveScrollFromBook {
                         drop.setNoPickUpDelay();
                         player.level().addFreshEntity(drop);
                     }
-
                     this.scrollList.remove(this.index);
                     CompoundTag tag = SpellBookItem.constructBook(this.book, this.scrollList).getTag();
                     int newSlot = SpellBookScreen.getNewSlotFromScrollRemoval(this.index, tag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT));

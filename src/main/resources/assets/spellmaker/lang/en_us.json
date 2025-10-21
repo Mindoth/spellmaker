@@ -19,6 +19,7 @@
   "item.spellmaker.fire_rune": "Fire Rune",
   "item.spellmaker.frost_rune": "Frost Rune",
   "item.spellmaker.shock_rune": "Shock Rune",
+  "item.spellmaker.sleep_rune": "Sleep Rune",
 
 
   "spellform.spellmaker.caster_only": "Caster only",
@@ -29,6 +30,7 @@
 
 
   "effect.spellmaker.paralysis": "Paralysis",
+  "effect.spellmaker.sleep": "Sleep",
 
 
   "tooltip.spellmaker.make": "Make Spell",

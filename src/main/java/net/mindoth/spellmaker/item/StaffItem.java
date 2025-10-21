@@ -40,7 +40,7 @@ public class StaffItem extends Item {
         if ( serverPlayer.getCooldowns().isOnCooldown(staff.getItem()) ) return;
         ItemStack book = SpellBookItem.getSpellBookSlot(serverPlayer);
         if ( !book.isEmpty() && book.hasTag() && book.getTag().contains(SpellBookItem.NBT_KEY_BOOK_SLOT)
-                && SpellBookItem.getActiveScrollFromBook(book) != null && book.getTag().getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) >= 0 ) {
+                && book.getTag().getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) >= 0 && SpellBookItem.getActiveScrollFromBook(book) != null ) {
             ItemStack scroll = SpellBookItem.getActiveScrollFromBook(book);
             if ( scroll != null && scroll.hasTag() ) {
                 SpellForm form = DataHelper.getFormFromNbt(scroll.getTag());
