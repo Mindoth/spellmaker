@@ -2,6 +2,10 @@
   "itemGroup.spellmaker_tab": "Spell Maker",
 
 
+  "key.category.spellmaker": "Spell Maker",
+  "key.spellmaker.open_spell_book": "Open Spell Book",
+
+
   "container.spellmaker.spell_making": "Spell Making",
 
 
@@ -33,11 +37,13 @@
   "effect.spellmaker.sleep": "Sleep",
 
 
-  "tooltip.spellmaker.make": "Make Spell",
-  "tooltip.spellmaker.dump": "Edit Spell",
   "tooltip.spellmaker.book_owner": "Owner: ",
   "tooltip.spellmaker.cost": "Cost: ",
+
+  "tooltip.spellmaker.untitled": "Untitled",
+
+  "tooltip.spellmaker.make": "Make Spell",
+  "tooltip.spellmaker.dump": "Edit Spell",
   "tooltip.spellmaker.magnitude": "Magnitude",
-  "tooltip.spellmaker.duration": "Duration",
-  "tooltip.spellmaker.area": "Area"
+  "tooltip.spellmaker.duration": "Duration"
 }

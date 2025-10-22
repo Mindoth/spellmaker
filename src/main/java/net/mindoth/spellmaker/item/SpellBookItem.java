@@ -30,6 +30,10 @@ public class SpellBookItem extends Item implements DyeableMagickItem {
         super(pProperties);
     }
 
+    public static final int maxRows = 4;
+    public static final int maxColumns = 1;
+    public static int pageSize = maxRows * maxColumns * 2;
+
     public static final String NBT_KEY_BOOK_FORMS = "sm_book_forms";
     public static final String NBT_KEY_BOOK_RUNES = "sm_book_runes";
     public static final String NBT_KEY_BOOK_MAGNITUDES = "sm_book_magnitudes";
@@ -56,12 +60,30 @@ public class SpellBookItem extends Item implements DyeableMagickItem {
         InteractionResultHolder<ItemStack> result = InteractionResultHolder.fail(player.getItemInHand(handIn));
         if ( !level.isClientSide && player instanceof ServerPlayer serverPlayer ) {
             if ( !serverPlayer.isHolding(ModItems.STAFF.get()) ) {
-                ItemStack book = player.getItemInHand(handIn);
-                handleSignature(serverPlayer, book);
-                ModNetwork.sendToPlayer(new PacketOpenSpellBook(book, 0), serverPlayer);
+                ItemStack book = serverPlayer.getItemInHand(handIn);
+                openSpellBook(serverPlayer, book);
             }
         }
         return result;
+    }
+
+    public static void openSpellBook(ServerPlayer player, ItemStack book) {
+        handleSignature(player, book);
+        int slot = book.getTag().getInt(NBT_KEY_BOOK_SLOT);
+        int page = 0;
+        if ( slot >= pageSize ) {
+            for ( int i = pageSize; i < getScrollListFromBook(book.getTag()).size(); i++ ) {
+                if ( i % pageSize == 0 ) page++;
+                if ( i == slot ) break;
+            }
+        }
+        ModNetwork.sendToPlayer(new PacketOpenSpellBook(book, page), player);
+    }
+
+    public static int getNewSlotFromScrollRemoval(int oldSlot, int bookSlot) {
+        if ( oldSlot == bookSlot ) return -1;
+        else if ( oldSlot < bookSlot ) return bookSlot - 1;
+        else return bookSlot;
     }
 
     public static ItemStack getActiveScrollFromBook(ItemStack book) {

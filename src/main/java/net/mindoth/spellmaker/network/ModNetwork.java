@@ -34,6 +34,12 @@ public class ModNetwork {
         CHANNEL = net;
 
         //Spell Book
+        net.messageBuilder(PacketAskToOpenSpellBook.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(PacketAskToOpenSpellBook::new)
+                .encoder(PacketAskToOpenSpellBook::encode)
+                .consumerMainThread(PacketAskToOpenSpellBook::handle)
+                .add();
+        
         net.messageBuilder(PacketOpenSpellBook.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(PacketOpenSpellBook::new)
                 .encoder(PacketOpenSpellBook::encode)

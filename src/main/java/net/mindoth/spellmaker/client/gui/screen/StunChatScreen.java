@@ -1,11 +1,9 @@
 package net.mindoth.spellmaker.client.gui.screen;
 
-import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.mobeffect.AbstractStunEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.PauseScreen;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
@@ -15,22 +13,17 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
-public class StunScreen extends Screen {
-    protected StunScreen(Component pTitle) {
-        super(pTitle);
+public class StunChatScreen extends ChatScreen {
+    public StunChatScreen(String pInitial) {
+        super(pInitial);
     }
 
     public int stunScreenLeftPos = 0;
@@ -124,42 +117,13 @@ public class StunScreen extends Screen {
     }
 
     @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
-
-    @Override
     public boolean keyPressed(int key, int scanCode, int modifiers) {
         Minecraft instance = Minecraft.getInstance();
         if ( instance.player != null ) {
-            if ( key == 256 ) pauseGame(false);
-            else if ( key == 257 ) instance.setScreen(new StunChatScreen(""));
+            if ( key == 256 ) StunScreen.pauseGame(false);
+            else if ( key != 257 && key != 335 ) return super.keyPressed(key, scanCode, modifiers);
+            else if ( key == 257 ) instance.setScreen(new StunScreen(Component.literal("")));
         }
         return true;
-    }
-
-    public static void pauseGame(boolean pPauseOnly) {
-        Minecraft instance = Minecraft.getInstance();
-        boolean flag = instance.hasSingleplayerServer() && !instance.getSingleplayerServer().isPublished();
-        if ( flag ) {
-            instance.setScreen(new PauseScreen(!pPauseOnly));
-            instance.getSoundManager().pause();
-        }
-        else instance.setScreen(new PauseScreen(true));
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void clientStunTick(TickEvent.ClientTickEvent event) {
-        Minecraft instance = Minecraft.getInstance();
-        if ( instance.player != null ) {
-            Player player = instance.player;
-            if ( AbstractStunEffect.isStunned(player) ) {
-                if ( !(instance.screen instanceof StunScreen || instance.screen instanceof StunChatScreen) && (instance.screen == null || !instance.screen.isPauseScreen()) ) {
-                    instance.setScreen(new StunScreen(Component.literal("")));
-                }
-            }
-            else if ( instance.screen instanceof StunScreen || instance.screen instanceof StunChatScreen ) player.closeContainer();
-        }
     }
 }

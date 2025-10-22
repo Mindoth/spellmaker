@@ -42,7 +42,7 @@ public class SpellBookScreen extends ModScreen {
     private final int leftButtonOffsetX = -114 + 5;
     private final int rightButtonOffsetX = 20 - 6;
     private final int squareSpacingX = 26;
-    private final int squareSpacingY = 26;
+    private final int squareSpacingY = 34;
     private List<Button> selectButtonList = Lists.newArrayList();
     private HashMap<Button, Button> swapButtonMap = new HashMap<>();
     private List<Button> upSwapButtonList = Lists.newArrayList();
@@ -57,9 +57,6 @@ public class SpellBookScreen extends ModScreen {
     private Button leftArrow;
     private final int leftArrowOffsetX = -18 - this.arrowOffsetX;
 
-    private final int maxRows = 5;
-    private final int maxColumns = 1;
-
     protected SpellBookScreen(ItemStack book, int spreadNumber) {
         super(Component.literal(""));
         this.spreadNumber = spreadNumber;
@@ -72,12 +69,6 @@ public class SpellBookScreen extends ModScreen {
     public static void open(ItemStack stack, int spreadNumber) {
         Minecraft MINECRAFT = Minecraft.getInstance();
         if ( !(MINECRAFT.screen instanceof SpellBookScreen) ) MINECRAFT.setScreen(new SpellBookScreen(stack, spreadNumber));
-    }
-
-    public static int getNewSlotFromScrollRemoval(int oldSlot, int bookSlot) {
-        if ( oldSlot == bookSlot ) return -1;
-        else if ( oldSlot < bookSlot ) return bookSlot - 1;
-        else return bookSlot;
     }
 
     private boolean isFirstPage() {
@@ -96,7 +87,7 @@ public class SpellBookScreen extends ModScreen {
         List<ItemStack> page = Lists.newArrayList();
         for ( ItemStack stack : this.itemList ) {
             page.add(stack);
-            if ( page.size() == this.maxRows * this.maxColumns * 2 || this.itemList.get(this.itemList.size() - 1) == stack ) {
+            if ( page.size() == SpellBookItem.pageSize || this.itemList.get(this.itemList.size() - 1) == stack ) {
                 this.pageList.add(page);
                 page = Lists.newArrayList();
             }
@@ -126,11 +117,11 @@ public class SpellBookScreen extends ModScreen {
         boolean isRightPage = false;
         int row = 0;
         int column = 0;
-        for ( int i = 0; i < this.maxRows * this.maxColumns * 2; i++ ) {
-            if ( column == this.maxColumns ) {
+        for ( int i = 0; i < SpellBookItem.pageSize; i++ ) {
+            if ( column == SpellBookItem.maxColumns ) {
                 row++;
                 column = 0;
-                if ( row == this.maxRows ) {
+                if ( row == SpellBookItem.maxRows ) {
                     row = 0;
                     isRightPage = !isRightPage;
                 }
@@ -165,7 +156,7 @@ public class SpellBookScreen extends ModScreen {
                 .build());
         this.slotButtonList.add(button);
         buildSelectButton(xPos, yPos);
-        if ( (this.slotButtonList.size() - 1) % this.maxColumns == 0 ) {
+        if ( (this.slotButtonList.size() - 1) % SpellBookItem.maxColumns == 0 ) {
             buildUpSwapButton(xPos, yPos, button);
             buildDownSwapButton(xPos, yPos + 11, button);
         }
@@ -173,21 +164,21 @@ public class SpellBookScreen extends ModScreen {
 
     private void buildSelectButton(int xPos, int yPos) {
         Button button = addRenderableWidget(Button.builder(Component.literal(""), this::handleSelectButton)
-                .bounds(xPos - 1 + 24, yPos + 1, 77, 16)
+                .bounds(xPos - 1 + 24, yPos - 5, 77, 28)
                 .build());
         this.selectButtonList.add(button);
     }
 
     private void handleSelectButton(Button button) {
         if ( !this.selectButtonList.contains(button) ) return;
-        int index = this.selectButtonList.indexOf(button) + ((2 * this.maxColumns * this.maxRows) * (this.spreadNumber));
+        int index = this.selectButtonList.indexOf(button) + (SpellBookItem.pageSize * (this.spreadNumber));
         ModNetwork.sendToServer(new PacketUpdateBookData(this.book, this.scrollList, index));
         this.book.getTag().putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, index);
     }
 
     private void handleSelectButtonVisibility() {
         for ( Button button : this.selectButtonList ) {
-            int stackIndex = this.selectButtonList.indexOf(button) + ((2 * this.maxColumns * this.maxRows) * (this.spreadNumber));
+            int stackIndex = this.selectButtonList.indexOf(button) + (SpellBookItem.pageSize * (this.spreadNumber));
             if ( stackIndex >= this.itemList.size() && button.visible ) button.visible = false;
             else if ( !button.visible ) button.visible = true;
         }
@@ -203,7 +194,7 @@ public class SpellBookScreen extends ModScreen {
             ModNetwork.sendToServer(new PacketRemoveScrollFromBook(this.book, this.scrollList, index));
             this.scrollList.remove(index);
 
-            int newSlot = getNewSlotFromScrollRemoval(index, getSelectedSlot());
+            int newSlot = SpellBookItem.getNewSlotFromScrollRemoval(index, getSelectedSlot());
             this.book.getTag().putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, newSlot);
 
             createPages(true);
@@ -214,14 +205,14 @@ public class SpellBookScreen extends ModScreen {
 
     private void handleSlotButtonVisibility() {
         for ( Button button : this.slotButtonList ) {
-            int stackIndex = this.slotButtonList.indexOf(button) + ((2 * this.maxColumns * this.maxRows) * (this.spreadNumber));
+            int stackIndex = this.slotButtonList.indexOf(button) + (SpellBookItem.pageSize * (this.spreadNumber));
             if ( stackIndex >= this.itemList.size() && button.visible ) button.visible = false;
             else if ( !button.visible ) button.visible = true;
         }
     }
 
     private void buildUpSwapButton(int xPos, int yPos, Button slotButton) {
-        if ( this.upSwapButtonList.size() >= this.maxRows ) xPos += this.rightSwapButtonOffsetX;
+        if ( this.upSwapButtonList.size() >= SpellBookItem.maxRows ) xPos += this.rightSwapButtonOffsetX;
         else xPos -= this.leftSwapButtonOffsetX;
         Button button = addRenderableWidget(Button.builder(Component.literal(""), this::handleSwapButton)
                 .bounds(xPos - 1, yPos - 1, 13, 9)
@@ -231,7 +222,7 @@ public class SpellBookScreen extends ModScreen {
     }
 
     private void buildDownSwapButton(int xPos, int yPos, Button slotButton) {
-        if ( this.downSwapButtonList.size() >= this.maxRows ) xPos += this.rightSwapButtonOffsetX;
+        if ( this.downSwapButtonList.size() >= SpellBookItem.maxRows ) xPos += this.rightSwapButtonOffsetX;
         else xPos -= this.leftSwapButtonOffsetX;
         Button button = addRenderableWidget(Button.builder(Component.literal(""), this::handleSwapButton)
                 .bounds(xPos - 1, yPos - 1, 13, 9)
@@ -308,13 +299,13 @@ public class SpellBookScreen extends ModScreen {
 
         //Background
         renderBackground(graphics);
-        drawTexture(TEXTURE, x - 140, y - 90, 0, 0, 280, 180, 280, 202, graphics);
+        drawTexture(TEXTURE, x - 140, y - 90, 0, 0, 280, 180, 280, 280, graphics);
 
         //Arrows
         if ( this.rightArrow.visible ) this.rightArrow.renderTexture(graphics, TEXTURE, x + this.rightArrowOffsetX, y + this.arrowOffsetY,
-                0, 180, 10, 18, 10, 280, 202);
+                0, 180, 10, 18, 10, 280, 280);
         if ( this.leftArrow.visible ) this.leftArrow.renderTexture(graphics, TEXTURE, x + this.leftArrowOffsetX, y + this.arrowOffsetY,
-                18, 180, 10, 18, 10, 280, 202);
+                18, 180, 10, 18, 10, 280, 280);
 
         boolean spellSelected = false;
         for ( List<ItemStack> page : this.pageList ) {
@@ -326,10 +317,10 @@ public class SpellBookScreen extends ModScreen {
                     ItemStack stack = page.get(i);
 
                     //Spot calc
-                    if ( column == this.maxColumns ) {
+                    if ( column == SpellBookItem.maxColumns ) {
                         row++;
                         column = 0;
-                        if ( row == this.maxRows ) {
+                        if ( row == SpellBookItem.maxRows ) {
                             row = 0;
                             isRightPage = !isRightPage;
                         }
@@ -339,22 +330,22 @@ public class SpellBookScreen extends ModScreen {
                     int yPos = y - 74 + (row * this.squareSpacingY);
 
                     if ( stack.getItem() instanceof ParchmentItem ) {
-                        drawTexture(TEXTURE, xPos - 3, yPos - 3, 58, 180, 105, 22, 280, 202, graphics);
-                        if ( stack.hasCustomHoverName() ) {
-                            Component spellTitle = Component.literal(stack.getHoverName().getString());
-                            int titleX = xPos + 61;
-                            int titleY = yPos - 5 + this.font.lineHeight;
-                            graphics.drawString(this.font, spellTitle, titleX - this.font.width(spellTitle) / 2, titleY, 0, false);
-                        }
+                        drawTexture(TEXTURE, xPos - 3, yPos - 9, 58, 180, 105, 34, 280, 280, graphics);
+                        Component spellTitle = stack.hasCustomHoverName() ? Component.literal(stack.getHoverName().getString())
+                                : Component.translatable("tooltip.spellmaker.untitled").setStyle(Style.EMPTY.withItalic(true));
+                        int titleX = xPos + 61;
+                        int titleY = yPos - 5;
+                        renderSpellName(graphics, spellTitle, titleX, titleY);
+
                         //Selected Spell
                         if ( !spellSelected && !this.book.isEmpty() && this.book.hasTag() && this.book.getTag().contains(SpellBookItem.NBT_KEY_BOOK_SLOT) ) {
                             if ( getSelectedSlot() > -1 && getSelectedSlot() < this.itemList.size() && stack == this.scrollList.get(getSelectedSlot()) ) {
-                                drawTexture(TEXTURE, xPos + 19, yPos - 3, 163, 180, 83, 22, 280, 202, graphics);
+                                drawTexture(TEXTURE, xPos + 19, yPos - 9, 163, 180, 83, 34, 280, 280, graphics);
                                 spellSelected = true;
                             }
                         }
                         if ( this.selectButtonList.get(i).isHovered() ) {
-                            graphics.fill(RenderType.guiOverlay(), xPos + 22, yPos, xPos + 99, yPos + 16, Integer.MIN_VALUE);
+                            graphics.fill(RenderType.guiOverlay(), xPos + 22, yPos - 6, xPos + 99, yPos + 22, Integer.MIN_VALUE);
                         }
                     }
 
@@ -366,14 +357,14 @@ public class SpellBookScreen extends ModScreen {
 
                     //Swap Arrows
                     if ( stack.getItem() instanceof ParchmentItem ) {
-                        int index = i / this.maxColumns;
+                        int index = i / SpellBookItem.maxColumns;
                         int newX = xPos;
-                        if ( index >= this.maxRows ) newX += this.rightSwapButtonOffsetX;
+                        if ( index >= SpellBookItem.maxRows ) newX += this.rightSwapButtonOffsetX;
                         else newX -= this.leftSwapButtonOffsetX;
                         this.upSwapButtonList.get(index).renderTexture(graphics, TEXTURE, newX - 1, yPos - 1,
-                                36, 180, 7, 11, 7, 280, 202);
+                                36, 180, 7, 11, 7, 280, 280);
                         this.downSwapButtonList.get(index).renderTexture(graphics, TEXTURE, newX - 1, yPos + 10,
-                                47, 180, 7, 11, 7, 280, 202);
+                                47, 180, 7, 11, 7, 280, 280);
                     }
 
                     column++;
@@ -389,6 +380,24 @@ public class SpellBookScreen extends ModScreen {
             int pageNumXOff = 67;
             int pageNumX = pageNum % 2 == 0 ? textX + pageNumXOff : textX - pageNumXOff;
             graphics.drawString(this.font, pageNumTxt, pageNumX, y + this.arrowOffsetY, 0, false);
+        }
+    }
+
+    private void renderSpellName(GuiGraphics graphics, Component spellTitle, int titleX, int titleY) {
+        String name = spellTitle.getString();
+        List<Component> nameLineList = Lists.newArrayList();
+        int length = this.font.width(spellTitle);
+        int limit = 75;
+        if ( length < limit ) nameLineList.add(spellTitle);
+        else {
+            List<String> lines = putTextToLines(name, this.font, limit);
+            lines.forEach(s -> nameLineList.add(Component.literal(s).setStyle(spellTitle.getStyle())));
+        }
+        for ( int i = 0; i < nameLineList.size(); i++ ) {
+            Component component = nameLineList.get(i);
+            int height = titleY - (nameLineList.size() - 1) * 4;
+            //graphics.drawString(this.font, spellTitle, titleX - this.font.width(spellTitle) / 2, titleY, 0, false);
+            graphics.drawString(this.font, component, titleX - this.font.width(component) / 2, height + this.font.lineHeight * (i + 1), 0, false);
         }
     }
 
@@ -409,7 +418,7 @@ public class SpellBookScreen extends ModScreen {
     }
 
     private ItemStack getStackFromSlot(Button button) {
-        int stackIndex = this.slotButtonList.indexOf(button) + ((2 * this.maxColumns * this.maxRows) * (this.spreadNumber));
+        int stackIndex = this.slotButtonList.indexOf(button) + (SpellBookItem.pageSize * this.spreadNumber);
         if ( stackIndex >= this.itemList.size() ) return ItemStack.EMPTY;
         return this.pageList.get(this.spreadNumber).get(this.slotButtonList.indexOf(button));
     }
