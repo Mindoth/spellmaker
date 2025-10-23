@@ -24,6 +24,7 @@
   "item.spellmaker.frost_rune": "Frost Rune",
   "item.spellmaker.shock_rune": "Shock Rune",
   "item.spellmaker.sleep_rune": "Sleep Rune",
+  "item.spellmaker.polymorph_rune": "Polymorph Rune",
 
 
   "spellform.spellmaker.caster_only": "Caster only",
@@ -35,6 +36,7 @@
 
   "effect.spellmaker.paralysis": "Paralysis",
   "effect.spellmaker.sleep": "Sleep",
+  "effect.spellmaker.polymorph": "Polymorph",
 
 
   "tooltip.spellmaker.book_owner": "Owner: ",
