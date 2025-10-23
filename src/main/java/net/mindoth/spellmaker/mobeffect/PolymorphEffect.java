@@ -18,6 +18,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -25,6 +26,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -41,6 +44,9 @@ public class PolymorphEffect extends MobEffect {
 
     public static final AttributeModifier POLYMORPH_NAME_TAG_DISTANCE = new AttributeModifier(UUID.fromString("84527dc5-d3e5-4550-98ed-c8186c5d3089"),
             "Polymorph Model", 0.0D, AttributeModifier.Operation.ADDITION);
+
+    public static final AttributeModifier POLYMORPH_SPEED_MODIFIER = new AttributeModifier(UUID.fromString("cb37c083-b435-4c89-9949-5c7f7823f62e"),
+            "Polymorph Speed", -0.04D, AttributeModifier.Operation.ADDITION);
 
     @Override
     public void addAttributeModifiers(LivingEntity living, AttributeMap map, int pAmplifier) {
@@ -61,6 +67,11 @@ public class PolymorphEffect extends MobEffect {
             if ( nameTagDistance != null && !nameTagDistance.hasModifier(POLYMORPH_NAME_TAG_DISTANCE) ) {
                 nameTagDistance.addPermanentModifier(POLYMORPH_NAME_TAG_DISTANCE);
             }
+            AttributeInstance speedModifier = player.getAttribute(Attributes.MOVEMENT_SPEED);
+            if ( speedModifier != null && !speedModifier.hasModifier(POLYMORPH_SPEED_MODIFIER) ) {
+                speedModifier.addPermanentModifier(POLYMORPH_SPEED_MODIFIER);
+                if ( player.isSprinting() ) player.setSprinting(false);
+            }
         }
     }
 
@@ -76,13 +87,11 @@ public class PolymorphEffect extends MobEffect {
             if ( nameTagDistance != null && nameTagDistance.hasModifier(POLYMORPH_NAME_TAG_DISTANCE) ) {
                 nameTagDistance.removeModifier(POLYMORPH_NAME_TAG_DISTANCE);
             }
+            AttributeInstance speedModifier = player.getAttribute(Attributes.MOVEMENT_SPEED);
+            if ( speedModifier != null && speedModifier.hasModifier(POLYMORPH_SPEED_MODIFIER) ) {
+                speedModifier.removeModifier(POLYMORPH_SPEED_MODIFIER);
+            }
         }
-    }
-
-    @SubscribeEvent
-    public static void transformBackWhenAttacked(final LivingHurtEvent event) {
-        LivingEntity living = event.getEntity();
-        if ( living.hasEffect(ModEffects.POLYMORPH.get()) ) living.removeEffect(ModEffects.POLYMORPH.get());
     }
 
     private boolean transformBack(CompoundTag tag, ServerLevel level, LivingEntity living) {
@@ -156,5 +165,25 @@ public class PolymorphEffect extends MobEffect {
         Minecraft instance = Minecraft.getInstance();
         float yaw = Mth.lerp(partialTicks, sheep.yRotO, sheep.getYRot());
         instance.getEntityRenderDispatcher().getRenderer(sheep).render(sheep, yaw, partialTicks, poseStack, buffer, light);
+    }
+
+    @SubscribeEvent
+    public static void preventAttackWhilePolymorphed(AttackEntityEvent event) {
+        Player player = event.getEntity();
+        if ( !player.hasEffect(ModEffects.POLYMORPH.get()) ) return;
+        event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void preventInteractWhilePolymorphed(PlayerInteractEvent event) {
+        Player player = event.getEntity();
+        if ( !player.hasEffect(ModEffects.POLYMORPH.get()) ) return;
+        if ( event.isCancelable() ) event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void polymorphBackWhenAttacked(final LivingHurtEvent event) {
+        LivingEntity living = event.getEntity();
+        if ( living.hasEffect(ModEffects.POLYMORPH.get()) ) living.removeEffect(ModEffects.POLYMORPH.get());
     }
 }
