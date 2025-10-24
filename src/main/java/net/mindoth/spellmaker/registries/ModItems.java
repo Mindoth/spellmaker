@@ -45,8 +45,8 @@ public class ModItems {
             () -> new ShockRuneItem(new Item.Properties(), SpellColor.DARK_BLUE, 3, 64, 1, 64, 5));
 
     public static final RegistryObject<Item> SLEEP_RUNE = ITEMS.register("sleep_rune",
-            () -> new SleepRuneItem(new Item.Properties(), SpellColor.DARK_PURPLE, 3, 0, 0, 64, 4));
+            () -> new SleepRuneItem(new Item.Properties(), SpellColor.DARK_PURPLE, 3, 0, 0, 64, 2));
 
     public static final RegistryObject<Item> POLYMORPH_RUNE = ITEMS.register("polymorph_rune",
-            () -> new PolymorphRuneItem(new Item.Properties(), SpellColor.DARK_PURPLE, 10, 0, 0, 64, 5));
+            () -> new PolymorphRuneItem(new Item.Properties(), SpellColor.DARK_PURPLE, 5, 0, 0, 64, 1));
 }

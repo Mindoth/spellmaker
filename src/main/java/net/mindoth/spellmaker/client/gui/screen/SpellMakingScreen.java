@@ -92,7 +92,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     }
 
     private void buildButtons(int x, int y) {
-        this.craftButton = addRenderableWidget(Button.builder(Component.literal(""), this::handleCraftButton)
+        this.craftButton = addWidget(Button.builder(Component.literal(""), this::handleCraftButton)
                 .bounds(x + CRAFT_BUTTON_OFFSET_X, y + CRAFT_BUTTON_OFFSET_Y, 16, 16)
                 .build());
 
@@ -167,15 +167,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         this.menu.editSpellForm(tag);
     }
 
-    private boolean canEditStat(byte flag, int index, boolean isIncrease, int stat) {
-        if ( !this.menu.isReadyToMake() || this.menu.getCraftSlots().getItem(index + 1).isEmpty() ) return false;
-        if ( !(this.menu.getCraftSlots().getItem(index + 1).getItem() instanceof RuneItem rune) ) return false;
-        if ( !isIncrease && stat <= 0 ) return false;
-        if ( (flag == 0 && rune.getMaxMagnitude() <= 0 ) || (flag == 1 && rune.getMaxDuration() <= 0) ) return false;
-        if ( (flag == 0 && isIncrease && stat >= rune.getMaxMagnitude()) || (flag == 1 && isIncrease && stat >= rune.getMaxDuration()) ) return false;
-        return true;
-    }
-
     private void handleLeftMagnitudeButton(Button button) {
         int index = this.magnitudeListLeft.indexOf(button);
         int magnitude = this.menu.getMagnitude().get(index);
@@ -229,27 +220,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     }
 
     @Override
-    public void containerTick() {
-        super.containerTick();
-        this.name.tick();
-        if ( this.craftButton.isFocused() ) this.craftButton.setFocused(false);
-        if ( this.leftSpellFormButton.isFocused() ) this.leftSpellFormButton.setFocused(false);
-        if ( this.rightSpellFormButton.isFocused() ) this.rightSpellFormButton.setFocused(false);
-        for ( Button button : this.magnitudeListLeft ) {
-            if ( button.isFocused() ) button.setFocused(false);
-        }
-        for ( Button button : this.magnitudeListRight ) {
-            if ( button.isFocused() ) button.setFocused(false);
-        }
-        for ( Button button : this.durationListLeft ) {
-            if ( button.isFocused() ) button.setFocused(false);
-        }
-        for ( Button button : this.durationListRight ) {
-            if ( button.isFocused() ) button.setFocused(false);
-        }
-    }
-
-    @Override
     public void removed() {
         super.removed();
         this.menu.removeSlotListener(this);
@@ -267,8 +237,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     }
 
     private void renderArrowButton(Button button, GuiGraphics graphics, int x, int y, int v, int u) {
-        button.renderTexture(graphics, TEXTURE, x, y, v, u,
-                0, 7, 11, 256, 256);
+        button.renderTexture(graphics, TEXTURE, x, y, v, u, 0, 7, 11, 256, 256);
     }
 
     @Override
@@ -282,40 +251,48 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         int y = (this.height - this.imageHeight) / 2;
 
         //Action button
-        this.craftButton.renderTexture(graphics, TEXTURE, x + CRAFT_BUTTON_OFFSET_X, y + CRAFT_BUTTON_OFFSET_Y,
-                this.menu.isReadyToMake() ? 176 : 176 + 16,
-                this.menu.isReadyToMake() || this.menu.isReadyToDump() ? 16 : 0,
-                this.menu.isReadyToMake() || this.menu.isReadyToDump() ? 16 : 0, 16, 16, 256, 256);
-
         if ( this.menu.isReadyToMake() || this.menu.isReadyToDump() ) {
             int xIcon = x + CRAFT_BUTTON_OFFSET_X;
             int yIcon = y + CRAFT_BUTTON_OFFSET_Y;
+            this.craftButton.renderTexture(graphics, TEXTURE, xIcon, yIcon,
+                    this.menu.isReadyToMake() ? 176 : 176 + 16, this.craftButton.isMouseOver(mouseX, mouseY) ? 32 : 16,
+                    0, 16, 16, 256, 256);
             Component name = this.menu.isReadyToMake() ? Component.translatable("tooltip.spellmaker.make") : Component.translatable("tooltip.spellmaker.dump");
             if ( mouseX >= xIcon && mouseX <= xIcon + 16 && mouseY >= yIcon && mouseY <= yIcon + 16 ) graphics.renderTooltip(this.font, name, mouseX, mouseY);
         }
 
         //Spell Form buttons
-        renderArrowButton(this.leftSpellFormButton, graphics, x + LEFT_SPELL_FORM_BUTTON_OFFSET_X, y + SPELL_FORM_BUTTON_OFFSET_Y, 176,
-                !this.menu.isReadyToMake() ? 86 : this.leftSpellFormButton.isMouseOver(mouseX, mouseY) ? 75 : 64);
-        renderArrowButton(this.rightSpellFormButton, graphics, x + RIGHT_SPELL_FORM_BUTTON_OFFSET_X, y + SPELL_FORM_BUTTON_OFFSET_Y, 183,
-                !this.menu.isReadyToMake() ? 86 : this.rightSpellFormButton.isMouseOver(mouseX, mouseY) ? 75 : 64);
+        if ( this.menu.isReadyToMake() ) {
+            renderArrowButton(this.leftSpellFormButton, graphics, x + LEFT_SPELL_FORM_BUTTON_OFFSET_X, y + SPELL_FORM_BUTTON_OFFSET_Y, 176,
+                    this.leftSpellFormButton.isMouseOver(mouseX, mouseY) ? 59 : 48);
+            renderArrowButton(this.rightSpellFormButton, graphics, x + RIGHT_SPELL_FORM_BUTTON_OFFSET_X, y + SPELL_FORM_BUTTON_OFFSET_Y, 183,
+                    this.rightSpellFormButton.isMouseOver(mouseX, mouseY) ? 59 : 48);
+        }
 
         //Stat buttons
         for ( int i = 0; i < this.magnitudeListLeft.size(); i++ ) {
-            renderArrowButton(this.magnitudeListLeft.get(i), graphics, x + LEFT_MAGNITUDE_BUTTON_OFFSET_X, y + MAGNITUDE_BUTTON_OFFSET_Y + 18 * i, 176,
-                    !canEditStat((byte)0, i, false, this.menu.getMagnitude().get(i)) ? 86 : this.magnitudeListLeft.get(i).isMouseOver(mouseX, mouseY) ? 75 : 64);
+            if ( canEditStat((byte)0, i, false, this.menu.getMagnitude().get(i)) ) {
+                renderArrowButton(this.magnitudeListLeft.get(i), graphics, x + LEFT_MAGNITUDE_BUTTON_OFFSET_X, y + MAGNITUDE_BUTTON_OFFSET_Y + 18 * i, 176,
+                        this.magnitudeListLeft.get(i).isMouseOver(mouseX, mouseY) ? 59 : 48);
+            }
         }
         for ( int i = 0; i < this.magnitudeListRight.size(); i++ ) {
-            renderArrowButton(this.magnitudeListRight.get(i), graphics, x + RIGHT_MAGNITUDE_BUTTON_OFFSET_X, y + MAGNITUDE_BUTTON_OFFSET_Y + 18 * i, 183,
-                    !canEditStat((byte)0, i, true, this.menu.getMagnitude().get(i)) ? 86 : this.magnitudeListRight.get(i).isMouseOver(mouseX, mouseY) ? 75 : 64);
+            if ( canEditStat((byte)0, i, true, this.menu.getMagnitude().get(i)) ) {
+                renderArrowButton(this.magnitudeListRight.get(i), graphics, x + RIGHT_MAGNITUDE_BUTTON_OFFSET_X, y + MAGNITUDE_BUTTON_OFFSET_Y + 18 * i, 183,
+                        this.magnitudeListRight.get(i).isMouseOver(mouseX, mouseY) ? 59 : 48);
+            }
         }
         for ( int i = 0; i < this.durationListLeft.size(); i++ ) {
-            renderArrowButton(this.durationListLeft.get(i), graphics, x + LEFT_DURATION_BUTTON_OFFSET_X, y + DURATION_BUTTON_OFFSET_Y + 18 * i, 176,
-                    !canEditStat((byte)1, i, false, this.menu.getDuration().get(i)) ? 86 : this.durationListLeft.get(i).isMouseOver(mouseX, mouseY) ? 75 : 64);
+            if ( canEditStat((byte)1, i, false, this.menu.getDuration().get(i)) ) {
+                renderArrowButton(this.durationListLeft.get(i), graphics, x + LEFT_DURATION_BUTTON_OFFSET_X, y + DURATION_BUTTON_OFFSET_Y + 18 * i, 176,
+                        this.durationListLeft.get(i).isMouseOver(mouseX, mouseY) ? 59 : 48);
+            }
         }
         for ( int i = 0; i < this.durationListRight.size(); i++ ) {
-            renderArrowButton(this.durationListRight.get(i), graphics, x + RIGHT_DURATION_BUTTON_OFFSET_X, y + DURATION_BUTTON_OFFSET_Y + 18 * i, 183,
-                    !canEditStat((byte)1, i, true, this.menu.getDuration().get(i)) ? 86 : this.durationListRight.get(i).isMouseOver(mouseX, mouseY) ? 75 : 64);
+            if ( canEditStat((byte)1, i, true, this.menu.getDuration().get(i)) ) {
+                renderArrowButton(this.durationListRight.get(i), graphics, x + RIGHT_DURATION_BUTTON_OFFSET_X, y + DURATION_BUTTON_OFFSET_Y + 18 * i, 183,
+                        this.durationListRight.get(i).isMouseOver(mouseX, mouseY) ? 59 : 48);
+            }
         }
 
         //Spell Form icon rendering
@@ -330,11 +307,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                 graphics.renderTooltip(this.font, name, mouseX, mouseY);
             }
         }
-        else {
-            int xIcon = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
-            int yIcon = y + SPELL_FORM_BUTTON_OFFSET_Y - 2;
-            ModScreen.drawTexture(TEXTURE, xIcon, yIcon, 192, 0, 16, 16, 256, 256, graphics);
-        }
 
         //Stat number strings
         boolean showMag = false;
@@ -343,6 +315,28 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             if ( this.menu.slots.get(i) instanceof RuneSlot runeSlot && runeSlot.getItem().getItem() instanceof RuneItem rune ) {
                 if ( !showMag && rune.getMaxMagnitude() > 0 ) showMag = true;
                 if ( !showDur && rune.getMaxDuration() > 0 ) showDur = true;
+            }
+        }
+        //Stat name plate
+        int boxX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 35;
+        int boxY = y + SPELL_FORM_BUTTON_OFFSET_Y - 3;
+        for ( int i = 0; i < 2; i++ ) {
+            if ( (i == 0 && showMag) || (i == 1 && showDur) ) {
+                ModScreen.drawTexture(TEXTURE, boxX + 54 * i, boxY, 194, 70, 54, 18, 256, 256, graphics);
+            }
+        }
+        for ( int i = 0; i < this.maxSlots; i++ ) {
+            //Magnitude plates
+            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof RuneItem rune && rune.getMaxMagnitude() > 0 ) {
+                int magX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 53;
+                int magY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
+                ModScreen.drawTexture(TEXTURE, magX, magY + 18 * i, 176, 70, 18, 18, 256, 256, graphics);
+            }
+            //Duration plates
+            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof RuneItem rune && rune.getMaxDuration() > 0 ) {
+                int durX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 107;
+                int durY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
+                ModScreen.drawTexture(TEXTURE, durX, durY + 18 * i, 176, 70, 18, 18, 256, 256, graphics);
             }
         }
         if ( this.menu.isReadyToMake() ) {
@@ -371,31 +365,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                 }
             }
         }
-        //Stat name plate
-        int boxX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 35;
-        int boxY = y + SPELL_FORM_BUTTON_OFFSET_Y - 3;
-        for ( int i = 0; i < 2; i++ ) {
-            if ( (i == 0 && !showMag) || (i == 1 && !showDur) ) {
-                ModScreen.drawTexture(TEXTURE, boxX + 54 * i, boxY, 194, 97, 54, 18, 256, 256, graphics);
-            }
-        }
-        for ( int i = 0; i < this.maxSlots; i++ ) {
-            //Magnitude plates
-            if ( !this.menu.isReadyToMake() || (this.menu.getCraftSlots().getItem(i + 1).isEmpty()
-                    || (this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof RuneItem rune && rune.getMaxMagnitude() <= 0)) ) {
-                int magX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 53;
-                int magY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
-                ModScreen.drawTexture(TEXTURE, magX, magY + 18 * i, 176, 97, 18, 18, 256, 256, graphics);
-            }
-            //Duration plates
-            if ( !this.menu.isReadyToMake() || (this.menu.getCraftSlots().getItem(i + 1).isEmpty()
-                    || (this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof RuneItem rune && rune.getMaxDuration() <= 0)) ) {
-                int durX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 107;
-                int durY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
-                ModScreen.drawTexture(TEXTURE, durX, durY + 18 * i, 176, 97, 18, 18, 256, 256, graphics);
-            }
-        }
-
         //Locked Slots
         int off = 1;
         for ( int i = 0; i < this.menu.slots.size(); i++ ) {
@@ -407,6 +376,80 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                 off++;
             }
         }
+    }
+
+    @Override
+    public void containerTick() {
+        super.containerTick();
+        this.name.tick();
+        if ( this.craftButton.isFocused() ) this.craftButton.setFocused(false);
+        if ( this.menu.isReadyToMake() || this.menu.isReadyToDump() ) {
+            if ( !this.craftButton.visible ) this.craftButton.visible = true;
+        }
+        else {
+            if ( this.craftButton.visible ) this.craftButton.visible = false;
+        }
+
+        if ( this.leftSpellFormButton.isFocused() ) this.leftSpellFormButton.setFocused(false);
+        if ( this.rightSpellFormButton.isFocused() ) this.rightSpellFormButton.setFocused(false);
+        if ( this.menu.isReadyToMake() ) {
+            if ( !this.leftSpellFormButton.visible ) this.leftSpellFormButton.visible = true;
+            if ( !this.rightSpellFormButton.visible ) this.rightSpellFormButton.visible = true;
+        }
+        else {
+            if ( this.leftSpellFormButton.visible ) this.leftSpellFormButton.visible = false;
+            if ( this.rightSpellFormButton.visible ) this.rightSpellFormButton.visible = false;
+        }
+
+        for ( int i = 0; i < this.magnitudeListLeft.size(); i++ ) {
+            Button button = this.magnitudeListLeft.get(i);
+            if ( button.isFocused() ) button.setFocused(false);
+            if ( canEditStat((byte)0, i, false, this.menu.getMagnitude().get(i)) ) {
+                if ( !button.visible ) button.visible = true;
+            }
+            else {
+                if ( button.visible ) button.visible = false;
+            }
+        }
+        for ( int i = 0; i < this.magnitudeListRight.size(); i++ ) {
+            Button button = this.magnitudeListRight.get(i);
+            if ( button.isFocused() ) button.setFocused(false);
+            if ( canEditStat((byte)0, i, true, this.menu.getMagnitude().get(i)) ) {
+                if ( !button.visible ) button.visible = true;
+            }
+            else {
+                if ( button.visible ) button.visible = false;
+            }
+        }
+        for ( int i = 0; i < this.durationListLeft.size(); i++ ) {
+            Button button = this.durationListLeft.get(i);
+            if ( button.isFocused() ) button.setFocused(false);
+            if ( canEditStat((byte)1, i, false, this.menu.getDuration().get(i)) ) {
+                if ( !button.visible ) button.visible = true;
+            }
+            else {
+                if ( button.visible ) button.visible = false;
+            }
+        }
+        for ( int i = 0; i < this.durationListRight.size(); i++ ) {
+            Button button = this.durationListRight.get(i);
+            if ( button.isFocused() ) button.setFocused(false);
+            if ( canEditStat((byte)1, i, true, this.menu.getDuration().get(i)) ) {
+                if ( !button.visible ) button.visible = true;
+            }
+            else {
+                if ( button.visible ) button.visible = false;
+            }
+        }
+    }
+
+    private boolean canEditStat(byte flag, int index, boolean isIncrease, int stat) {
+        if ( !this.menu.isReadyToMake() || this.menu.getCraftSlots().getItem(index + 1).isEmpty() ) return false;
+        if ( !(this.menu.getCraftSlots().getItem(index + 1).getItem() instanceof RuneItem rune) ) return false;
+        if ( !isIncrease && stat <= 0 ) return false;
+        if ( (flag == 0 && rune.getMaxMagnitude() <= 0 ) || (flag == 1 && rune.getMaxDuration() <= 0) ) return false;
+        if ( (flag == 0 && isIncrease && stat >= rune.getMaxMagnitude()) || (flag == 1 && isIncrease && stat >= rune.getMaxDuration()) ) return false;
+        return true;
     }
 
     @Override
