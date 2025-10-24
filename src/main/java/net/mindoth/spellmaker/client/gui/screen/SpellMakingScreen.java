@@ -300,7 +300,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             ResourceLocation icon = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spellform/" + this.menu.getSpellForm().getName() + ".png");
             int xIcon = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
             int yIcon = y + SPELL_FORM_BUTTON_OFFSET_Y - 2;
-            ModScreen.drawTexture(icon, xIcon, yIcon, 0, 0, 16, 16, 16, 16, graphics);
+            graphics.blit(icon, xIcon, yIcon, 0, 0, 16, 16, 16, 16);
             Component name = Component.translatable("spellform.spellmaker." + this.menu.getSpellForm().getName());
             if ( mouseX >= xIcon && mouseX <= xIcon + 16 && mouseY >= yIcon && mouseY <= yIcon + 16 ) {
                 graphics.fill(RenderType.guiOverlay(), xIcon, yIcon, xIcon + 16, yIcon + 16, Integer.MAX_VALUE);
@@ -322,7 +322,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         int boxY = y + SPELL_FORM_BUTTON_OFFSET_Y - 3;
         for ( int i = 0; i < 2; i++ ) {
             if ( (i == 0 && showMag) || (i == 1 && showDur) ) {
-                ModScreen.drawTexture(TEXTURE, boxX + 54 * i, boxY, 194, 70, 54, 18, 256, 256, graphics);
+                graphics.blit(TEXTURE, boxX + 54 * i, boxY, 194, 70, 54, 18, 256, 256);
             }
         }
         for ( int i = 0; i < this.maxSlots; i++ ) {
@@ -330,13 +330,13 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof RuneItem rune && rune.getMaxMagnitude() > 0 ) {
                 int magX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 53;
                 int magY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
-                ModScreen.drawTexture(TEXTURE, magX, magY + 18 * i, 176, 70, 18, 18, 256, 256, graphics);
+                graphics.blit(TEXTURE, magX, magY + 18 * i, 176, 70, 18, 18, 256, 256);
             }
             //Duration plates
             if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof RuneItem rune && rune.getMaxDuration() > 0 ) {
                 int durX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 107;
                 int durY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
-                ModScreen.drawTexture(TEXTURE, durX, durY + 18 * i, 176, 70, 18, 18, 256, 256, graphics);
+                graphics.blit(TEXTURE, durX, durY + 18 * i, 176, 70, 18, 18, 256, 256);
             }
         }
         if ( this.menu.isReadyToMake() ) {
@@ -372,7 +372,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                 int xPos = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
                 int yPos = y + SPELL_FORM_BUTTON_OFFSET_Y - 2 + 18 * off;
                 int u = this.menu.isReadyToMake() ? 176 : 192;
-                if ( !slot.isOpen ) ModScreen.drawTexture(TEXTURE, xPos, yPos, u, 0, 16, 16, 256, 256, graphics);
+                if ( !slot.isOpen ) graphics.blit(TEXTURE, xPos, yPos, u, 0, 16, 16, 256, 256);
                 off++;
             }
         }

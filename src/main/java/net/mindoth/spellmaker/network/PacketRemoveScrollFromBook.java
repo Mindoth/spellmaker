@@ -2,7 +2,6 @@ package net.mindoth.spellmaker.network;
 
 import com.google.common.collect.Lists;
 import net.mindoth.shadowizardlib.event.ShadowEvents;
-import net.mindoth.spellmaker.client.gui.screen.SpellBookScreen;
 import net.mindoth.spellmaker.item.SpellBookItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;

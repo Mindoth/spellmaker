@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-public class SpellBookItem extends Item implements DyeableMagickItem {
+public class SpellBookItem extends Item implements ModDyeableItem {
     public SpellBookItem(Properties pProperties) {
         super(pProperties);
     }

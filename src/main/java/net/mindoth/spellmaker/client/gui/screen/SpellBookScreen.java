@@ -117,7 +117,7 @@ public class SpellBookScreen extends ModScreen {
         boolean isRightPage = false;
         int row = 0;
         int column = 0;
-        for ( int i = 0; i < SpellBookItem.pageSize; i++ ) {
+        for (int i = 0; i < SpellBookItem.pageSize; i++ ) {
             if ( column == SpellBookItem.maxColumns ) {
                 row++;
                 column = 0;
@@ -299,7 +299,7 @@ public class SpellBookScreen extends ModScreen {
 
         //Background
         renderBackground(graphics);
-        drawTexture(TEXTURE, x - 140, y - 90, 0, 0, 280, 180, 280, 280, graphics);
+        graphics.blit(TEXTURE, x - 140, y - 90, 0, 0, 280, 180, 280, 280);
 
         //Arrows
         if ( this.rightArrow.visible ) this.rightArrow.renderTexture(graphics, TEXTURE, x + this.rightArrowOffsetX, y + this.arrowOffsetY,
@@ -330,7 +330,7 @@ public class SpellBookScreen extends ModScreen {
                     int yPos = y - 74 + (row * this.squareSpacingY);
 
                     if ( stack.getItem() instanceof ParchmentItem ) {
-                        drawTexture(TEXTURE, xPos - 3, yPos - 9, 58, 180, 105, 34, 280, 280, graphics);
+                        graphics.blit(TEXTURE, xPos - 3, yPos - 9, 58, 180, 105, 34, 280, 280);
                         Component spellTitle = stack.hasCustomHoverName() ? Component.literal(stack.getHoverName().getString())
                                 : Component.translatable("tooltip.spellmaker.untitled").setStyle(Style.EMPTY.withItalic(true));
                         int titleX = xPos + 61;
@@ -340,7 +340,7 @@ public class SpellBookScreen extends ModScreen {
                         //Selected Spell
                         if ( !spellSelected && !this.book.isEmpty() && this.book.hasTag() && this.book.getTag().contains(SpellBookItem.NBT_KEY_BOOK_SLOT) ) {
                             if ( getSelectedSlot() > -1 && getSelectedSlot() < this.itemList.size() && stack == this.scrollList.get(getSelectedSlot()) ) {
-                                drawTexture(TEXTURE, xPos + 19, yPos - 9, 163, 180, 83, 34, 280, 280, graphics);
+                                graphics.blit(TEXTURE, xPos + 19, yPos - 9, 163, 180, 83, 34, 280, 280);
                                 spellSelected = true;
                             }
                         }

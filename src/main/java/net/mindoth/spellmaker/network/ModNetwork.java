@@ -33,6 +33,13 @@ public class ModNetwork {
 
         CHANNEL = net;
 
+        //Mana
+        net.messageBuilder(PacketSyncClientMana.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(PacketSyncClientMana::new)
+                .encoder(PacketSyncClientMana::encode)
+                .consumerMainThread(PacketSyncClientMana::handle)
+                .add();
+
         //Spell Book
         net.messageBuilder(PacketAskToOpenSpellBook.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(PacketAskToOpenSpellBook::new)

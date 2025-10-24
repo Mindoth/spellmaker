@@ -1,5 +1,7 @@
 package net.mindoth.spellmaker.item;
 
+import net.mindoth.spellmaker.capability.ModCapabilities;
+import net.mindoth.spellmaker.capability.playermagic.PlayerMagickProvider;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.SpellForm;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,6 +18,8 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class StaffItem extends Item {
     public StaffItem(Properties pProperties) {
@@ -36,17 +40,30 @@ public class StaffItem extends Item {
     @Override
     public void onUseTick(Level level, LivingEntity caster, ItemStack staff, int timeLeft) {
         if ( level.isClientSide ) return;
-        if ( !(caster instanceof ServerPlayer serverPlayer) ) return;
-        if ( serverPlayer.getCooldowns().isOnCooldown(staff.getItem()) ) return;
-        ItemStack book = SpellBookItem.getSpellBookSlot(serverPlayer);
+        if ( !(caster instanceof ServerPlayer player) ) return;
+        if ( player.getCooldowns().isOnCooldown(staff.getItem()) ) return;
+        ItemStack book = SpellBookItem.getSpellBookSlot(player);
         if ( !book.isEmpty() && book.hasTag() && book.getTag().contains(SpellBookItem.NBT_KEY_BOOK_SLOT)
                 && book.getTag().getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) >= 0 && SpellBookItem.getActiveScrollFromBook(book) != null ) {
             ItemStack scroll = SpellBookItem.getActiveScrollFromBook(book);
             if ( scroll != null && scroll.hasTag() ) {
                 SpellForm form = DataHelper.getFormFromNbt(scroll.getTag());
-                form.castMagick(serverPlayer, DataHelper.createMapFromTag(scroll.getTag()));
-                handleCooldowns(caster, staff, 20);
-                if ( !(caster instanceof Player player && player.isCreative()) ) addItemDamage(staff, 1, caster);
+                LinkedHashMap<RuneItem, List<Integer>> map = DataHelper.createMapFromTag(scroll.getTag());
+                int cost = ParchmentItem.calculateSpellCost(form, map);
+                player.getCapability(PlayerMagickProvider.PLAYER_MAGICK).ifPresent(magic -> {
+                    if ( cost <= magic.getCurrentMana() || player.isCreative() ) {
+                        form.castMagick(player, map);
+                        handleCooldowns(caster, staff, 20);
+                        if ( !player.isCreative() ) {
+                            addItemDamage(staff, 1, caster);
+                            ModCapabilities.changeMana(player, -cost);
+                        }
+                    }
+                    else if ( !player.isCreative() ) {
+                        handleCooldowns(caster, staff, 20);
+                        playWhiffSound(caster);
+                    }
+                });
             }
         }
         else {
@@ -70,6 +87,10 @@ public class StaffItem extends Item {
 
     public static void addCastingCooldown(Entity entity, Item item, int cooldown) {
         if ( entity instanceof Player player ) player.getCooldowns().addCooldown(item, cooldown);
+    }
+
+    public static boolean isValidCastingItem(ItemStack staff) {
+        return staff.getItem() instanceof StaffItem;
     }
 
     @Override

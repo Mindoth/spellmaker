@@ -4,8 +4,11 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.item.StaffItem;
+import net.mindoth.spellmaker.item.armor.ColorableArmorItem;
+import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
 import net.mindoth.spellmaker.item.rune.*;
 import net.mindoth.spellmaker.util.SpellColor;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -18,11 +21,11 @@ public class ModItems {
     public static final RegistryObject<Item> RUNE_ESSENCE = ITEMS.register("rune_essence",
             () -> new Item(new Item.Properties()));
 
-    public static final RegistryObject<Item> PARCHMENT = ITEMS.register("parchment",
-            () -> new ParchmentItem(new Item.Properties(), 1));
+    public static final RegistryObject<Item> ARCANE_CLOTH = ITEMS.register("arcane_cloth",
+            () -> new Item(new Item.Properties()));
 
-    public static final RegistryObject<Item> ARCANE_PARCHMENT = ITEMS.register("arcane_parchment",
-            () -> new ParchmentItem(new Item.Properties(), 2));
+    public static final RegistryObject<Item> PARCHMENT = ITEMS.register("parchment",
+            () -> new ParchmentItem(new Item.Properties(), 3));
 
     //Equipment
     public static final RegistryObject<Item> STAFF = ITEMS.register("staff",
@@ -30,6 +33,18 @@ public class ModItems {
 
     public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book",
             () -> new SpellBookItem(new Item.Properties()));
+
+    public static final RegistryObject<Item> ROBE_HOOD = ITEMS.register("robe_hood",
+            () -> new ColorableArmorItem(ModArmorMaterials.ROBE, ArmorItem.Type.HELMET, new Item.Properties()));
+
+    public static final RegistryObject<Item> ROBE_TOP = ITEMS.register("robe_top",
+            () -> new ColorableArmorItem(ModArmorMaterials.ROBE, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+
+    public static final RegistryObject<Item> ROBE_BOTTOM = ITEMS.register("robe_bottom",
+            () -> new ColorableArmorItem(ModArmorMaterials.ROBE, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+
+    public static final RegistryObject<Item> ROBE_BOOTS = ITEMS.register("robe_boots",
+            () -> new ColorableArmorItem(ModArmorMaterials.ROBE, ArmorItem.Type.BOOTS, new Item.Properties()));
 
     //Runes
     public static final RegistryObject<Item> EXCAVATE_RUNE = ITEMS.register("excavate_rune",

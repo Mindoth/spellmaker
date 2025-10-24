@@ -46,7 +46,7 @@ public class PolymorphEffect extends MobEffect {
             "Polymorph Model", 0.0D, AttributeModifier.Operation.ADDITION);
 
     public static final AttributeModifier POLYMORPH_SPEED_MODIFIER = new AttributeModifier(UUID.fromString("cb37c083-b435-4c89-9949-5c7f7823f62e"),
-            "Polymorph Speed", -0.04D, AttributeModifier.Operation.ADDITION);
+            "Polymorph Speed", -0.05D, AttributeModifier.Operation.ADDITION);
 
     @Override
     public void addAttributeModifiers(LivingEntity living, AttributeMap map, int pAmplifier) {

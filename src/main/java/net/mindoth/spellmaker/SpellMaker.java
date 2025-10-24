@@ -31,6 +31,7 @@ public class SpellMaker {
         ModBlocks.BLOCKS.register(modEventBus);
         ModEntities.ENTITIES.register(modEventBus);
         ModEffects.EFFECTS.register(modEventBus);
+        ModAttributes.ATTRIBUTES.register(modEventBus);
         ModMenus.MENUS.register(modEventBus);
         ModSpellForms.SPELL_FORMS.register(modEventBus);
         ModRecipes.SERIALIZERS.register(modEventBus);

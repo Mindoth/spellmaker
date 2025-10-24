@@ -30,7 +30,7 @@ public class SpellBookAddRecipe extends CustomRecipe {
             ItemStack stack = container.getItem(i);
             if ( !stack.isEmpty() ) {
                 boolean paperHasSpell = stack.hasTag() && stack.getTag().contains(ParchmentItem.NBT_KEY_SPELL_FORM);
-                if ( stack.getItem() instanceof SpellBookItem ) bookList.add(stack);
+                if ( stack.getItem() instanceof SpellBookItem) bookList.add(stack);
                 else if ( stack.getItem() instanceof ParchmentItem && paperHasSpell ) paperList.add(stack);
                 else restList.add(stack);
             }
@@ -47,7 +47,7 @@ public class SpellBookAddRecipe extends CustomRecipe {
             ItemStack stack = container.getItem(i);
             if ( !stack.isEmpty() ) {
                 boolean paperHasSpell = stack.hasTag() && stack.getTag().contains(ParchmentItem.NBT_KEY_SPELL_FORM);
-                if ( stack.getItem() instanceof SpellBookItem ) bookList.add(stack);
+                if ( stack.getItem() instanceof SpellBookItem) bookList.add(stack);
                 else if ( stack.getItem() instanceof ParchmentItem && paperHasSpell ) paperList.add(stack);
                 else restList.add(stack);
             }
