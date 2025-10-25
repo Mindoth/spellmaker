@@ -5,7 +5,8 @@
   "mixins": [
     "LivingEntityMixin",
     "WalkAnimationStateMixin",
-    "LocalPlayerMixin"
+    "LocalPlayerMixin",
+    "EntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

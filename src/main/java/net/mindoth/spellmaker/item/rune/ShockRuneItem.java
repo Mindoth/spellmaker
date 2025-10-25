@@ -23,7 +23,9 @@ public class ShockRuneItem extends RuneItem {
             if ( magnitude > 0 ) entity.hurt(entity.damageSources().lightningBolt(), magnitude);
             int duration = stats.get(1);
             int paralysisTicks = duration * 20;
-            if ( entity instanceof LivingEntity living ) living.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), paralysisTicks, 0, false, false));
+            if ( entity instanceof LivingEntity living && living.isInWaterOrBubble() ) {
+                living.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), paralysisTicks, 0, false, false));
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(WalkAnimationState.class)
 public interface WalkAnimationStateMixin {
+
     @Accessor
     float getSpeedOld();
 

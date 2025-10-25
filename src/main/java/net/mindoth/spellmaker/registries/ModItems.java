@@ -8,11 +8,14 @@ import net.mindoth.spellmaker.item.armor.ColorableArmorItem;
 import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
 import net.mindoth.spellmaker.item.rune.*;
 import net.mindoth.spellmaker.util.SpellColor;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.UUID;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, SpellMaker.MOD_ID);
@@ -62,6 +65,11 @@ public class ModItems {
     public static final RegistryObject<Item> SLEEP_RUNE = ITEMS.register("sleep_rune",
             () -> new SleepRuneItem(new Item.Properties(), SpellColor.DARK_PURPLE, 3, 0, 0, 64, 2));
 
-    public static final RegistryObject<Item> POLYMORPH_RUNE = ITEMS.register("polymorph_rune",
-            () -> new PolymorphRuneItem(new Item.Properties(), SpellColor.DARK_PURPLE, 5, 0, 0, 64, 1));
+    public static final RegistryObject<Item> SHEEP_POLYMORPH_RUNE = ITEMS.register("sheep_polymorph_rune",
+            () -> new SheepPolymorphRuneItem(new Item.Properties(), SpellColor.DARK_PURPLE, 5, 0, 0, 64, 1,
+                    UUID.fromString("84527dc5-d3e5-4550-98ed-c8186c5d3089"), EntityType.SHEEP));
+
+    public static final RegistryObject<Item> FISH_POLYMORPH_RUNE = ITEMS.register("fish_polymorph_rune",
+            () -> new FishPolymorphItem(new Item.Properties(), SpellColor.DARK_PURPLE, 5, 0, 0, 64, 1,
+                    UUID.fromString("b2bc1fd5-a121-42cf-b7cb-d29c61e3211c"), EntityType.COD));
 }

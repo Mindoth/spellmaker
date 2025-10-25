@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "spellmaker:item/rune_essence",
+    "layer1": "spellmaker:item/rune/fish_polymorph"
+  }
+}

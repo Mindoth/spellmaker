@@ -1,7 +1,10 @@
 package net.mindoth.spellmaker.mobeffect;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.item.rune.PolymorphRuneItem;
+import net.mindoth.spellmaker.mixin.EntityMixin;
 import net.mindoth.spellmaker.mixin.WalkAnimationStateMixin;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.minecraft.client.Minecraft;
@@ -19,12 +22,16 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -32,6 +39,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = SpellMaker.MOD_ID)
@@ -42,129 +51,156 @@ public class PolymorphEffect extends MobEffect {
 
     public static final String NBT_KEY_OLD_MOB = "sm_polymorphed_entity";
 
-    public static final AttributeModifier POLYMORPH_NAME_TAG_DISTANCE = new AttributeModifier(UUID.fromString("84527dc5-d3e5-4550-98ed-c8186c5d3089"),
-            "Polymorph Model", 0.0D, AttributeModifier.Operation.ADDITION);
+    public static EntityType getTypeFromUUID(UUID uuid) {
+        for ( Item item : ForgeRegistries.ITEMS.getValues() ) {
+            if ( item instanceof PolymorphRuneItem rune && Objects.equals(rune.getUUID().toString(), uuid.toString()) ) return rune.getEntityType();
+        }
+        return null;
+    }
 
-    public static final AttributeModifier POLYMORPH_SPEED_MODIFIER = new AttributeModifier(UUID.fromString("cb37c083-b435-4c89-9949-5c7f7823f62e"),
-            "Polymorph Speed", -0.05D, AttributeModifier.Operation.ADDITION);
+    public static PolymorphRuneItem getRuneFromUUID(UUID uuid) {
+        for ( Item item : ForgeRegistries.ITEMS.getValues() ) {
+            if ( item instanceof PolymorphRuneItem rune && Objects.equals(rune.getUUID().toString(), uuid.toString()) ) return rune;
+        }
+        return null;
+    }
 
-    @Override
-    public void addAttributeModifiers(LivingEntity living, AttributeMap map, int pAmplifier) {
-        if ( living.getPersistentData().contains(NBT_KEY_OLD_MOB) ) return;
-        if ( living instanceof Mob target ) {
-            if ( target.level() instanceof ServerLevel level && target.getType() != EntityType.SHEEP ) {
-                CompoundTag tag = new CompoundTag();
-                tag.putString("id", EntityType.getKey(target.getType()).toString());
-                target.saveWithoutId(tag);
-                Sheep sheep = target.convertTo(EntityType.SHEEP, false);
-                if ( target.hasEffect(ModEffects.POLYMORPH.get()) ) sheep.addEffect(target.getEffect(ModEffects.POLYMORPH.get()));
-                sheep.finalizeSpawn(level, level.getCurrentDifficultyAt(sheep.blockPosition()), MobSpawnType.CONVERSION, null, null);
-                sheep.getPersistentData().put(NBT_KEY_OLD_MOB, tag);
+    public static boolean isPolymorphed(AttributeInstance instance) {
+        for ( AttributeModifier modifier : instance.getModifiers() ) if ( getRuneFromUUID(modifier.getId()) != null ) return true;
+        return false;
+    }
+
+    public static void doPolymorph(LivingEntity living, AttributeModifier nameTagModifier) {
+        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        if ( nameTagDistance != null && !nameTagDistance.hasModifier(nameTagModifier) ) nameTagDistance.addPermanentModifier(nameTagModifier);
+        if ( living instanceof Mob target ) polymorphMob(target);
+        else if ( living instanceof Player player ) getRuneFromUUID(nameTagModifier.getId()).addStatModifiers(player);
+    }
+
+    private static void polymorphMob(Mob target) {
+        if ( target.getPersistentData().contains(NBT_KEY_OLD_MOB) || !(target.level() instanceof ServerLevel level) ) return;
+        AttributeInstance nameTagDistance = target.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        if ( nameTagDistance == null ) return;
+        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) {
+            if ( getTypeFromUUID(modifier.getId()) != null ) {
+                transformMob(target, level, getTypeFromUUID(modifier.getId()));
+                break;
             }
         }
-        else if ( living instanceof Player player ) {
-            AttributeInstance nameTagDistance = player.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
-            if ( nameTagDistance != null && !nameTagDistance.hasModifier(POLYMORPH_NAME_TAG_DISTANCE) ) {
-                nameTagDistance.addPermanentModifier(POLYMORPH_NAME_TAG_DISTANCE);
-            }
-            AttributeInstance speedModifier = player.getAttribute(Attributes.MOVEMENT_SPEED);
-            if ( speedModifier != null && !speedModifier.hasModifier(POLYMORPH_SPEED_MODIFIER) ) {
-                speedModifier.addPermanentModifier(POLYMORPH_SPEED_MODIFIER);
-                if ( player.isSprinting() ) player.setSprinting(false);
-            }
-        }
+    }
+
+    private static void transformMob(Mob target, ServerLevel level, EntityType entityType) {
+        CompoundTag tag = new CompoundTag();
+        tag.putString("id", EntityType.getKey(target.getType()).toString());
+        target.saveWithoutId(tag);
+        Mob mob = target.convertTo(entityType, false);
+        if ( mob == null ) return;
+        if ( target.hasEffect(ModEffects.POLYMORPH.get()) ) mob.addEffect(target.getEffect(ModEffects.POLYMORPH.get()));
+        ForgeEventFactory.onFinalizeSpawn(mob, level, level.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.CONVERSION, null, null);
+        mob.getPersistentData().put(NBT_KEY_OLD_MOB, tag);
     }
 
     @Override
     public void removeAttributeModifiers(LivingEntity living, AttributeMap map, int pAmplifier) {
-        if ( living instanceof Mob target ) {
-            if ( target.level() instanceof ServerLevel level && living.getPersistentData().contains(NBT_KEY_OLD_MOB) ) {
-                transformBack(target.getPersistentData().getCompound(NBT_KEY_OLD_MOB), level, living);
-            }
+        if ( living instanceof Mob mob ) {
+            if ( !living.getPersistentData().contains(NBT_KEY_OLD_MOB) || !(mob.level() instanceof ServerLevel level) ) return;
+            restoreMob(mob.getPersistentData().getCompound(NBT_KEY_OLD_MOB), level, mob);
         }
-        else if ( living instanceof Player player ) {
-            AttributeInstance nameTagDistance = player.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
-            if ( nameTagDistance != null && nameTagDistance.hasModifier(POLYMORPH_NAME_TAG_DISTANCE) ) {
-                nameTagDistance.removeModifier(POLYMORPH_NAME_TAG_DISTANCE);
-            }
-            AttributeInstance speedModifier = player.getAttribute(Attributes.MOVEMENT_SPEED);
-            if ( speedModifier != null && speedModifier.hasModifier(POLYMORPH_SPEED_MODIFIER) ) {
-                speedModifier.removeModifier(POLYMORPH_SPEED_MODIFIER);
-            }
+        else if ( living instanceof Player player ) removeModifiers(player);
+    }
+
+    public static void removeModifiers(LivingEntity living) {
+        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        if ( nameTagDistance != null ) {
+            List<AttributeModifier> nameTagModifierList = Lists.newArrayList();
+            for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( getRuneFromUUID(modifier.getId()) != null ) nameTagModifierList.add(modifier);
+            for ( AttributeModifier modifier : nameTagModifierList ) getRuneFromUUID(modifier.getId()).removeModifiers(living);
         }
     }
 
-    private boolean transformBack(CompoundTag tag, ServerLevel level, LivingEntity living) {
-        if ( tag.isEmpty() || !(living instanceof Mob oldMob) ) return false;
+    private void restoreMob(CompoundTag tag, ServerLevel level, LivingEntity living) {
+        if ( tag.isEmpty() || !(living instanceof Mob oldMob) ) return;
         ForgeRegistries.ENTITY_TYPES.getValue(EntityType.getKey(oldMob.getType()));
-        return EntityType.create(tag, level).map((entity -> {
+        EntityType.create(tag, level).map((entity -> {
             entity.setPos(oldMob.position());
             entity.setDeltaMovement(oldMob.getDeltaMovement());
-            if ( entity instanceof LivingEntity newLiving && newLiving.hasEffect(ModEffects.POLYMORPH.get()) ) {
-                newLiving.removeEffect(ModEffects.POLYMORPH.get());
+            if ( entity instanceof LivingEntity newLiving ) {
+                if ( newLiving.hasEffect(ModEffects.POLYMORPH.get()) ) newLiving.removeEffect(ModEffects.POLYMORPH.get());
+                removeModifiers(newLiving);
             }
             level.addFreshEntity(entity);
             oldMob.discard();
             return entity;
-        })).isPresent();
+        }));
     }
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public static void renderPrePolymorphedPlayer(RenderPlayerEvent.Pre event) {
+    public static void renderPolymorphedPlayer(RenderPlayerEvent.Pre event) {
         Player player = event.getEntity();
         AttributeInstance nameTagDistance = player.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
-        if ( nameTagDistance != null && nameTagDistance.hasModifier(POLYMORPH_NAME_TAG_DISTANCE) ) {
-            event.setCanceled(true);
-            final Sheep sheep = EntityType.SHEEP.create(player.level());
-            UUID sheepUUID = sheep.getUUID();
-            sheep.setUUID(player.getUUID());
-            syncEntityWithPlayer(sheep, player, event.getPartialTick());
-            sheep.setUUID(sheepUUID);
-            render(sheep, event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
+        if ( nameTagDistance == null ) return;
+        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) {
+            if ( getTypeFromUUID(modifier.getId()) != null && getTypeFromUUID(modifier.getId()).create(player.level()) instanceof LivingEntity living ) {
+                renderPolymorphModel(living, player, event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
+                event.setCanceled(true);
+                break;
+            }
         }
     }
 
-    private static void syncEntityWithPlayer(Sheep sheep, Player player, float partialTicks) {
-        sheep.yBodyRotO = player.yBodyRotO;
-        sheep.yBodyRot = player.yBodyRot;
-        sheep.tickCount = player.tickCount;
-        sheep.setXRot(player.getXRot());
-        sheep.setYRot(player.getYRot());
-        sheep.yHeadRot = player.yHeadRot;
-        sheep.yRotO = player.yRotO;
-        sheep.xRotO = player.xRotO;
-        sheep.yHeadRotO = player.yHeadRotO;
-        sheep.setInvisible(player.isInvisible());
-
-        sheep.setOldPosAndRot();
-
-        ((WalkAnimationStateMixin)sheep.walkAnimation).setPosition(player.walkAnimation.position());
-        sheep.walkAnimation.setSpeed(player.walkAnimation.speed());
-        ((WalkAnimationStateMixin)sheep.walkAnimation).setSpeedOld(((WalkAnimationStateMixin)player.walkAnimation).getSpeedOld());
-        sheep.setDeltaMovement(player.getDeltaMovement());
-
-        sheep.hurtTime = player.hurtTime;
-        sheep.deathTime = player.deathTime;
-
-        sheep.horizontalCollision = player.horizontalCollision;
-        sheep.verticalCollision = player.verticalCollision;
-        sheep.setOnGround(player.onGround());
-        //sheep.setCrouching(player.isCrouching());
-        sheep.setSwimming(player.isSwimming());
-        sheep.setSprinting(player.isSprinting());
-
-        sheep.swinging = player.swinging;
-        sheep.swingingArm = player.swingingArm;
-        sheep.swingTime = player.swingTime;
-
-        sheep.setPose(player.getPose());
+    private static void renderPolymorphModel(LivingEntity living, Player player, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light) {
+        UUID livingUUID = living.getUUID();
+        living.setUUID(player.getUUID());
+        syncEntityWithPlayer(living, player);
+        living.setUUID(livingUUID);
+        render(living, partialTicks, poseStack, buffer, light);
     }
 
-    private static void render(LivingEntity sheep, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light) {
+    private static void syncEntityWithPlayer(LivingEntity living, Player player) {
+        living.yBodyRotO = player.yBodyRotO;
+        living.yBodyRot = player.yBodyRot;
+
+        living.yHeadRotO = player.yHeadRotO;
+        living.yHeadRot = player.yHeadRot;
+
+        living.yRotO = player.yRotO;
+        living.setYRot(player.getYRot());
+
+        living.xRotO = player.xRotO;
+        living.setXRot(player.getXRot());
+
+        ((WalkAnimationStateMixin)living.walkAnimation).setPosition(player.walkAnimation.position());
+        living.walkAnimation.setSpeed(player.walkAnimation.speed());
+        ((WalkAnimationStateMixin)living.walkAnimation).setSpeedOld(((WalkAnimationStateMixin)player.walkAnimation).getSpeedOld());
+
+        ((EntityMixin)living).setWasTouchingWater(((EntityMixin)player).getWasTouchingWater());
+
+        living.setDeltaMovement(player.getDeltaMovement());
+
+        living.hurtTime = player.hurtTime;
+        living.deathTime = player.deathTime;
+        living.tickCount = player.tickCount;
+        living.setInvisible(player.isInvisible());
+
+        living.horizontalCollision = player.horizontalCollision;
+        living.verticalCollision = player.verticalCollision;
+        living.setOnGround(player.onGround());
+        //living.setCrouching(player.isCrouching());
+        living.setSwimming(player.isSwimming());
+        living.setSprinting(player.isSprinting());
+
+        living.swinging = player.swinging;
+        living.swingingArm = player.swingingArm;
+        living.swingTime = player.swingTime;
+
+        living.setPose(player.getPose());
+    }
+
+    private static void render(LivingEntity living, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light) {
         Minecraft instance = Minecraft.getInstance();
-        float yaw = Mth.lerp(partialTicks, sheep.yRotO, sheep.getYRot());
-        instance.getEntityRenderDispatcher().getRenderer(sheep).render(sheep, yaw, partialTicks, poseStack, buffer, light);
+        float yaw = Mth.lerp(partialTicks, living.yRotO, living.getYRot());
+        instance.getEntityRenderDispatcher().getRenderer(living).render(living, yaw, partialTicks, poseStack, buffer, light);
     }
 
     @SubscribeEvent
@@ -185,5 +221,44 @@ public class PolymorphEffect extends MobEffect {
     public static void polymorphBackWhenAttacked(final LivingHurtEvent event) {
         LivingEntity living = event.getEntity();
         if ( living.hasEffect(ModEffects.POLYMORPH.get()) ) living.removeEffect(ModEffects.POLYMORPH.get());
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void counterFovChangeWhilePolymorphed(ComputeFovModifierEvent event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        Player player = minecraft.player;
+        if ( player == null ) return;
+        AttributeInstance nameTagDistance = player.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        if ( nameTagDistance == null || !PolymorphEffect.isPolymorphed(nameTagDistance) ) return;
+        double amount = 0;
+        for ( AttributeInstance instance : player.getAttributes().getSyncableAttributes() ) {
+            for ( AttributeModifier modifier : instance.getModifiers() ) {
+                if ( modifier.getName().equals("Polymorph Speed") || modifier.getName().equals("Polymorph Swim Speed") ) {
+                    amount += modifier.getAmount();
+                }
+            }
+        }
+        if ( amount != 0 ) event.setNewFovModifier(newFovCalc(player, amount));
+    }
+
+    private static float newFovCalc(Player player, double amount) {
+        System.out.println("AMOUNT: " + amount);
+        float f = 1.0F;
+        if ( player.getAbilities().flying ) f *= 1.1F;
+        f *= ((float)(player.getAttributeValue(Attributes.MOVEMENT_SPEED) - amount) / player.getAbilities().getWalkingSpeed() + 1.0F) / 2.0F;
+        if ( player.getAbilities().getWalkingSpeed() == 0.0F || Float.isNaN(f) || Float.isInfinite(f) ) f = 1.0F;
+        ItemStack itemstack = player.getUseItem();
+        if ( player.isUsingItem() ) {
+            if ( itemstack.is(Items.BOW) ) {
+                int i = player.getTicksUsingItem();
+                float f1 = (float)i / 20.0F;
+                if ( f1 > 1.0F ) f1 = 1.0F;
+                else f1 *= f1;
+                f *= 1.0F - f1 * 0.15F;
+            }
+            else if ( Minecraft.getInstance().options.getCameraType().isFirstPerson() && player.isScoping() ) return 0.1F;
+        }
+        return f;
     }
 }

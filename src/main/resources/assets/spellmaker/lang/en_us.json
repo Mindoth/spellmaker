@@ -28,7 +28,8 @@
   "item.spellmaker.frost_rune": "Frost Rune",
   "item.spellmaker.shock_rune": "Shock Rune",
   "item.spellmaker.sleep_rune": "Sleep Rune",
-  "item.spellmaker.polymorph_rune": "Polymorph Rune",
+  "item.spellmaker.sheep_polymorph_rune": "Sheep Polymorph Rune",
+  "item.spellmaker.fish_polymorph_rune": "Fish Polymorph Rune",
 
 
   "spellform.spellmaker.caster_only": "Caster only",
