@@ -6,7 +6,10 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.rune.PolymorphRuneItem;
 import net.mindoth.spellmaker.mixin.EntityMixin;
 import net.mindoth.spellmaker.mixin.WalkAnimationStateMixin;
+import net.mindoth.spellmaker.network.ModNetwork;
+import net.mindoth.spellmaker.network.PacketOpenSpellBook;
 import net.mindoth.spellmaker.registries.ModEffects;
+import net.mindoth.spellmaker.registries.PacketSyncDimensions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
@@ -14,10 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -26,12 +26,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -65,8 +67,11 @@ public class PolymorphEffect extends MobEffect {
         return null;
     }
 
-    public static boolean isPolymorphed(AttributeInstance instance) {
-        for ( AttributeModifier modifier : instance.getModifiers() ) if ( getRuneFromUUID(modifier.getId()) != null ) return true;
+    public static boolean isPolymorphed(LivingEntity living) {
+        if ( living.getAttributes() == null ) return false;
+        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        if ( nameTagDistance == null ) return false;
+        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( getRuneFromUUID(modifier.getId()) != null ) return true;
         return false;
     }
 
@@ -74,7 +79,38 @@ public class PolymorphEffect extends MobEffect {
         AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
         if ( nameTagDistance != null && !nameTagDistance.hasModifier(nameTagModifier) ) nameTagDistance.addPermanentModifier(nameTagModifier);
         if ( living instanceof Mob target ) polymorphMob(target);
-        else if ( living instanceof Player player ) getRuneFromUUID(nameTagModifier.getId()).addStatModifiers(player);
+        else if ( living instanceof Player player ) polymorphPlayer(player, nameTagModifier);
+    }
+
+    private static void polymorphPlayer(Player player, AttributeModifier nameTagModifier) {
+        PolymorphRuneItem rune = getRuneFromUUID(nameTagModifier.getId());
+        if ( rune != null ) {
+            syncDimensions(player);
+            rune.addStatModifiers(player);
+        }
+    }
+
+    //TODO: Refresh dimensions on client. Figure out where to refresh the damn dimensions client-side
+    private static void syncDimensions(Player player) {
+        player.refreshDimensions();
+        //ModNetwork.sendToPlayersTrackingEntity(new PacketSyncDimensions(player.getId()), player, true);
+    }
+
+    /*@OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void test(TickEvent.ClientTickEvent event) {
+        Player player = Minecraft.getInstance().player;
+        if ( player != null ) player.refreshDimensions();
+    }*/
+
+    public static EntityDimensions getPolymorphDimensions(LivingEntity living) {
+        if ( living.getAttributes() == null ) return null;
+        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        if ( nameTagDistance == null ) return null;
+        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( PolymorphEffect.getTypeFromUUID(modifier.getId()) != null ) {
+            return PolymorphEffect.getTypeFromUUID(modifier.getId()).getDimensions();
+        }
+        return null;
     }
 
     private static void polymorphMob(Mob target) {
@@ -106,7 +142,10 @@ public class PolymorphEffect extends MobEffect {
             if ( !living.getPersistentData().contains(NBT_KEY_OLD_MOB) || !(mob.level() instanceof ServerLevel level) ) return;
             restoreMob(mob.getPersistentData().getCompound(NBT_KEY_OLD_MOB), level, mob);
         }
-        else if ( living instanceof Player player ) removeModifiers(player);
+        else if ( living instanceof Player player ) {
+            removeModifiers(player);
+            syncDimensions(player);
+        }
     }
 
     public static void removeModifiers(LivingEntity living) {
@@ -194,7 +233,10 @@ public class PolymorphEffect extends MobEffect {
         living.swingingArm = player.swingingArm;
         living.swingTime = player.swingTime;
 
+        /*Pose pose = living.getPose();
         living.setPose(player.getPose());
+        if ( pose != living.getPose() ) living.refreshDimensions();*/
+        //player.refreshDimensions();
     }
 
     private static void render(LivingEntity living, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light) {
@@ -229,21 +271,17 @@ public class PolymorphEffect extends MobEffect {
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
         if ( player == null ) return;
-        AttributeInstance nameTagDistance = player.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
-        if ( nameTagDistance == null || !PolymorphEffect.isPolymorphed(nameTagDistance) ) return;
+        if ( !PolymorphEffect.isPolymorphed(player) ) return;
         double amount = 0;
         for ( AttributeInstance instance : player.getAttributes().getSyncableAttributes() ) {
             for ( AttributeModifier modifier : instance.getModifiers() ) {
-                if ( modifier.getName().equals("Polymorph Speed") || modifier.getName().equals("Polymorph Swim Speed") ) {
-                    amount += modifier.getAmount();
-                }
+                if ( Objects.equals(modifier.getId().toString(), PolymorphRuneItem.POLYMORPH_SPEED_MODIFIER_UUID.toString()) ) amount += modifier.getAmount();
             }
         }
         if ( amount != 0 ) event.setNewFovModifier(newFovCalc(player, amount));
     }
 
     private static float newFovCalc(Player player, double amount) {
-        System.out.println("AMOUNT: " + amount);
         float f = 1.0F;
         if ( player.getAbilities().flying ) f *= 1.1F;
         f *= ((float)(player.getAttributeValue(Attributes.MOVEMENT_SPEED) - amount) / player.getAbilities().getWalkingSpeed() + 1.0F) / 2.0F;

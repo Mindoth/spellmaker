@@ -1,6 +1,7 @@
 package net.mindoth.spellmaker.network;
 
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.registries.PacketSyncDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -66,7 +67,7 @@ public class ModNetwork {
                 .add();
 
 
-        //Spell Making
+        //Spell making
         net.messageBuilder(PacketEditSpellForm.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(PacketEditSpellForm::new)
                 .encoder(PacketEditSpellForm::encode)
@@ -90,6 +91,13 @@ public class ModNetwork {
                 .encoder(PacketDumpSpell::encode)
                 .consumerMainThread(PacketDumpSpell::handle)
                 .add();
+
+        //Sync
+        net.messageBuilder(PacketSyncDimensions.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(PacketSyncDimensions::new)
+                .encoder(PacketSyncDimensions::encode)
+                .consumerMainThread(PacketSyncDimensions::handle)
+                .add();
     }
 
     public static <MSG> void sendToServer(MSG message) {
@@ -106,8 +114,9 @@ public class ModNetwork {
 
     public static <MSG> void sendToPlayersTrackingEntity(MSG message, Entity entity, boolean sendToSource) {
         if ( entity != null ) {
-            CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
-            if ( sendToSource && entity instanceof ServerPlayer serverPlayer ) sendToPlayer(message, serverPlayer);
+            if ( sendToSource ) CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
+            else CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), message);
+            //if ( sendToSource && entity instanceof ServerPlayer serverPlayer ) sendToPlayer(message, serverPlayer);
         }
     }
 

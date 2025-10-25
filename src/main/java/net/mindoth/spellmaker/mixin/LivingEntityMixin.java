@@ -15,19 +15,19 @@ public class LivingEntityMixin {
 
     @Inject(method = "isImmobile", at = @At(value = "HEAD"), cancellable = true)
     public void stopMovementWhileSleeping(CallbackInfoReturnable<Boolean> callback) {
-        LivingEntity living = (LivingEntity)(Object) this;
+        LivingEntity living = (LivingEntity)(Object)this;
         if ( AbstractStunEffect.isStunned(living) && living instanceof Mob ) callback.setReturnValue(true);
     }
 
     @Inject(method = "checkBedExists", at = @At(value = "HEAD"), cancellable = true)
     public void allowSleepWithMobEffect(CallbackInfoReturnable<Boolean> callback) {
-        LivingEntity living = (LivingEntity)(Object) this;
+        LivingEntity living = (LivingEntity)(Object)this;
         if ( living.hasEffect(ModEffects.SLEEP.get()) ) callback.setReturnValue(true);
     }
 
     @Inject(method = "stopSleeping", at = @At(value = "HEAD"), cancellable = true)
     public void stopWakingUpWhileSleeping(CallbackInfo callback) {
-        LivingEntity living = (LivingEntity)(Object) this;
+        LivingEntity living = (LivingEntity)(Object)this;
         if ( living.hasEffect(ModEffects.SLEEP.get()) ) callback.cancel();
     }
 }

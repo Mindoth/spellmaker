@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 public class PacketOpenSpellBook {
 
     public ItemStack book;
-    int page;
+    public int page;
 
     public PacketOpenSpellBook(ItemStack book, int page) {
         this.book = book;

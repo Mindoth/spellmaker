@@ -17,6 +17,7 @@ import net.minecraftforge.common.ForgeMod;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class PolymorphRuneItem extends RuneItem {
@@ -53,8 +54,9 @@ public class PolymorphRuneItem extends RuneItem {
         addSwimSpeedModifier(living);
     }
 
+    public static final UUID POLYMORPH_SPEED_MODIFIER_UUID = UUID.fromString("0ca369c9-8322-4247-a63d-15a464e0f889");
     protected AttributeModifier getSpeedModifier() {
-        return new AttributeModifier(getUUID(), "Polymorph Speed", 0.0D, AttributeModifier.Operation.ADDITION);
+        return new AttributeModifier(POLYMORPH_SPEED_MODIFIER_UUID, "Polymorph Speed", 0.0D, AttributeModifier.Operation.ADDITION);
     }
 
     private void addSpeedModifier(LivingEntity living) {
@@ -80,7 +82,11 @@ public class PolymorphRuneItem extends RuneItem {
         HashMap<AttributeInstance, List<AttributeModifier>> map = new HashMap<>();
         for ( AttributeInstance instance : living.getAttributes().getSyncableAttributes() ) {
             List<AttributeModifier> list = Lists.newArrayList();
-            for ( AttributeModifier modifier : instance.getModifiers() ) if ( PolymorphEffect.getRuneFromUUID(modifier.getId()) != null ) list.add(modifier);
+            for ( AttributeModifier modifier : instance.getModifiers() ) {
+                if ( PolymorphEffect.getRuneFromUUID(modifier.getId()) != null || Objects.equals(modifier.getId().toString(), POLYMORPH_SPEED_MODIFIER_UUID.toString()) ) {
+                    list.add(modifier);
+                }
+            }
             if ( !list.isEmpty() ) map.put(instance, list);
         }
         for ( AttributeInstance instance : map.keySet() ) {

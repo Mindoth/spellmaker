@@ -13,6 +13,6 @@ public class SheepPolymorphRuneItem extends PolymorphRuneItem {
 
     @Override
     protected AttributeModifier getSpeedModifier() {
-        return new AttributeModifier(getUUID(), "Polymorph Speed", -0.05D, AttributeModifier.Operation.ADDITION);
+        return new AttributeModifier(POLYMORPH_SPEED_MODIFIER_UUID, "Polymorph Speed", -0.05D, AttributeModifier.Operation.ADDITION);
     }
 }

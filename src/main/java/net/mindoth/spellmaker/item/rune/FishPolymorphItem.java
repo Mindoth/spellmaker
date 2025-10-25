@@ -13,11 +13,11 @@ public class FishPolymorphItem extends PolymorphRuneItem {
 
     @Override
     protected AttributeModifier getSpeedModifier() {
-        return new AttributeModifier(getUUID(), "Polymorph Speed", -10.0D, AttributeModifier.Operation.ADDITION);
+        return new AttributeModifier(POLYMORPH_SPEED_MODIFIER_UUID, "Polymorph Speed", -0.1D, AttributeModifier.Operation.ADDITION);
     }
 
     @Override
     protected AttributeModifier getSwimSpeedModifier() {
-        return new AttributeModifier(getUUID(), "Polymorph Swim Speed", 4.0D, AttributeModifier.Operation.MULTIPLY_BASE);
+        return new AttributeModifier(getUUID(), "Polymorph Swim Speed", 5.0D, AttributeModifier.Operation.ADDITION);
     }
 }
