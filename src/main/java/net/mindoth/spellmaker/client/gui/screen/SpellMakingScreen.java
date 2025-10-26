@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -30,7 +31,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: Maybe show casting cost while editing spell?
 @OnlyIn(Dist.CLIENT)
 public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> implements ContainerListener {
 
@@ -375,6 +375,13 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                 if ( !slot.isOpen ) graphics.blit(TEXTURE, xPos, yPos, u, 0, 16, 16, 256, 256);
                 off++;
             }
+        }
+        //Casting cost
+        if ( this.menu.isReadyToMake() ) {
+            ItemStack scroll = this.menu.assemble(this.menu.getCraftSlots());
+            int cost = ParchmentItem.calculateSpellCost(this.menu.getSpellForm(), DataHelper.createMapFromTag(scroll.getTag()));
+            Component component = Component.literal(String.valueOf(cost)).setStyle(Style.EMPTY.withBold(true));
+            graphics.drawString(this.font, component, x + 16 - this.font.width(String.valueOf(cost)) / 2, y + 66, 5804213, false);
         }
     }
 
