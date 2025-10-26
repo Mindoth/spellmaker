@@ -4,6 +4,7 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.playermagic.ClientMagickData;
 import net.mindoth.spellmaker.item.StaffItem;
 import net.mindoth.spellmaker.item.armor.ModArmorItem;
+import net.mindoth.spellmaker.item.rune.FishPolymorphItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -31,7 +32,7 @@ public class HudMana implements IGuiOverlay {
         String mana = (int)currentMana + "/" + (int)maxMana;
         int posX = (MINECRAFT.getWindow().getGuiScaledWidth() / 2) + 10;
         int posY = MINECRAFT.getWindow().getGuiScaledHeight() - 49;
-        if ( player.getAirSupply() != player.getMaxAirSupply() ) posY -= 10;
+        if ( player.getAirSupply() != player.getMaxAirSupply() || FishPolymorphItem.isFish(player) ) posY -= 10;
         double manaPercentage = currentMana / maxMana;
         int barPercentage = (int)(manaPercentage * 79.0D);
         int barWidth = Math.max(0, Math.min(barPercentage, 79));

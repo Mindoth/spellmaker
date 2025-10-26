@@ -26,5 +26,6 @@ public class PacketDumpSpell {
                 if ( player.containerMenu instanceof SpellMakingMenu menu ) menu.processDumping();
             }
         });
+        contextSupplier.get().setPacketHandled(true);
     }
 }

@@ -32,5 +32,6 @@ public class PacketEditSpellForm {
                 if ( player.containerMenu instanceof SpellMakingMenu menu ) menu.processSpellFormEditing(this.tag);
             }
         });
+        contextSupplier.get().setPacketHandled(true);
     }
 }

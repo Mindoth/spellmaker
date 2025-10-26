@@ -31,5 +31,6 @@ public class PacketMakeSpell {
                 if ( player.containerMenu instanceof SpellMakingMenu ) ((SpellMakingMenu)player.containerMenu).processMaking(this.name);
             }
         });
+        contextSupplier.get().setPacketHandled(true);
     }
 }

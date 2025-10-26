@@ -10,10 +10,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(Player.class)
+//@Mixin(Player.class)
 public class PlayerMixin {
 
-    @Inject(method = "getDimensions", at = @At(value = "RETURN"), cancellable = true)
+    /*@Inject(method = "getDimensions", at = @At(value = "RETURN"), cancellable = true)
     public void getSize(Pose pose, CallbackInfoReturnable<EntityDimensions> callback) {
         LivingEntity living = (LivingEntity)(Object)this;
         if ( PolymorphEffect.isPolymorphed(living) && PolymorphEffect.getPolymorphDimensions(living) != null ) {
@@ -27,5 +27,5 @@ public class PlayerMixin {
         if ( PolymorphEffect.isPolymorphed(living) && PolymorphEffect.getPolymorphDimensions(living) != null ) {
             callback.setReturnValue(PolymorphEffect.getPolymorphDimensions(living).height * 0.85F);
         }
-    }
+    }*/
 }

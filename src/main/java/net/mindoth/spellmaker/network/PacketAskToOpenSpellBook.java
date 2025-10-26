@@ -29,5 +29,6 @@ public class PacketAskToOpenSpellBook {
                 SpellBookItem.openSpellBook(player, book);
             }
         });
+        contextSupplier.get().setPacketHandled(true);
     }
 }

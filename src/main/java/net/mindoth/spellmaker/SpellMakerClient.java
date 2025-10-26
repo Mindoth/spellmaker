@@ -93,7 +93,7 @@ public class SpellMakerClient {
 
         @SubscribeEvent
         public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {
-            event.registerAbove(VanillaGuiOverlay.EXPERIENCE_BAR.id(), "mana_hud", HudMana.OVERLAY);
+            event.registerAbove(VanillaGuiOverlay.AIR_LEVEL.id(), "mana_hud", HudMana.OVERLAY);
         }
 
         @SubscribeEvent

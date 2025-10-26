@@ -1,4 +1,4 @@
-package net.mindoth.spellmaker.registries;
+package net.mindoth.spellmaker.network;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -9,15 +9,15 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PacketSyncDimensions {
+public class PacketSyncSize {
 
     public int id;
 
-    public PacketSyncDimensions(int id) {
+    public PacketSyncSize(int id) {
         this.id = id;
     }
 
-    public PacketSyncDimensions(FriendlyByteBuf buf) {
+    public PacketSyncSize(FriendlyByteBuf buf) {
         this.id = buf.readInt();
     }
 
@@ -30,9 +30,7 @@ public class PacketSyncDimensions {
             ClientLevel level = Minecraft.getInstance().level;
             if ( level != null ) {
                 Entity entity = level.getEntity(this.id);
-                if ( entity instanceof LivingEntity living ) {
-                    living.refreshDimensions();
-                }
+                if ( entity instanceof LivingEntity living ) living.refreshDimensions();
             }
         });
         contextSupplier.get().setPacketHandled(true);

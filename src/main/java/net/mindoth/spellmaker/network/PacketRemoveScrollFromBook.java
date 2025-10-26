@@ -67,5 +67,6 @@ public class PacketRemoveScrollFromBook {
                 }
             }
         });
+        contextSupplier.get().setPacketHandled(true);
     }
 }

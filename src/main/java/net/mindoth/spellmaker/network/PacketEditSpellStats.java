@@ -44,5 +44,6 @@ public class PacketEditSpellStats {
                 if ( player.containerMenu instanceof SpellMakingMenu menu ) menu.processSpellStatEditing(this.flag, this.list);
             }
         });
+        contextSupplier.get().setPacketHandled(true);
     }
 }
