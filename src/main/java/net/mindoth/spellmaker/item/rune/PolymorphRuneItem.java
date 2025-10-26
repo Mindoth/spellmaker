@@ -9,6 +9,7 @@ import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.network.PacketSyncSize;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.util.SpellColor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -18,6 +19,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -63,8 +66,6 @@ public class PolymorphRuneItem extends RuneItem {
     public void addStatModifiers(LivingEntity living) {
         addSpeedModifier(living);
         addSwimSpeedModifier(living);
-
-        syncDimensions(living);
     }
 
     public static final UUID POLYMORPH_SPEED_MODIFIER_UUID = UUID.fromString("0ca369c9-8322-4247-a63d-15a464e0f889");
@@ -107,30 +108,49 @@ public class PolymorphRuneItem extends RuneItem {
                 for ( AttributeModifier modifier : map.get(instance) ) instance.removeModifier(modifier);
             }
         }
-        syncDimensions(living);
     }
 
-    private static final AttributeModifier SYNC_POLYMORPH_SIZE = new AttributeModifier(UUID.fromString("9eb86aa6-343f-430c-8296-1a5fe6b400fa"),
-            "Polymorph Size", 0.0D, AttributeModifier.Operation.ADDITION);
+    public static final AttributeModifier SYNC_POLYMORPH_SIZE_CLIENT = new AttributeModifier(UUID.fromString("9eb86aa6-343f-430c-8296-1a5fe6b400fa"),
+            "Polymorph Size Client", 0.0D, AttributeModifier.Operation.ADDITION);
 
-    private static void syncDimensions(LivingEntity living) {
+    public static final AttributeModifier SYNC_POLYMORPH_SIZE_SERVER = new AttributeModifier(UUID.fromString("380f5e37-276f-43c3-9646-19ffd6b41fb3"),
+            "Polymorph Size Server", 0.0D, AttributeModifier.Operation.ADDITION);
+
+    public static void syncDimensions(LivingEntity living) {
         if ( !(living instanceof Player player) ) return;
+        player.refreshDimensions();
         AttributeInstance nameTagDistance = player.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
         if ( nameTagDistance == null ) return;
-        if ( !nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE) ) nameTagDistance.addPermanentModifier(SYNC_POLYMORPH_SIZE);
+        if ( !nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_CLIENT) ) nameTagDistance.addPermanentModifier(SYNC_POLYMORPH_SIZE_CLIENT);
+        if ( !nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_SERVER) ) nameTagDistance.addPermanentModifier(SYNC_POLYMORPH_SIZE_SERVER);
+        ModNetwork.sendToPlayersTrackingEntity(new PacketSyncSize(player.getId()), player, true);
     }
 
     @SubscribeEvent
-    public static void syncPolymorphSize(TickEvent.PlayerTickEvent event) {
-        if ( event.side == LogicalSide.CLIENT || event.phase != TickEvent.Phase.START ) return;
+    public static void setSyncPolymorphSizeServer(TickEvent.PlayerTickEvent event) {
+        if ( event.side != LogicalSide.SERVER || event.phase != TickEvent.Phase.START ) return;
         Player player = event.player;
         if ( player == null ) return;
         AttributeInstance nameTagDistance = player.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
         if ( nameTagDistance == null ) return;
-        if ( nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE) ) {
-            nameTagDistance.removeModifier(SYNC_POLYMORPH_SIZE);
+        if ( nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_SERVER) ) {
+            nameTagDistance.removeModifier(SYNC_POLYMORPH_SIZE_SERVER);
             player.refreshDimensions();
-            ModNetwork.sendToPlayersTrackingEntity(new PacketSyncSize(player.getId()), player, true);
+            ModNetwork.sendToPlayersTrackingEntity(new PacketSyncSize(player.getId()), player);
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void syncPolymorphSizeClient(TickEvent.ClientTickEvent event) {
+        if ( event.side != LogicalSide.CLIENT || event.phase != TickEvent.Phase.START ) return;
+        Player player = Minecraft.getInstance().player;
+        if ( player == null ) return;
+        AttributeInstance nameTagDistance = player.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        if ( nameTagDistance == null ) return;
+        if ( nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_CLIENT) ) {
+            nameTagDistance.removeModifier(SYNC_POLYMORPH_SIZE_CLIENT);
+            player.refreshDimensions();
         }
     }
 
