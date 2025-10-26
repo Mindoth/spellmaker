@@ -7,6 +7,7 @@ import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.network.PacketRemoveScrollFromBook;
 import net.mindoth.spellmaker.network.PacketUpdateBookData;
+import net.mindoth.spellmaker.util.DataHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -350,10 +351,17 @@ public class SpellBookScreen extends ModScreen {
                         }
                     }
 
-                    renderItemWithDecorations(graphics, stack, xPos, yPos);
-                    if ( this.slotButtonList.get(i).isHovered() ) {
-                        graphics.fill(RenderType.guiOverlay(), xPos, yPos, xPos + 16, yPos + 16, Integer.MAX_VALUE);
-                        if ( stack.getItem() instanceof ParchmentItem ) graphics.renderTooltip(this.font, stack, mouseX, mouseY);
+                    if ( stack.getItem() instanceof ParchmentItem ) {
+                        if ( this.slotButtonList.get(i).isHovered() ) {
+                            renderItemWithDecorations(graphics, stack, xPos, yPos);
+                            graphics.fill(RenderType.guiOverlay(), xPos, yPos, xPos + 16, yPos + 16, Integer.MAX_VALUE);
+                            graphics.renderTooltip(this.font, stack, mouseX, mouseY);
+                        }
+                        else {
+                            ResourceLocation icon = new ResourceLocation(SpellMaker.MOD_ID,
+                                    "textures/gui/spellform/" + DataHelper.getFormFromNbt(stack.getTag()).getName() + ".png");
+                            graphics.blit(icon, xPos, yPos, 0, 0, 16, 16, 16, 16);
+                        }
                     }
 
                     //Swap Arrows

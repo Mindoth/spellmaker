@@ -7,6 +7,7 @@ import net.mindoth.spellmaker.item.RuneItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.SpellForm;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -20,12 +21,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Random;
 
 public class StaffItem extends Item {
     public StaffItem(Properties pProperties) {
@@ -63,6 +64,7 @@ public class StaffItem extends Item {
                             addItemDamage(staff, 1, player);
                             ModCapabilities.changeMana(player, -cost);
                         }
+                        playCastingSound(player);
                     }
                     else if ( !player.isCreative() ) {
                         handleCooldowns(player, staff, 20);
@@ -101,20 +103,29 @@ public class StaffItem extends Item {
 
     private static void addWhiffParticles(Entity caster) {
         if ( !caster.level().isClientSide && caster.level() instanceof ServerLevel level ) {
-            Vec3 start = caster.getEyePosition().add(caster.getLookAngle().multiply(0.5D, 0.5D, 0.5D));
-            Vec3 dir = caster.getLookAngle().multiply(2, 2, 2);
+            Vec3 start = caster.getEyePosition().add(caster.getLookAngle().multiply(1.0D, 1.0D, 1.0D));
+            Vec3 dir = caster.getLookAngle();
             for ( int i = 0; i < 6; i++ ) {
-                double variable = 0.5D;
-                double randX = new Random().nextDouble(variable - -variable) + -variable;
-                double randY = new Random().nextDouble(variable - -variable) + -variable;
-                double randZ = new Random().nextDouble(variable - -variable) + -variable;
-                level.sendParticles(ParticleTypes.ASH, start.x, start.y, start.z, 0, dir.x + randX, dir.y + randY, dir.z + randZ, 0.1D);
+                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState()),
+                        start.x, start.y, start.z, 0, dir.x, dir.y, dir.z, 0);
             }
         }
     }
 
     private static void playWhiffSound(Entity caster) {
-        if ( caster instanceof Player player ) player.playNotifySound(SoundEvents.NOTE_BLOCK_SNARE.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
+        if ( caster instanceof Player player && !player.level().isClientSide && player.level() instanceof ServerLevel level ) {
+            player.playNotifySound(SoundEvents.NOTE_BLOCK_SNARE.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
+            level.playSound(player, player.getOnPos(), SoundEvents.NOTE_BLOCK_SNARE.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
+        }
+    }
+
+    private static void playCastingSound(Entity caster) {
+        if ( caster instanceof Player player && !player.level().isClientSide && player.level() instanceof ServerLevel level ) {
+            player.playNotifySound(SoundEvents.ENDER_PEARL_THROW, SoundSource.PLAYERS, 0.5F, 1.0F);
+            level.playSound(player, player.getOnPos(), SoundEvents.ENDER_PEARL_THROW, SoundSource.PLAYERS, 0.5F, 1.0F);
+            player.playNotifySound(SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.5F, 2.0F);
+            level.playSound(player, player.getOnPos(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.5F, 2.0F);
+        }
     }
 
     private static void addCastingCooldown(Entity entity, Item item, int cooldown) {

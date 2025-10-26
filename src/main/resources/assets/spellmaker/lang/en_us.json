@@ -54,5 +54,5 @@
   "tooltip.spellmaker.magnitude": "Magnitude",
   "tooltip.spellmaker.duration": "Duration",
 
-  "attribute.ancientmagicks.mana_max": "\u00A79Magick\u00A7r"
+  "attribute.spellmaker.mana_max": "\u00A79Magick\u00A7r"
 }

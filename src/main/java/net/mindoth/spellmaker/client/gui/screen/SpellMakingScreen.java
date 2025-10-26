@@ -297,9 +297,11 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
 
         //Spell Form icon rendering
         if ( this.menu.isReadyToMake() ) {
+            ResourceLocation iconBg = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spellform/icon_background.png");
             ResourceLocation icon = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spellform/" + this.menu.getSpellForm().getName() + ".png");
             int xIcon = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
             int yIcon = y + SPELL_FORM_BUTTON_OFFSET_Y - 2;
+            graphics.blit(iconBg, xIcon, yIcon, 0, 0, 16, 16, 16, 16);
             graphics.blit(icon, xIcon, yIcon, 0, 0, 16, 16, 16, 16);
             Component name = Component.translatable("spellform.spellmaker." + this.menu.getSpellForm().getName());
             if ( mouseX >= xIcon && mouseX <= xIcon + 16 && mouseY >= yIcon && mouseY <= yIcon + 16 ) {

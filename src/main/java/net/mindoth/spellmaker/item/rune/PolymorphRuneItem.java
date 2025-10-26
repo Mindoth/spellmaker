@@ -54,7 +54,7 @@ public class PolymorphRuneItem extends RuneItem {
             if ( !entity.isAttackable() || !entity.isAlive() || !(entity instanceof LivingEntity living) ) return;
             int duration = stats.get(1);
             int polymorphTicks = duration * 20;
-            if ( !living.hasEffect(ModEffects.POLYMORPH.get()) && living.addEffect(new MobEffectInstance(ModEffects.POLYMORPH.get(), polymorphTicks, 0, false, false)) ) {
+            if ( living.addEffect(new MobEffectInstance(ModEffects.POLYMORPH.get(), polymorphTicks, 0, false, false)) ) {
                 PolymorphEffect.doPolymorph(living, new AttributeModifier(getUUID(), "Polymorph", 0.0D, AttributeModifier.Operation.ADDITION));
             }
         }
