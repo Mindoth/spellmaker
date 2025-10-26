@@ -39,8 +39,9 @@ public class SpellBookScreen extends ModScreen {
     private List<List<ItemStack>> pageList;
     private int spreadNumber;
     private List<Button> slotButtonList = Lists.newArrayList();
-    private final int leftButtonOffsetX = -114 + 5;
-    private final int rightButtonOffsetX = 20 - 6;
+    private final int yOffset = 8;
+    private final int leftButtonOffsetX = -114 + 6;
+    private final int rightButtonOffsetX = 20 - 8;
     private final int squareSpacingX = 26;
     private final int squareSpacingY = 34;
     private List<Button> selectButtonList = Lists.newArrayList();
@@ -128,7 +129,7 @@ public class SpellBookScreen extends ModScreen {
             }
 
             int xPos = isRightPage ? x + (column * this.squareSpacingX) + this.rightButtonOffsetX : x + (column * this.squareSpacingX) + this.leftButtonOffsetX;
-            int yPos = y - 74 + (row * this.squareSpacingY);
+            int yPos = y - 74 + (row * this.squareSpacingY) + this.yOffset;
 
             buildSlotButton(xPos - 1, yPos - 1);
 
@@ -157,8 +158,8 @@ public class SpellBookScreen extends ModScreen {
         this.slotButtonList.add(button);
         buildSelectButton(xPos, yPos);
         if ( (this.slotButtonList.size() - 1) % SpellBookItem.maxColumns == 0 ) {
-            buildUpSwapButton(xPos, yPos, button);
-            buildDownSwapButton(xPos, yPos + 11, button);
+            buildUpSwapButton(xPos + 1, yPos + 1, button);
+            buildDownSwapButton(xPos + 1, yPos + 12, button);
         }
     }
 
@@ -215,7 +216,7 @@ public class SpellBookScreen extends ModScreen {
         if ( this.upSwapButtonList.size() >= SpellBookItem.maxRows ) xPos += this.rightSwapButtonOffsetX;
         else xPos -= this.leftSwapButtonOffsetX;
         Button button = addRenderableWidget(Button.builder(Component.literal(""), this::handleSwapButton)
-                .bounds(xPos - 1, yPos - 1, 13, 9)
+                .bounds(xPos - 1, yPos - 1, 11, 7)
                 .build());
         this.upSwapButtonList.add(button);
         this.swapButtonMap.put(button, slotButton);
@@ -225,7 +226,7 @@ public class SpellBookScreen extends ModScreen {
         if ( this.downSwapButtonList.size() >= SpellBookItem.maxRows ) xPos += this.rightSwapButtonOffsetX;
         else xPos -= this.leftSwapButtonOffsetX;
         Button button = addRenderableWidget(Button.builder(Component.literal(""), this::handleSwapButton)
-                .bounds(xPos - 1, yPos - 1, 13, 9)
+                .bounds(xPos - 1, yPos - 1, 11, 7)
                 .build());
         this.downSwapButtonList.add(button);
         this.swapButtonMap.put(button, slotButton);
@@ -326,8 +327,8 @@ public class SpellBookScreen extends ModScreen {
                         }
                     }
 
-                    int xPos = isRightPage ? x + (column * this.squareSpacingX) + this.rightButtonOffsetX - 1 : x + (column * this.squareSpacingX) + this.leftButtonOffsetX;
-                    int yPos = y - 74 + (row * this.squareSpacingY);
+                    int xPos = isRightPage ? x + (column * this.squareSpacingX) + this.rightButtonOffsetX : x + (column * this.squareSpacingX) + this.leftButtonOffsetX;
+                    int yPos = y - 74 + (row * this.squareSpacingY) + this.yOffset;
 
                     if ( stack.getItem() instanceof ParchmentItem ) {
                         graphics.blit(TEXTURE, xPos - 3, yPos - 9, 58, 180, 105, 34, 280, 280);

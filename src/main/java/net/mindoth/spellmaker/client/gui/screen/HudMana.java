@@ -2,7 +2,7 @@ package net.mindoth.spellmaker.client.gui.screen;
 
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.playermagic.ClientMagickData;
-import net.mindoth.spellmaker.item.StaffItem;
+import net.mindoth.spellmaker.item.castingitem.StaffItem;
 import net.mindoth.spellmaker.item.armor.ModArmorItem;
 import net.mindoth.spellmaker.item.rune.FishPolymorphItem;
 import net.mindoth.spellmaker.registries.ModAttributes;

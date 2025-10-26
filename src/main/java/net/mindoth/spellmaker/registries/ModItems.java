@@ -3,9 +3,9 @@ package net.mindoth.spellmaker.registries;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
-import net.mindoth.spellmaker.item.StaffItem;
 import net.mindoth.spellmaker.item.armor.ColorableArmorItem;
 import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
+import net.mindoth.spellmaker.item.castingitem.ColorableStaffItem;
 import net.mindoth.spellmaker.item.rune.*;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.world.entity.EntityType;
@@ -31,11 +31,11 @@ public class ModItems {
             () -> new ParchmentItem(new Item.Properties(), 3));
 
     //Equipment
-    public static final RegistryObject<Item> STAFF = ITEMS.register("staff",
-            () -> new StaffItem(new Item.Properties().durability(512)));
-
     public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book",
             () -> new SpellBookItem(new Item.Properties()));
+
+    public static final RegistryObject<Item> STAFF = ITEMS.register("staff",
+            () -> new ColorableStaffItem(new Item.Properties().durability(512)));
 
     public static final RegistryObject<Item> ROBE_HOOD = ITEMS.register("robe_hood",
             () -> new ColorableArmorItem(ModArmorMaterials.ROBE, ArmorItem.Type.HELMET, new Item.Properties()));

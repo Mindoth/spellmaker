@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:item/handheld",
+  "parent": "item/handheld",
   "textures": {
-    "layer0": "minecraft:item/stick"
+    "layer0": "spellmaker:item/staff",
+    "layer1": "spellmaker:item/staff_overlay"
   }
 }
