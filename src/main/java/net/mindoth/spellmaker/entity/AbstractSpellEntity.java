@@ -92,7 +92,7 @@ public abstract class AbstractSpellEntity extends Projectile {
 
     protected HitResult getHitResult(Vec3 pStartVec, Entity pProjectile, Predicate<Entity> pFilter, Vec3 pEndVecOffset, Level pLevel) {
         Vec3 vec3 = pStartVec.add(pEndVecOffset);
-        HitResult hitresult = pLevel.clip(new ClipContext(pStartVec, vec3, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, pProjectile));
+        HitResult hitresult = pLevel.clip(new ClipContext(pStartVec, vec3, ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, pProjectile));
         if ( hitresult.getType() != HitResult.Type.MISS ) vec3 = hitresult.getLocation();
         HitResult hitresult1 = getEntityHitResult(pLevel, pProjectile, pStartVec, vec3, pProjectile.getBoundingBox().expandTowards(pEndVecOffset).inflate(1.0D), pFilter);
         if ( hitresult1 != null ) hitresult = hitresult1;
