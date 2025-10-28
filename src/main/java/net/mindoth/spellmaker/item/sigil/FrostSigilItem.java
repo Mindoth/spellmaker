@@ -1,9 +1,9 @@
 package net.mindoth.spellmaker.item.sigil;
 
-import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
-import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
+import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -20,33 +20,29 @@ public class FrostSigilItem extends SigilItem {
     }
 
     @Override
-    public void effectOnEntity(List<Integer> stats, MultiEntityHitResult result) {
-        for ( Entity entity : result.getEntities() ) {
-            if ( !entity.isAttackable() || !entity.isAlive() || !entity.canFreeze() ) return;
-            int magnitude = stats.get(0);
-            if ( magnitude > 0 ) entity.hurt(entity.damageSources().freeze(), magnitude);
-            int duration = stats.get(1);
-            int freezeTicks = duration * 20;
-            if ( entity.getTicksFrozen() > 0 && entity.getTicksFrozen() < freezeTicks ) {
-                freezeTicks = entity.getTicksFrozen() + (freezeTicks - entity.getTicksFrozen());
-            }
-            if ( freezeTicks > 0 ) entity.setTicksFrozen(freezeTicks * 4);
+    public void effectOnAllEntitiesInList(Entity target, List<Integer> stats, Entity source, DimVec3 location) {
+        if ( !target.isAttackable() || !target.isAlive() || !target.canFreeze() ) return;
+        int magnitude = stats.get(0);
+        if ( magnitude > 0 ) target.hurt(target.damageSources().freeze(), magnitude);
+        int duration = stats.get(1);
+        int freezeTicks = duration * 20;
+        if ( target.getTicksFrozen() > 0 && target.getTicksFrozen() < freezeTicks ) {
+            freezeTicks = target.getTicksFrozen() + (freezeTicks - target.getTicksFrozen());
         }
+        if ( freezeTicks > 0 ) target.setTicksFrozen(freezeTicks * 4);
     }
 
     @Override
-    public void effectOnBlock(List<Integer> stats, MultiBlockHitResult result) {
+    public void effectOnAllBlocksInList(BlockPos target, List<Integer> stats, DimVec3 location, Direction direction, boolean isInside) {
         int duration = stats.get(1);
         int freezeTicks = duration * 20;
-        Level level = result.getPos().getLevel();
-        for ( BlockPos blockPos : result.getBlocks() ) {
-            BlockState blockState = level.getBlockState(blockPos);
-            BlockState frozenBlock = Blocks.FROSTED_ICE.defaultBlockState();
-            if ( blockState.getBlock() instanceof LiquidBlock liquid && liquid.getFluid() == Fluids.WATER && frozenBlock.canSurvive(level, blockPos)
-                    && level.isUnobstructed(frozenBlock, blockPos, CollisionContext.empty()) ) {
-                level.setBlockAndUpdate(blockPos, frozenBlock);
-                level.scheduleTick(blockPos, Blocks.FROSTED_ICE, freezeTicks);
-            }
+        Level level = location.getLevel();
+        BlockState blockState = level.getBlockState(target);
+        BlockState frozenBlock = Blocks.FROSTED_ICE.defaultBlockState();
+        if ( blockState.getBlock() instanceof LiquidBlock liquid && liquid.getFluid() == Fluids.WATER && frozenBlock.canSurvive(level, target)
+                && level.isUnobstructed(frozenBlock, target, CollisionContext.empty()) ) {
+            level.setBlockAndUpdate(target, frozenBlock);
+            level.scheduleTick(target, Blocks.FROSTED_ICE, freezeTicks);
         }
     }
 }

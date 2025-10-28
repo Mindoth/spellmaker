@@ -29,15 +29,12 @@ public class ByTouchForm extends AbstractSpellForm {
     public void castMagick(Entity caster, LinkedHashMap<SigilItem, List<Integer>> map) {
         Entity target = getPointedEntity(caster.getEyePosition(), caster.getLookAngle(), caster, caster.level(), 4.5F, 0.25F, true, true, map);
         if ( target != null ) {
-            for ( SigilItem sigil : map.keySet() ) {
-                sigil.effectOnEntity(map.get(sigil), new MultiEntityHitResult(caster, Collections.singletonList(target), new DimVec3(caster.position(), caster.level())));
-            }
+            MultiEntityHitResult mResult = new MultiEntityHitResult(caster, Collections.singletonList(target), new DimVec3(target.position(), target.level()));
+            for ( SigilItem sigil : map.keySet() ) sigil.effectOnEntity(map.get(sigil), mResult);
         }
         else {
             MultiBlockHitResult mResult = getPOVHitResult(caster.getEyePosition(), caster.getLookAngle(), caster, caster.level(), ClipContext.Fluid.SOURCE_ONLY, 4.5F);
-            if ( !mResult.getPos().getLevel().getBlockState(mResult.getBlocks().get(0)).isAir() ) {
-                for ( SigilItem sigil : map.keySet() ) sigil.effectOnBlock(map.get(sigil), mResult);
-            }
+            for ( SigilItem sigil : map.keySet() ) sigil.effectOnBlock(map.get(sigil), mResult);
         }
     }
 

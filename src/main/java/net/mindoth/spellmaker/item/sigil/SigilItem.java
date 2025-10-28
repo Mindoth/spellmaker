@@ -1,8 +1,12 @@
 package net.mindoth.spellmaker.item.sigil;
 
+import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.util.SpellColor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 
 import java.util.List;
@@ -44,8 +48,16 @@ public abstract class SigilItem extends Item {
     }
 
     public void effectOnEntity(List<Integer> stats, MultiEntityHitResult result) {
+        for ( Entity entity : result.getEntities() ) effectOnAllEntitiesInList(entity, stats, result.getEntity(), result.getPos());
+    }
+
+    public void effectOnAllEntitiesInList(Entity target, List<Integer> stats, Entity source, DimVec3 location) {
     }
 
     public void effectOnBlock(List<Integer> stats, MultiBlockHitResult result) {
+        for ( BlockPos block : result.getBlocks() ) effectOnAllBlocksInList(block, stats, result.getPos(), result.getDirection(), result.isInside());
+    }
+
+    public void effectOnAllBlocksInList(BlockPos target, List<Integer> stats, DimVec3 location, Direction direction, boolean isInside) {
     }
 }

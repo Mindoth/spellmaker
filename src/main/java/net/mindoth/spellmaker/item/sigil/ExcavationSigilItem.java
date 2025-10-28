@@ -1,9 +1,11 @@
 package net.mindoth.spellmaker.item.sigil;
 
 import com.mojang.authlib.GameProfile;
+import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -23,11 +25,9 @@ public class ExcavationSigilItem extends SigilItem {
     }
 
     @Override
-    public void effectOnBlock(List<Integer> stats, MultiBlockHitResult result) {
+    public void effectOnAllBlocksInList(BlockPos target, List<Integer> stats, DimVec3 location, Direction direction, boolean isInside) {
         int magnitude = stats.get(0);
-        for ( BlockPos blockPos : result.getBlocks() ) {
-            handleMine(blockPos, result.getPos().getLevel(), magnitude);
-        }
+        handleMine(target, location.getLevel(), magnitude);
     }
 
     private static final GameProfile FAKE_PROFILE = new GameProfile(UUID.fromString("fdc17a6f-5d46-484e-9343-820f43c7b101"), "am_fake_player_profile");

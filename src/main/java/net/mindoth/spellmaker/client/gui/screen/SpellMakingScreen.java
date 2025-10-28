@@ -8,6 +8,7 @@ import net.mindoth.spellmaker.client.gui.menu.SpellMakingMenu;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.util.DataHelper;
+import net.mindoth.spellmaker.util.SpellColor;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -298,7 +299,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         //Spell Form icon rendering
         if ( this.menu.isReadyToMake() ) {
             ResourceLocation iconBg = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spellform/icon_background.png");
-            ResourceLocation icon = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spellform/" + this.menu.getSpellForm().getName() + ".png");
+            ResourceLocation icon = getSpellIcon();
             int xIcon = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
             int yIcon = y + SPELL_FORM_BUTTON_OFFSET_Y - 2;
             graphics.blit(iconBg, xIcon, yIcon, 0, 0, 16, 16, 16, 16);
@@ -385,6 +386,15 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             Component component = Component.literal(String.valueOf(cost)).setStyle(Style.EMPTY.withBold(true));
             graphics.drawString(this.font, component, x + 16 - this.font.width(String.valueOf(cost)) / 2, y + 66, 5804213, false);
         }
+    }
+
+    private ResourceLocation getSpellIcon() {
+        AbstractSpellForm form =this.menu.getSpellForm();
+        List<SigilItem> sigilList = Lists.newArrayList();
+        for ( Slot slot : this.menu.slots ) if ( slot instanceof SigilSlot && slot.getItem().getItem() instanceof SigilItem ) sigilList.add((SigilItem)slot.getItem().getItem());
+        List<Integer> magnitudeList = this.menu.getMagnitude();
+        List<Integer> durationList = this.menu.getDuration();
+        return SpellColor.getSpellIcon(form, sigilList, magnitudeList, durationList);
     }
 
     @Override

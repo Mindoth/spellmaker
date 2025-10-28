@@ -40,12 +40,12 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
     @Override
     protected void doMobEffects(EntityHitResult result) {
         Level level = level();
-        AABB box = this.getBoundingBox().inflate(1.4D, 1.4D, 1.4D).move(result.getEntity().getBoundingBox().getCenter().subtract(this.getBoundingBox().getCenter()));
+        AABB box = this.getBoundingBox().inflate(2.2D, 2.2D, 2.2D).move(result.getEntity().getBoundingBox().getCenter().subtract(this.getBoundingBox().getCenter()));
         List<Entity> list = new ArrayList<>(level.getEntities(this, box).stream().filter((entity -> entity instanceof LivingEntity)).toList());
         if ( !list.contains(result.getEntity()) ) list.add(result.getEntity());
-        for ( SigilItem sigil : getMap().keySet() ) {
-            sigil.effectOnEntity(getMap().get(sigil), new MultiEntityHitResult(this, list, new DimVec3(this.position(), this.level())));
-        }
+        MultiEntityHitResult mEntityResult = new MultiEntityHitResult(this, list, new DimVec3(this.position(), this.level()));
+        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnEntity(getMap().get(sigil), mEntityResult);
+
         List<BlockPos> blocks = Lists.newArrayList();
         for ( int x = this.getBlockX() -1; x < this.getBlockX() + 2; x++ ) {
             for ( int y = this.getBlockY() -1; y < this.getBlockY() + 2; y++ ) {
@@ -54,19 +54,19 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
                 }
             }
         }
-        MultiBlockHitResult mResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(position(), level));
-        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(getMap().get(sigil), mResult);
+        MultiBlockHitResult mBlockResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(position(), level));
+        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(getMap().get(sigil), mBlockResult);
         aoeEntitySpellParticles(level, box, (float)box.getYsize() * 0.5F, getParticleStats());
     }
 
     @Override
     protected void doBlockEffects(BlockHitResult result) {
         Level level = level();
-        AABB box = this.getBoundingBox().inflate(1.4D, 1.4D, 1.4D);
+        AABB box = this.getBoundingBox().inflate(2.2D, 2.2D, 2.2D);
         List<Entity> list = new ArrayList<>(level.getEntities(this, box).stream().filter((entity -> entity instanceof LivingEntity)).toList());
-        for ( SigilItem sigil : getMap().keySet() ) {
-            sigil.effectOnEntity(getMap().get(sigil), new MultiEntityHitResult(this, list, new DimVec3(this.position(), this.level())));
-        }
+        MultiEntityHitResult mEntityResult = new MultiEntityHitResult(this, list, new DimVec3(this.position(), this.level()));
+        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnEntity(getMap().get(sigil), mEntityResult);
+
         List<BlockPos> blocks = Lists.newArrayList();
         BlockPos blockPos = getPosOfFace(result.getBlockPos(), result.getDirection());
         for ( int x = blockPos.getX() -1; x < blockPos.getX() + 2; x++ ) {
@@ -76,8 +76,8 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
                 }
             }
         }
-        MultiBlockHitResult mResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(position(), level));
-        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(getMap().get(sigil), mResult);
+        MultiBlockHitResult mBlockResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(position(), level));
+        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(getMap().get(sigil), mBlockResult);
         aoeEntitySpellParticles(level, box, (float)box.getYsize() * 0.5F, getParticleStats());
     }
 
@@ -131,7 +131,7 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
         }
     }
 
-    protected void aoeEntitySpellParticles(Level level, AABB box, float range, HashMap<String, Float> stats) {
+    public static void aoeEntitySpellParticles(Level level, AABB box, float range, HashMap<String, Float> stats) {
         Vec3 center = box.getCenter();
         BlockPos pos = new BlockPos(Mth.floor(center.x), Mth.floor(center.y), Mth.floor(center.z));
         double tempY = center.y;

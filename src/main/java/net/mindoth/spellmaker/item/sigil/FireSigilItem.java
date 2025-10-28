@@ -1,9 +1,9 @@
 package net.mindoth.spellmaker.item.sigil;
 
-import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
-import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
+import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
@@ -21,33 +21,29 @@ public class FireSigilItem extends SigilItem {
     }
 
     @Override
-    public void effectOnEntity(List<Integer> stats, MultiEntityHitResult result) {
-        for ( Entity entity : result.getEntities() ) {
-            if ( !entity.isAttackable() || !entity.isAlive() || entity.fireImmune() ) return;
-            int magnitude = stats.get(0);
-            if ( magnitude > 0 ) entity.hurt(entity.damageSources().onFire(), magnitude);
-            int duration = stats.get(1);
-            int fireTicks = duration * 20;
-            if ( entity.getRemainingFireTicks() > 0 && entity.getRemainingFireTicks() < fireTicks ) {
-                fireTicks = entity.getRemainingFireTicks() + (fireTicks - entity.getRemainingFireTicks());
-            }
-            if ( fireTicks > 0 ) entity.setSecondsOnFire(fireTicks / 20);
+    public void effectOnAllEntitiesInList(Entity target, List<Integer> stats, Entity source, DimVec3 location) {
+        if ( !target.isAttackable() || !target.isAlive() || target.fireImmune() ) return;
+        int magnitude = stats.get(0);
+        if ( magnitude > 0 ) target.hurt(target.damageSources().onFire(), magnitude);
+        int duration = stats.get(1);
+        int fireTicks = duration * 20;
+        if ( target.getRemainingFireTicks() > 0 && target.getRemainingFireTicks() < fireTicks ) {
+            fireTicks = target.getRemainingFireTicks() + (fireTicks - target.getRemainingFireTicks());
         }
+        if ( fireTicks > 0 ) target.setSecondsOnFire(fireTicks / 20);
     }
 
     @Override
-    public void effectOnBlock(List<Integer> stats, MultiBlockHitResult result) {
-        Level level = result.getPos().getLevel();
-        for ( BlockPos blockPos : result.getBlocks() ) {
-            BlockState blockState = level.getBlockState(blockPos);
-            if ( !CampfireBlock.canLight(blockState) && !CandleBlock.canLight(blockState) && !CandleCakeBlock.canLight(blockState) ) {
-                BlockPos blockPos1 = blockPos.relative(result.getDirection());
-                if ( BaseFireBlock.canBePlacedAt(level, blockPos1, result.getDirection()) ) {
-                    BlockState blockState1 = BaseFireBlock.getState(level, blockPos1);
-                    level.setBlock(blockPos1, blockState1, 11);
-                }
+    public void effectOnAllBlocksInList(BlockPos target, List<Integer> stats, DimVec3 location, Direction direction, boolean isInside) {
+        Level level = location.getLevel();
+        BlockState blockState = level.getBlockState(target);
+        if ( !CampfireBlock.canLight(blockState) && !CandleBlock.canLight(blockState) && !CandleCakeBlock.canLight(blockState) ) {
+            BlockPos blockPos1 = target.relative(direction);
+            if ( BaseFireBlock.canBePlacedAt(level, blockPos1, direction) ) {
+                BlockState blockState1 = BaseFireBlock.getState(level, blockPos1);
+                level.setBlock(blockPos1, blockState1, 11);
             }
-            else level.setBlock(blockPos, blockState.setValue(BlockStateProperties.LIT, Boolean.valueOf(true)), 11);
         }
+        else level.setBlock(target, blockState.setValue(BlockStateProperties.LIT, Boolean.valueOf(true)), 11);
     }
 }

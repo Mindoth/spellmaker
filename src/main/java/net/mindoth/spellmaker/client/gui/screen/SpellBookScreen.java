@@ -4,10 +4,13 @@ import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
+import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.network.PacketRemoveScrollFromBook;
 import net.mindoth.spellmaker.network.PacketUpdateBookData;
 import net.mindoth.spellmaker.util.DataHelper;
+import net.mindoth.spellmaker.util.SpellColor;
+import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -358,8 +361,7 @@ public class SpellBookScreen extends ModScreen {
                             graphics.renderTooltip(this.font, stack, mouseX, mouseY);
                         }
                         else {
-                            ResourceLocation icon = new ResourceLocation(SpellMaker.MOD_ID,
-                                    "textures/gui/spellform/" + DataHelper.getFormFromNbt(stack.getTag()).getName() + ".png");
+                            ResourceLocation icon = getSpellIcon(stack);
                             graphics.blit(icon, xPos, yPos, 0, 0, 16, 16, 16, 16);
                         }
                     }
@@ -390,6 +392,14 @@ public class SpellBookScreen extends ModScreen {
             int pageNumX = pageNum % 2 == 0 ? textX + pageNumXOff : textX - pageNumXOff;
             graphics.drawString(this.font, pageNumTxt, pageNumX, y + this.arrowOffsetY, 0, false);
         }
+    }
+
+    private ResourceLocation getSpellIcon(ItemStack scroll) {
+        AbstractSpellForm form = DataHelper.getFormFromNbt(scroll.getTag());
+        List<SigilItem> sigilList = DataHelper.getSigilListFromString(scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_SIGILS));
+        List<Integer> magnitudeList = DataHelper.getStatsFromString(scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
+        List<Integer> durationList = DataHelper.getStatsFromString(scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
+        return SpellColor.getSpellIcon(form, sigilList, magnitudeList, durationList);
     }
 
     private void renderSpellName(GuiGraphics graphics, Component spellTitle, int titleX, int titleY) {

@@ -77,6 +77,7 @@ public class ParchmentItem extends Item {
             List<Integer> stats = map.get(sigil);
             if ( sigil.getMaxMagnitude() > 0 ) cost += stats.get(0) * sigil.getMagnitudeMultiplier();
             if ( sigil.getMaxDuration() > 0 ) cost += stats.get(1) * sigil.getDurationMultiplier();
+            if ( cost == highestCost ) return null;
             if ( cost > highestCost ) {
                 highestCost = cost;
                 state = sigil;

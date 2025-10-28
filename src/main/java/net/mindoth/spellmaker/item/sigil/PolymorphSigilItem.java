@@ -1,6 +1,7 @@
 package net.mindoth.spellmaker.item.sigil;
 
 import com.google.common.collect.Lists;
+import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
@@ -51,14 +52,12 @@ public class PolymorphSigilItem extends SigilItem {
     }
 
     @Override
-    public void effectOnEntity(List<Integer> stats, MultiEntityHitResult result) {
-        for ( Entity entity : result.getEntities() ) {
-            if ( !entity.isAttackable() || !entity.isAlive() || !(entity instanceof LivingEntity living) ) return;
-            int duration = stats.get(1);
-            int polymorphTicks = duration * 20;
-            if ( living.addEffect(new MobEffectInstance(ModEffects.POLYMORPH.get(), polymorphTicks, 0, false, false)) ) {
-                PolymorphEffect.doPolymorph(living, new AttributeModifier(getUUID(), "Polymorph", 0.0D, AttributeModifier.Operation.ADDITION));
-            }
+    public void effectOnAllEntitiesInList(Entity target, List<Integer> stats, Entity source, DimVec3 location) {
+        if ( !(target instanceof LivingEntity living) || !target.isAttackable() || !target.isAlive() ) return;
+        int duration = stats.get(1);
+        int polymorphTicks = duration * 20;
+        if ( living.addEffect(new MobEffectInstance(ModEffects.POLYMORPH.get(), polymorphTicks, 0, false, false)) ) {
+            PolymorphEffect.doPolymorph(living, new AttributeModifier(getUUID(), "Polymorph", 0.0D, AttributeModifier.Operation.ADDITION));
         }
     }
 
