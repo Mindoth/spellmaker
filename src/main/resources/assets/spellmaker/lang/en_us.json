@@ -23,13 +23,13 @@
   "item.spellmaker.robe_bottom": "Robe Bottom",
   "item.spellmaker.robe_boots": "Robe Boots",
 
-  "item.spellmaker.excavate_rune": "Excavate Rune",
-  "item.spellmaker.fire_rune": "Fire Rune",
-  "item.spellmaker.frost_rune": "Frost Rune",
-  "item.spellmaker.shock_rune": "Shock Rune",
-  "item.spellmaker.sleep_rune": "Sleep Rune",
-  "item.spellmaker.sheep_polymorph_rune": "Sheep Polymorph Rune",
-  "item.spellmaker.fish_polymorph_rune": "Fish Polymorph Rune",
+  "item.spellmaker.excavation_sigil": "Excavation Sigil",
+  "item.spellmaker.fire_sigil": "Fire Sigil",
+  "item.spellmaker.frost_sigil": "Frost Sigil",
+  "item.spellmaker.shock_sigil": "Shock Sigil",
+  "item.spellmaker.sleep_sigil": "Sleep Sigil",
+  "item.spellmaker.sheep_transformation_sigil": "Sheep Transformation Sigil",
+  "item.spellmaker.fish_transformation_sigil": "Fish Transformation Sigil",
 
 
   "spellform.spellmaker.caster_only": "Caster only",

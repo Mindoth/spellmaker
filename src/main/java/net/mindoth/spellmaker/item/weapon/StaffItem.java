@@ -1,12 +1,12 @@
-package net.mindoth.spellmaker.item.castingitem;
+package net.mindoth.spellmaker.item.weapon;
 
 import net.mindoth.spellmaker.capability.ModCapabilities;
 import net.mindoth.spellmaker.capability.playermagic.PlayerMagickProvider;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.RuneItem;
+import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.util.DataHelper;
-import net.mindoth.spellmaker.util.SpellForm;
+import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -53,8 +53,8 @@ public class StaffItem extends Item {
                 && book.getTag().getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) >= 0 && SpellBookItem.getActiveScrollFromBook(book) != null ) {
             ItemStack scroll = SpellBookItem.getActiveScrollFromBook(book);
             if ( scroll != null && scroll.hasTag() ) {
-                SpellForm form = DataHelper.getFormFromNbt(scroll.getTag());
-                LinkedHashMap<RuneItem, List<Integer>> map = DataHelper.createMapFromTag(scroll.getTag());
+                AbstractSpellForm form = DataHelper.getFormFromNbt(scroll.getTag());
+                LinkedHashMap<SigilItem, List<Integer>> map = DataHelper.createMapFromTag(scroll.getTag());
                 int cost = ParchmentItem.calculateSpellCost(form, map);
                 player.getCapability(PlayerMagickProvider.PLAYER_MAGICK).ifPresent(magic -> {
                     if ( cost <= magic.getCurrentMana() || player.isCreative() ) {

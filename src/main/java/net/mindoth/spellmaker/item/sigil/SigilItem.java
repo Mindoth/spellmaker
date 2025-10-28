@@ -1,4 +1,4 @@
-package net.mindoth.spellmaker.item;
+package net.mindoth.spellmaker.item.sigil;
 
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
@@ -7,7 +7,7 @@ import net.minecraft.world.item.Item;
 
 import java.util.List;
 
-public abstract class RuneItem extends Item {
+public abstract class SigilItem extends Item {
     private final SpellColor color;
     public SpellColor getColor() {
         return this.color;
@@ -33,7 +33,7 @@ public abstract class RuneItem extends Item {
         return this.durationMultiplier;
     }
 
-    public RuneItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier) {
+    public SigilItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier) {
         super(pProperties);
         this.color = color;
         this.cost = cost;

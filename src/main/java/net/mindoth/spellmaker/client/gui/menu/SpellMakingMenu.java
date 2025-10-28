@@ -2,13 +2,13 @@ package net.mindoth.spellmaker.client.gui.menu;
 
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.RuneItem;
+import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.network.*;
 import net.mindoth.spellmaker.registries.ModBlocks;
 import net.mindoth.spellmaker.registries.ModMenus;
 import net.mindoth.spellmaker.registries.ModSpellForms;
 import net.mindoth.spellmaker.util.DataHelper;
-import net.mindoth.spellmaker.util.SpellForm;
+import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
@@ -27,7 +27,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class SpellMakingMenu extends AbstractContainerMenu {
@@ -69,7 +68,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
         //Rune slots
         for ( int i = 0; i < 3; ++i ) {
-            this.addSlot(new RuneSlot(this.craftSlots, 1 + i, 35, 62 + i * 18, !this.craftSlots.getItem(0).isEmpty()));
+            this.addSlot(new SigilSlot(this.craftSlots, 1 + i, 35, 62 + i * 18, !this.craftSlots.getItem(0).isEmpty()));
         }
 
         //Player inventory
@@ -86,12 +85,12 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         dataInit();
     }
 
-    private List<SpellForm> formList;
-    public List<SpellForm> getFormList() {
+    private List<AbstractSpellForm> formList;
+    public List<AbstractSpellForm> getFormList() {
         return this.formList;
     }
-    private SpellForm spellForm;
-    public SpellForm getSpellForm() {
+    private AbstractSpellForm spellForm;
+    public AbstractSpellForm getSpellForm() {
         return this.spellForm;
     }
     private List<Integer> magnitude;
@@ -120,7 +119,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         if ( stack.hasTag() ) {
             CompoundTag tag = stack.getTag();
             if ( tag.contains(ParchmentItem.NBT_KEY_SPELL_FORM) ) tag.remove(ParchmentItem.NBT_KEY_SPELL_FORM);
-            if ( tag.contains(ParchmentItem.NBT_KEY_SPELL_RUNES) ) tag.remove(ParchmentItem.NBT_KEY_SPELL_RUNES);
+            if ( tag.contains(ParchmentItem.NBT_KEY_SPELL_SIGILS) ) tag.remove(ParchmentItem.NBT_KEY_SPELL_SIGILS);
             if ( tag.contains(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES) ) tag.remove(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES);
             if ( tag.contains(ParchmentItem.NBT_KEY_SPELL_DURATIONS) ) tag.remove(ParchmentItem.NBT_KEY_SPELL_DURATIONS);
             if ( stack.getTag().isEmpty() ) stack.setTag(null);
@@ -181,9 +180,9 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                         }
                         else {
                             Slot slot = this.slots.get(i);
-                            if ( slot instanceof RuneSlot ) {
-                                ItemStack rune = list.get(i - 1);
-                                setSlotContent(level, i, rune);
+                            if ( slot instanceof SigilSlot) {
+                                ItemStack sigil = list.get(i - 1);
+                                setSlotContent(level, i, sigil);
                             }
                         }
                     }
@@ -194,17 +193,17 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
     public ItemStack assemble(Container container) {
         ItemStack scroll = this.craftSlots.getItem(0).copy();
-        List<ItemStack> runeStackList = Lists.newArrayList();
+        List<ItemStack> sigilStackList = Lists.newArrayList();
         List<ItemStack> restList = Lists.newArrayList();
         for ( int i = 1; i < container.getContainerSize(); i++ ) {
             ItemStack stack = container.getItem(i);
-            if ( stack.getItem() instanceof RuneItem || stack.isEmpty() ) runeStackList.add(stack);
+            if ( stack.getItem() instanceof SigilItem || stack.isEmpty() ) sigilStackList.add(stack);
             else restList.add(stack);
         }
         if ( restList.isEmpty() ) {
             CompoundTag tag = scroll.getOrCreateTag();
             tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(this.spellForm));
-            tag.putString(ParchmentItem.NBT_KEY_SPELL_RUNES, DataHelper.getStringFromSpellStack(runeStackList));
+            tag.putString(ParchmentItem.NBT_KEY_SPELL_SIGILS, DataHelper.getStringFromSpellStack(sigilStackList));
             tag.putString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES, DataHelper.getStringFromStats(this.magnitude));
             tag.putString(ParchmentItem.NBT_KEY_SPELL_DURATIONS, DataHelper.getStringFromStats(this.duration));
             return scroll;
@@ -225,9 +224,9 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         }
     }
 
-    public int howManyRuneSlotsOpen() {
+    public int howManySigilSlotsOpen() {
         int count = 0;
-        for ( Slot slot : this.slots ) if ( slot instanceof RuneSlot runeSlot && runeSlot.isOpen ) count++;
+        for ( Slot slot : this.slots ) if ( slot instanceof SigilSlot sigilSlot && sigilSlot.isOpen ) count++;
         return count;
     }
 
@@ -239,18 +238,18 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             if ( isCleanParchment(stack) ) {
                 final int slotsToOpen = ((ParchmentItem)stack.getItem()).getSize();
                 for ( Slot slot : this.slots ) {
-                    if ( howManyRuneSlotsOpen() >= slotsToOpen ) break;
-                    if ( slot instanceof RuneSlot runeSlot && !runeSlot.isOpen ) runeSlot.isOpen = true;
+                    if ( howManySigilSlotsOpen() >= slotsToOpen ) break;
+                    if ( slot instanceof SigilSlot sigilSlot && !sigilSlot.isOpen ) sigilSlot.isOpen = true;
                 }
             }
             else {
                 for ( Slot slot : this.slots ) {
-                    if ( slot instanceof RuneSlot runeSlot ) {
-                        if ( !level.isClientSide && !runeSlot.getItem().isEmpty() ) {
-                            if ( stack.isEmpty() ) quickMoveStack(this.player, runeSlot.index);
-                            else setSlotContent(level, runeSlot.getSlotIndex(), ItemStack.EMPTY);
+                    if ( slot instanceof SigilSlot sigilSlot) {
+                        if ( !level.isClientSide && !sigilSlot.getItem().isEmpty() ) {
+                            if ( stack.isEmpty() ) quickMoveStack(this.player, sigilSlot.index);
+                            else setSlotContent(level, sigilSlot.getSlotIndex(), ItemStack.EMPTY);
                         }
-                        if ( runeSlot.isOpen ) runeSlot.isOpen = false;
+                        if ( sigilSlot.isOpen ) sigilSlot.isOpen = false;
                     }
                 }
             }

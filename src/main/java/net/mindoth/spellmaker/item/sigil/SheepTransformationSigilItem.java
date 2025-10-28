@@ -1,4 +1,4 @@
-package net.mindoth.spellmaker.item.rune;
+package net.mindoth.spellmaker.item.sigil;
 
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.util.SpellColor;
@@ -9,8 +9,8 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = SpellMaker.MOD_ID)
-public class SheepPolymorphRuneItem extends PolymorphRuneItem {
-    public SheepPolymorphRuneItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier, UUID uuid, EntityType entityType) {
+public class SheepTransformationSigilItem extends PolymorphSigilItem {
+    public SheepTransformationSigilItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier, UUID uuid, EntityType entityType) {
         super(pProperties, color, cost, maxMagnitude, magnitudeMultiplier, maxDuration, durationMultiplier, uuid, entityType);
     }
 

@@ -1,8 +1,9 @@
 package net.mindoth.spellmaker.item;
 
+import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.registries.ModSpellForms;
 import net.mindoth.spellmaker.util.DataHelper;
-import net.mindoth.spellmaker.util.SpellForm;
+import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -28,7 +29,7 @@ public class ParchmentItem extends Item {
     }
 
     public static final String NBT_KEY_SPELL_FORM = "sm_spell_form";
-    public static final String NBT_KEY_SPELL_RUNES = "sm_spell_runes";
+    public static final String NBT_KEY_SPELL_SIGILS = "sm_spell_sigils";
     public static final String NBT_KEY_SPELL_MAGNITUDES = "sm_spell_magnitudes";
     public static final String NBT_KEY_SPELL_DURATIONS = "sm_spell_durations";
 
@@ -39,16 +40,16 @@ public class ParchmentItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flagIn) {
         if ( stack.hasTag() && stack.getTag().contains(NBT_KEY_SPELL_FORM) ) {
-            SpellForm form = ModSpellForms.SPELL_FORM_REGISTRY.get().getValue(new ResourceLocation(stack.getTag().getString(NBT_KEY_SPELL_FORM)));
+            AbstractSpellForm form = ModSpellForms.SPELL_FORM_REGISTRY.get().getValue(new ResourceLocation(stack.getTag().getString(NBT_KEY_SPELL_FORM)));
             int cost = calculateSpellCost(form, DataHelper.createMapFromTag(stack.getTag()));
             tooltip.add(Component.literal(""));
             tooltip.add(Component.translatable("tooltip.spellmaker.cost")
                     .append(Component.literal("" + cost)).withStyle(ChatFormatting.GRAY));
             tooltip.add(Component.translatable("spellform.spellmaker." + form.getName()).withStyle(ChatFormatting.GRAY));
-            if ( stack.getTag().contains(NBT_KEY_SPELL_RUNES) ) {
-                List<RuneItem> list = DataHelper.getRuneListFromString(stack.getTag().getString(NBT_KEY_SPELL_RUNES));
-                for ( RuneItem rune : list ) {
-                    String name = new ItemStack(rune).getHoverName().getString();
+            if ( stack.getTag().contains(NBT_KEY_SPELL_SIGILS) ) {
+                List<SigilItem> list = DataHelper.getSigilListFromString(stack.getTag().getString(NBT_KEY_SPELL_SIGILS));
+                for ( SigilItem sigil : list ) {
+                    String name = new ItemStack(sigil).getHoverName().getString();
                     tooltip.add(Component.literal(" ").append(Component.literal(name).withStyle(ChatFormatting.GRAY)));
                 }
             }
@@ -56,29 +57,29 @@ public class ParchmentItem extends Item {
         super.appendHoverText(stack, world, tooltip, flagIn);
     }
 
-    public static int calculateSpellCost(SpellForm form, LinkedHashMap<RuneItem, List<Integer>> map) {
+    public static int calculateSpellCost(AbstractSpellForm form, LinkedHashMap<SigilItem, List<Integer>> map) {
         int totalCost = 0;
-        for ( RuneItem rune : map.keySet() ) {
-            int cost = rune.getCost() + form.getCost();
-            List<Integer> stats = map.get(rune);
-            if ( rune.getMaxMagnitude() > 0 ) cost += stats.get(0) * rune.getMagnitudeMultiplier();
-            if ( rune.getMaxDuration() > 0 ) cost += stats.get(1) * rune.getDurationMultiplier();
+        for ( SigilItem sigil : map.keySet() ) {
+            int cost = sigil.getCost() + form.getCost();
+            List<Integer> stats = map.get(sigil);
+            if ( sigil.getMaxMagnitude() > 0 ) cost += stats.get(0) * sigil.getMagnitudeMultiplier();
+            if ( sigil.getMaxDuration() > 0 ) cost += stats.get(1) * sigil.getDurationMultiplier();
             totalCost += cost;
         }
         return totalCost;
     }
 
-    public static RuneItem getHighestCostRune(LinkedHashMap<RuneItem, List<Integer>> map) {
-        RuneItem state = null;
+    public static SigilItem getHighestCostSigil(LinkedHashMap<SigilItem, List<Integer>> map) {
+        SigilItem state = null;
         int highestCost = 0;
-        for ( RuneItem rune : map.keySet() ) {
-            int cost = rune.getCost();
-            List<Integer> stats = map.get(rune);
-            if ( rune.getMaxMagnitude() > 0 ) cost += stats.get(0) * rune.getMagnitudeMultiplier();
-            if ( rune.getMaxDuration() > 0 ) cost += stats.get(1) * rune.getDurationMultiplier();
+        for ( SigilItem sigil : map.keySet() ) {
+            int cost = sigil.getCost();
+            List<Integer> stats = map.get(sigil);
+            if ( sigil.getMaxMagnitude() > 0 ) cost += stats.get(0) * sigil.getMagnitudeMultiplier();
+            if ( sigil.getMaxDuration() > 0 ) cost += stats.get(1) * sigil.getDurationMultiplier();
             if ( cost > highestCost ) {
                 highestCost = cost;
-                state = rune;
+                state = sigil;
             }
         }
         return state;

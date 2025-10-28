@@ -1,7 +1,6 @@
-package net.mindoth.spellmaker.item.rune;
+package net.mindoth.spellmaker.item.sigil;
 
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
-import net.mindoth.spellmaker.item.RuneItem;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -10,8 +9,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
 
-public class SleepRuneItem extends RuneItem {
-    public SleepRuneItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier) {
+public class ShockSigilItem extends SigilItem {
+    public ShockSigilItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier) {
         super(pProperties, color, cost, maxMagnitude, magnitudeMultiplier, maxDuration, durationMultiplier);
     }
 
@@ -19,9 +18,13 @@ public class SleepRuneItem extends RuneItem {
     public void effectOnEntity(List<Integer> stats, MultiEntityHitResult result) {
         for ( Entity entity : result.getEntities() ) {
             if ( !entity.isAttackable() || !entity.isAlive() ) return;
+            int magnitude = stats.get(0);
+            if ( magnitude > 0 ) entity.hurt(entity.damageSources().lightningBolt(), magnitude);
             int duration = stats.get(1);
-            int sleepTicks = duration * 20;
-            if ( entity instanceof LivingEntity living ) living.addEffect(new MobEffectInstance(ModEffects.SLEEP.get(), sleepTicks, 0, false, false));
+            int paralysisTicks = duration * 20;
+            if ( entity instanceof LivingEntity living && living.isInWaterOrBubble() ) {
+                living.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), paralysisTicks, 0, false, false));
+            }
         }
     }
 }

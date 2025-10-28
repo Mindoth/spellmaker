@@ -7,7 +7,7 @@ import net.mindoth.shadowizardlib.event.ShadowEvents;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
-import net.mindoth.spellmaker.item.RuneItem;
+import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.registries.ModEntities;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -43,8 +43,8 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
         AABB box = this.getBoundingBox().inflate(1.4D, 1.4D, 1.4D).move(result.getEntity().getBoundingBox().getCenter().subtract(this.getBoundingBox().getCenter()));
         List<Entity> list = new ArrayList<>(level.getEntities(this, box).stream().filter((entity -> entity instanceof LivingEntity)).toList());
         if ( !list.contains(result.getEntity()) ) list.add(result.getEntity());
-        for ( RuneItem rune : getMap().keySet() ) {
-            rune.effectOnEntity(getMap().get(rune), new MultiEntityHitResult(this, list, new DimVec3(this.position(), this.level())));
+        for ( SigilItem sigil : getMap().keySet() ) {
+            sigil.effectOnEntity(getMap().get(sigil), new MultiEntityHitResult(this, list, new DimVec3(this.position(), this.level())));
         }
         List<BlockPos> blocks = Lists.newArrayList();
         for ( int x = this.getBlockX() -1; x < this.getBlockX() + 2; x++ ) {
@@ -55,7 +55,7 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
             }
         }
         MultiBlockHitResult mResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(position(), level));
-        for ( RuneItem rune : getMap().keySet() ) rune.effectOnBlock(getMap().get(rune), mResult);
+        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(getMap().get(sigil), mResult);
         aoeEntitySpellParticles(level, box, (float)box.getYsize() * 0.5F, getParticleStats());
     }
 
@@ -64,8 +64,8 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
         Level level = level();
         AABB box = this.getBoundingBox().inflate(1.4D, 1.4D, 1.4D);
         List<Entity> list = new ArrayList<>(level.getEntities(this, box).stream().filter((entity -> entity instanceof LivingEntity)).toList());
-        for ( RuneItem rune : getMap().keySet() ) {
-            rune.effectOnEntity(getMap().get(rune), new MultiEntityHitResult(this, list, new DimVec3(this.position(), this.level())));
+        for ( SigilItem sigil : getMap().keySet() ) {
+            sigil.effectOnEntity(getMap().get(sigil), new MultiEntityHitResult(this, list, new DimVec3(this.position(), this.level())));
         }
         List<BlockPos> blocks = Lists.newArrayList();
         BlockPos blockPos = getPosOfFace(result.getBlockPos(), result.getDirection());
@@ -77,7 +77,7 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
             }
         }
         MultiBlockHitResult mResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(position(), level));
-        for ( RuneItem rune : getMap().keySet() ) rune.effectOnBlock(getMap().get(rune), mResult);
+        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(getMap().get(sigil), mResult);
         aoeEntitySpellParticles(level, box, (float)box.getYsize() * 0.5F, getParticleStats());
     }
 

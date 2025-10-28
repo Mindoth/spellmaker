@@ -1,4 +1,4 @@
-package net.mindoth.spellmaker.item.castingitem;
+package net.mindoth.spellmaker.item.weapon;
 
 import net.mindoth.spellmaker.item.ModDyeableItem;
 

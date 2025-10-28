@@ -4,8 +4,7 @@ import net.mindoth.shadowizardlib.event.LightEvents;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
-import net.mindoth.spellmaker.item.RuneItem;
-import net.mindoth.spellmaker.util.SpellForm;
+import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -21,23 +20,23 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class ByTouchForm extends SpellForm {
+public class ByTouchForm extends AbstractSpellForm {
     public ByTouchForm(int cost) {
         super(cost);
     }
 
     @Override
-    public void castMagick(Entity caster, LinkedHashMap<RuneItem, List<Integer>> map) {
+    public void castMagick(Entity caster, LinkedHashMap<SigilItem, List<Integer>> map) {
         Entity target = getPointedEntity(caster.getEyePosition(), caster.getLookAngle(), caster, caster.level(), 4.5F, 0.25F, true, true, map);
         if ( target != null ) {
-            for ( RuneItem rune : map.keySet() ) {
-                rune.effectOnEntity(map.get(rune), new MultiEntityHitResult(caster, Collections.singletonList(target), new DimVec3(caster.position(), caster.level())));
+            for ( SigilItem sigil : map.keySet() ) {
+                sigil.effectOnEntity(map.get(sigil), new MultiEntityHitResult(caster, Collections.singletonList(target), new DimVec3(caster.position(), caster.level())));
             }
         }
         else {
             MultiBlockHitResult mResult = getPOVHitResult(caster.getEyePosition(), caster.getLookAngle(), caster, caster.level(), ClipContext.Fluid.SOURCE_ONLY, 4.5F);
             if ( !mResult.getPos().getLevel().getBlockState(mResult.getBlocks().get(0)).isAir() ) {
-                for ( RuneItem rune : map.keySet() ) rune.effectOnBlock(map.get(rune), mResult);
+                for ( SigilItem sigil : map.keySet() ) sigil.effectOnBlock(map.get(sigil), mResult);
             }
         }
     }
@@ -50,7 +49,7 @@ public class ByTouchForm extends SpellForm {
                 Collections.singletonList(result.getBlockPos()), new DimVec3(result.getLocation(), level));
     }
 
-    private Entity getPointedEntity(Vec3 position, Vec3 direction, Entity caster, Level level, float range, float error, boolean stopsAtSolid, boolean stopsAtLiquid, LinkedHashMap<RuneItem, List<Integer>> map) {
+    private Entity getPointedEntity(Vec3 position, Vec3 direction, Entity caster, Level level, float range, float error, boolean stopsAtSolid, boolean stopsAtLiquid, LinkedHashMap<SigilItem, List<Integer>> map) {
         Vec3 center = position.add(direction.multiply(range, range, range));
         Entity returnEntity = null;
         double playerX = position.x();

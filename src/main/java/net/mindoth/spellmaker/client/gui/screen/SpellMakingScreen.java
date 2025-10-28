@@ -3,12 +3,12 @@ package net.mindoth.spellmaker.client.gui.screen;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.client.gui.menu.RuneSlot;
+import net.mindoth.spellmaker.client.gui.menu.SigilSlot;
 import net.mindoth.spellmaker.client.gui.menu.SpellMakingMenu;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.RuneItem;
+import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.util.DataHelper;
-import net.mindoth.spellmaker.util.SpellForm;
+import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -146,9 +146,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     private void handleLeftSpellFormButton(Button button) {
         if ( !this.menu.isReadyToMake() ) return;
         CompoundTag tag = new CompoundTag();
-        List<SpellForm> list = this.menu.getFormList();
-        SpellForm form = this.menu.getSpellForm();
-        SpellForm newForm;
+        List<AbstractSpellForm> list = this.menu.getFormList();
+        AbstractSpellForm form = this.menu.getSpellForm();
+        AbstractSpellForm newForm;
         if ( form == list.get(0) ) newForm = list.get(list.size() - 1);
         else newForm = list.get(list.indexOf(form) - 1);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(newForm));
@@ -158,9 +158,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     private void handleRightSpellFormButton(Button button) {
         if ( !this.menu.isReadyToMake() ) return;
         CompoundTag tag = new CompoundTag();
-        List<SpellForm> list = this.menu.getFormList();
-        SpellForm form = this.menu.getSpellForm();
-        SpellForm newForm;
+        List<AbstractSpellForm> list = this.menu.getFormList();
+        AbstractSpellForm form = this.menu.getSpellForm();
+        AbstractSpellForm newForm;
         if ( form == list.get(list.size() - 1) ) newForm = list.get(0);
         else newForm = list.get(list.indexOf(form) + 1);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(newForm));
@@ -314,9 +314,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         boolean showMag = false;
         boolean showDur = false;
         for ( int i = 0; i < this.menu.slots.size(); i++ ) {
-            if ( this.menu.slots.get(i) instanceof RuneSlot runeSlot && runeSlot.getItem().getItem() instanceof RuneItem rune ) {
-                if ( !showMag && rune.getMaxMagnitude() > 0 ) showMag = true;
-                if ( !showDur && rune.getMaxDuration() > 0 ) showDur = true;
+            if ( this.menu.slots.get(i) instanceof SigilSlot sigilSlot && sigilSlot.getItem().getItem() instanceof SigilItem sigil ) {
+                if ( !showMag && sigil.getMaxMagnitude() > 0 ) showMag = true;
+                if ( !showDur && sigil.getMaxDuration() > 0 ) showDur = true;
             }
         }
         //Stat name plate
@@ -329,13 +329,13 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         }
         for ( int i = 0; i < this.maxSlots; i++ ) {
             //Magnitude plates
-            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof RuneItem rune && rune.getMaxMagnitude() > 0 ) {
+            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil && sigil.getMaxMagnitude() > 0 ) {
                 int magX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 53;
                 int magY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
                 graphics.blit(TEXTURE, magX, magY + 18 * i, 176, 70, 18, 18, 256, 256);
             }
             //Duration plates
-            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof RuneItem rune && rune.getMaxDuration() > 0 ) {
+            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil && sigil.getMaxDuration() > 0 ) {
                 int durX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 107;
                 int durY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
                 graphics.blit(TEXTURE, durX, durY + 18 * i, 176, 70, 18, 18, 256, 256);
@@ -353,14 +353,14 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                         stringX + 54, stringY - 7 + this.font.lineHeight, 16777215);
             }
 
-            for ( int i = 0; i < this.menu.howManyRuneSlotsOpen(); i++ ) {
-                if ( this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof RuneItem rune ) {
+            for (int i = 0; i < this.menu.howManySigilSlotsOpen(); i++ ) {
+                if ( this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil ) {
                     int numOffY = 18 * i;
-                    if ( rune.getMaxMagnitude() > 0 ) {
+                    if ( sigil.getMaxMagnitude() > 0 ) {
                         graphics.drawCenteredString(this.font, String.valueOf(this.menu.getMagnitude().get(i)),
                                 x + LEFT_MAGNITUDE_BUTTON_OFFSET_X + 17, y + MAGNITUDE_BUTTON_OFFSET_Y - 7 + this.font.lineHeight + numOffY, 16777215);
                     }
-                    if ( rune.getMaxDuration() > 0 ) {
+                    if ( sigil.getMaxDuration() > 0 ) {
                         graphics.drawCenteredString(this.font, String.valueOf(this.menu.getDuration().get(i)),
                                 x + LEFT_DURATION_BUTTON_OFFSET_X + 17, y + DURATION_BUTTON_OFFSET_Y - 7 + this.font.lineHeight + numOffY, 16777215);
                     }
@@ -370,7 +370,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         //Locked Slots
         int off = 1;
         for ( int i = 0; i < this.menu.slots.size(); i++ ) {
-            if ( this.menu.getSlot(i) instanceof RuneSlot slot ) {
+            if ( this.menu.getSlot(i) instanceof SigilSlot slot ) {
                 int xPos = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
                 int yPos = y + SPELL_FORM_BUTTON_OFFSET_Y - 2 + 18 * off;
                 int u = this.menu.isReadyToMake() ? 176 : 192;
@@ -454,10 +454,10 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
 
     private boolean canEditStat(byte flag, int index, boolean isIncrease, int stat) {
         if ( !this.menu.isReadyToMake() || this.menu.getCraftSlots().getItem(index + 1).isEmpty() ) return false;
-        if ( !(this.menu.getCraftSlots().getItem(index + 1).getItem() instanceof RuneItem rune) ) return false;
+        if ( !(this.menu.getCraftSlots().getItem(index + 1).getItem() instanceof SigilItem sigil) ) return false;
         if ( !isIncrease && stat <= 0 ) return false;
-        if ( (flag == 0 && rune.getMaxMagnitude() <= 0 ) || (flag == 1 && rune.getMaxDuration() <= 0) ) return false;
-        if ( (flag == 0 && isIncrease && stat >= rune.getMaxMagnitude()) || (flag == 1 && isIncrease && stat >= rune.getMaxDuration()) ) return false;
+        if ( (flag == 0 && sigil.getMaxMagnitude() <= 0 ) || (flag == 1 && sigil.getMaxDuration() <= 0) ) return false;
+        if ( (flag == 0 && isIncrease && stat >= sigil.getMaxMagnitude()) || (flag == 1 && isIncrease && stat >= sigil.getMaxDuration()) ) return false;
         return true;
     }
 

@@ -2,6 +2,6 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "spellmaker:item/rune_essence",
-    "layer1": "spellmaker:item/rune/fire"
+    "layer1": "spellmaker:item/sigil/sleep"
   }
 }

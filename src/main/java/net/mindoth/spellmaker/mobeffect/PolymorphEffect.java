@@ -3,7 +3,9 @@ package net.mindoth.spellmaker.mobeffect;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.item.rune.PolymorphRuneItem;
+import net.mindoth.spellmaker.item.SpellBookItem;
+import net.mindoth.spellmaker.item.sigil.PolymorphSigilItem;
+import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.mixin.EntityMixin;
 import net.mindoth.spellmaker.mixin.WalkAnimationStateMixin;
 import net.mindoth.spellmaker.registries.ModEffects;
@@ -57,10 +59,10 @@ public class PolymorphEffect extends MobEffect {
     }
 
     private static void polymorphPlayer(Player player, AttributeModifier nameTagModifier) {
-        PolymorphRuneItem rune = getRuneFromUUID(nameTagModifier.getId());
-        if ( rune != null ) {
-            rune.addStatModifiers(player);
-            PolymorphRuneItem.syncDimensions(player);
+        PolymorphSigilItem sigil = getSigilFromUUID(nameTagModifier.getId());
+        if ( sigil != null ) {
+            sigil.addStatModifiers(player);
+            PolymorphSigilItem.syncDimensions(player);
         }
     }
 
@@ -116,9 +118,9 @@ public class PolymorphEffect extends MobEffect {
         AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
         if ( nameTagDistance == null ) return;
         List<AttributeModifier> nameTagModifierList = Lists.newArrayList();
-        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( getRuneFromUUID(modifier.getId()) != null ) nameTagModifierList.add(modifier);
-        for ( AttributeModifier modifier : nameTagModifierList ) getRuneFromUUID(modifier.getId()).removeModifiers(living);
-        if ( doSync ) PolymorphRuneItem.syncDimensions(living);
+        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( getSigilFromUUID(modifier.getId()) != null ) nameTagModifierList.add(modifier);
+        for ( AttributeModifier modifier : nameTagModifierList ) getSigilFromUUID(modifier.getId()).removeModifiers(living);
+        if ( doSync ) PolymorphSigilItem.syncDimensions(living);
     }
 
     private void restoreMob(CompoundTag tag, ServerLevel level, LivingEntity living) {
@@ -148,6 +150,8 @@ public class PolymorphEffect extends MobEffect {
     public static void preventInteractWhilePolymorphed(PlayerInteractEvent event) {
         Player player = event.getEntity();
         if ( !player.hasEffect(ModEffects.POLYMORPH.get()) ) return;
+        if ( event instanceof PlayerInteractEvent.RightClickItem itemEvent
+                && (itemEvent.getItemStack().getItem() instanceof StaffItem || itemEvent.getItemStack().getItem() instanceof SpellBookItem) ) return;
         if ( event.isCancelable() ) event.setCanceled(true);
     }
 
@@ -238,7 +242,7 @@ public class PolymorphEffect extends MobEffect {
         double amount = 0;
         for ( AttributeInstance instance : player.getAttributes().getSyncableAttributes() ) {
             for ( AttributeModifier modifier : instance.getModifiers() ) {
-                if ( Objects.equals(modifier.getId().toString(), PolymorphRuneItem.POLYMORPH_SPEED_MODIFIER_UUID.toString()) ) amount += modifier.getAmount();
+                if ( Objects.equals(modifier.getId().toString(), PolymorphSigilItem.POLYMORPH_SPEED_MODIFIER_UUID.toString()) ) amount += modifier.getAmount();
             }
         }
         if ( amount != 0 ) event.setNewFovModifier(newFovCalc(player, amount));
@@ -265,14 +269,14 @@ public class PolymorphEffect extends MobEffect {
 
     public static EntityType getTypeFromUUID(UUID uuid) {
         for ( Item item : ForgeRegistries.ITEMS.getValues() ) {
-            if ( item instanceof PolymorphRuneItem rune && Objects.equals(rune.getUUID().toString(), uuid.toString()) ) return rune.getEntityType();
+            if ( item instanceof PolymorphSigilItem rune && Objects.equals(rune.getUUID().toString(), uuid.toString()) ) return rune.getEntityType();
         }
         return null;
     }
 
-    public static PolymorphRuneItem getRuneFromUUID(UUID uuid) {
+    public static PolymorphSigilItem getSigilFromUUID(UUID uuid) {
         for ( Item item : ForgeRegistries.ITEMS.getValues() ) {
-            if ( item instanceof PolymorphRuneItem rune && Objects.equals(rune.getUUID().toString(), uuid.toString()) ) return rune;
+            if ( item instanceof PolymorphSigilItem rune && Objects.equals(rune.getUUID().toString(), uuid.toString()) ) return rune;
         }
         return null;
     }
@@ -281,16 +285,16 @@ public class PolymorphEffect extends MobEffect {
         if ( living.getAttributes() == null ) return false;
         AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
         if ( nameTagDistance == null ) return false;
-        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( getRuneFromUUID(modifier.getId()) != null ) return true;
+        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( getSigilFromUUID(modifier.getId()) != null ) return true;
         return false;
     }
 
-    public static PolymorphRuneItem getPolymorphRune(LivingEntity living) {
+    public static PolymorphSigilItem getTransformationSigil(LivingEntity living) {
         if ( living.getAttributes() == null ) return null;
         AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
         if ( nameTagDistance == null ) return null;
         for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( PolymorphEffect.getTypeFromUUID(modifier.getId()) != null ) {
-            return PolymorphEffect.getRuneFromUUID(modifier.getId());
+            return PolymorphEffect.getSigilFromUUID(modifier.getId());
         }
         return null;
     }

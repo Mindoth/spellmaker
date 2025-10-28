@@ -1,4 +1,4 @@
-package net.mindoth.spellmaker.item.rune;
+package net.mindoth.spellmaker.item.sigil;
 
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
@@ -15,8 +15,8 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = SpellMaker.MOD_ID)
-public class FishPolymorphItem extends PolymorphRuneItem {
-    public FishPolymorphItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier, UUID uuid, EntityType entityType) {
+public class FishTransformationSigilItem extends PolymorphSigilItem {
+    public FishTransformationSigilItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier, UUID uuid, EntityType entityType) {
         super(pProperties, color, cost, maxMagnitude, magnitudeMultiplier, maxDuration, durationMultiplier, uuid, entityType);
     }
 
@@ -32,12 +32,12 @@ public class FishPolymorphItem extends PolymorphRuneItem {
 
     public static boolean isFish(LivingEntity living) {
         if ( !(living instanceof Player player) ) return false;
-        return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getPolymorphRune(player) == ModItems.FISH_POLYMORPH_RUNE.get();
+        return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getTransformationSigil(player) == ModItems.FISH_TRANSFORMATION_SIGIL.get();
     }
 
     @SubscribeEvent
     public static void fishPolymorphBreathe(LivingBreatheEvent event) {
-        if ( !(event.getEntity() instanceof Player player) ) return;
+        if ( !(event.getEntity() instanceof Player player) || player.isCreative() ) return;
         if ( !isFish(player) ) return;
         event.setCanBreathe(player.isInWater());
         event.setCanRefillAir(player.isInWater());

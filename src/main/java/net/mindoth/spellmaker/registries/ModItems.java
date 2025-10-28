@@ -5,8 +5,8 @@ import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.item.armor.ColorableArmorItem;
 import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
-import net.mindoth.spellmaker.item.castingitem.ColorableStaffItem;
-import net.mindoth.spellmaker.item.rune.*;
+import net.mindoth.spellmaker.item.weapon.ColorableStaffItem;
+import net.mindoth.spellmaker.item.sigil.*;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ArmorItem;
@@ -50,26 +50,26 @@ public class ModItems {
             () -> new ColorableArmorItem(ModArmorMaterials.ROBE, ArmorItem.Type.BOOTS, new Item.Properties()));
 
     //Runes
-    public static final RegistryObject<Item> EXCAVATE_RUNE = ITEMS.register("excavate_rune",
-            () -> new ExcavateRuneItem(new Item.Properties(), SpellColor.GREEN, 5, 5, 2, 0, 0));
+    public static final RegistryObject<Item> EXCAVATION_SIGIL = ITEMS.register("excavation_sigil",
+            () -> new ExcavationSigilItem(new Item.Properties(), SpellColor.GREEN, 0, 5, 5, 0, 0));
 
-    public static final RegistryObject<Item> FIRE_RUNE = ITEMS.register("fire_rune",
-            () -> new FireRuneItem(new Item.Properties(), SpellColor.GOLD, 1, 64, 1, 64, 1));
+    public static final RegistryObject<Item> FIRE_SIGIL = ITEMS.register("fire_sigil",
+            () -> new FireSigilItem(new Item.Properties(), SpellColor.GOLD, 0, 64, 1, 64, 1));
 
-    public static final RegistryObject<Item> FROST_RUNE = ITEMS.register("frost_rune",
-            () -> new FrostRuneItem(new Item.Properties(), SpellColor.AQUA, 2, 64, 1, 64, 1));
+    public static final RegistryObject<Item> FROST_SIGIL = ITEMS.register("frost_sigil",
+            () -> new FrostSigilItem(new Item.Properties(), SpellColor.AQUA, 0, 64, 1, 64, 1));
 
-    public static final RegistryObject<Item> SHOCK_RUNE = ITEMS.register("shock_rune",
-            () -> new ShockRuneItem(new Item.Properties(), SpellColor.DARK_BLUE, 3, 64, 1, 64, 5));
+    public static final RegistryObject<Item> SHOCK_SIGIL = ITEMS.register("shock_sigil",
+            () -> new ShockSigilItem(new Item.Properties(), SpellColor.DARK_BLUE, 0, 64, 2, 64, 2));
 
-    public static final RegistryObject<Item> SLEEP_RUNE = ITEMS.register("sleep_rune",
-            () -> new SleepRuneItem(new Item.Properties(), SpellColor.DARK_PURPLE, 3, 0, 0, 64, 2));
+    public static final RegistryObject<Item> SLEEP_SIGIL = ITEMS.register("sleep_sigil",
+            () -> new SleepSigilItem(new Item.Properties(), SpellColor.DARK_PURPLE, 0, 0, 0, 64, 1));
 
-    public static final RegistryObject<Item> SHEEP_POLYMORPH_RUNE = ITEMS.register("sheep_polymorph_rune",
-            () -> new SheepPolymorphRuneItem(new Item.Properties(), SpellColor.DARK_PURPLE, 5, 0, 0, 64, 1,
+    public static final RegistryObject<Item> SHEEP_TRANSFORMATION_SIGIL = ITEMS.register("sheep_transformation_sigil",
+            () -> new SheepTransformationSigilItem(new Item.Properties(), SpellColor.DARK_PURPLE, 0, 0, 0, 64, 1,
                     UUID.fromString("84527dc5-d3e5-4550-98ed-c8186c5d3089"), EntityType.SHEEP));
 
-    public static final RegistryObject<Item> FISH_POLYMORPH_RUNE = ITEMS.register("fish_polymorph_rune",
-            () -> new FishPolymorphItem(new Item.Properties(), SpellColor.DARK_PURPLE, 5, 0, 0, 64, 1,
+    public static final RegistryObject<Item> FISH_TRANSFORMATION_SIGIL = ITEMS.register("fish_transformation_sigil",
+            () -> new FishTransformationSigilItem(new Item.Properties(), SpellColor.DARK_PURPLE, 0, 0, 0, 64, 1,
                     UUID.fromString("b2bc1fd5-a121-42cf-b7cb-d29c61e3211c"), EntityType.COD));
 }

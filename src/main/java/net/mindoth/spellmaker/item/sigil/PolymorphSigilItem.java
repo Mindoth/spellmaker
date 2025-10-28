@@ -1,9 +1,8 @@
-package net.mindoth.spellmaker.item.rune;
+package net.mindoth.spellmaker.item.sigil;
 
 import com.google.common.collect.Lists;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.item.RuneItem;
 import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
 import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.network.PacketSyncSize;
@@ -34,7 +33,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = SpellMaker.MOD_ID)
-public class PolymorphRuneItem extends RuneItem {
+public class PolymorphSigilItem extends SigilItem {
 
     private final UUID uuid;
     public UUID getUUID() {
@@ -45,7 +44,7 @@ public class PolymorphRuneItem extends RuneItem {
         return this.entityType;
     }
 
-    public PolymorphRuneItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier, UUID uuid, EntityType entityType) {
+    public PolymorphSigilItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier, UUID uuid, EntityType entityType) {
         super(pProperties, color, cost, maxMagnitude, magnitudeMultiplier, maxDuration, durationMultiplier);
         this.uuid = uuid;
         this.entityType = entityType;
@@ -97,7 +96,7 @@ public class PolymorphRuneItem extends RuneItem {
         for ( AttributeInstance instance : living.getAttributes().getSyncableAttributes() ) {
             List<AttributeModifier> list = Lists.newArrayList();
             for ( AttributeModifier modifier : instance.getModifiers() ) {
-                if ( PolymorphEffect.getRuneFromUUID(modifier.getId()) != null || Objects.equals(modifier.getId().toString(), POLYMORPH_SPEED_MODIFIER_UUID.toString()) ) {
+                if ( PolymorphEffect.getSigilFromUUID(modifier.getId()) != null || Objects.equals(modifier.getId().toString(), POLYMORPH_SPEED_MODIFIER_UUID.toString()) ) {
                     list.add(modifier);
                 }
             }

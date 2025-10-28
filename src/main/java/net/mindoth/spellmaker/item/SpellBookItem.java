@@ -35,7 +35,7 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     public static int pageSize = maxRows * maxColumns * 2;
 
     public static final String NBT_KEY_BOOK_FORMS = "sm_book_forms";
-    public static final String NBT_KEY_BOOK_RUNES = "sm_book_runes";
+    public static final String NBT_KEY_BOOK_SIGILS = "sm_book_sigils";
     public static final String NBT_KEY_BOOK_MAGNITUDES = "sm_book_magnitudes";
     public static final String NBT_KEY_BOOK_DURATIONS = "sm_book_durations";
 
@@ -115,8 +115,8 @@ public class SpellBookItem extends Item implements ModDyeableItem {
         String form = tag.getString(NBT_KEY_BOOK_FORMS);
         List<String> formList = List.of(form.split(";"));
 
-        String rune = tag.getString(NBT_KEY_BOOK_RUNES);
-        List<String> runeList = List.of(rune.split(";"));
+        String sigil = tag.getString(NBT_KEY_BOOK_SIGILS);
+        List<String> sigilList = List.of(sigil.split(";"));
 
         String magnitude = tag.getString(NBT_KEY_BOOK_MAGNITUDES);
         List<String> magList = List.of(magnitude.split(";"));
@@ -130,19 +130,19 @@ public class SpellBookItem extends Item implements ModDyeableItem {
         String item = tag.getString(ParchmentItem.NBT_KEY_PAPER_TIER);
         List<String> itemList = List.of(item.split(";"));
 
-        for ( int i = 0; i < runeList.size(); i++ ) {
-            ItemStack stack = constructSpellScroll(formList.get(i), runeList.get(i), magList.get(i), durList.get(i), nameList.get(i), ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemList.get(i))));
+        for ( int i = 0; i < sigilList.size(); i++ ) {
+            ItemStack stack = constructSpellScroll(formList.get(i), sigilList.get(i), magList.get(i), durList.get(i), nameList.get(i), ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemList.get(i))));
             scrollList.add(stack);
         }
         return scrollList;
     }
 
-    public static ItemStack constructSpellScroll(String form, String runes, String magnitudes, String durations, String name, Item item) {
+    public static ItemStack constructSpellScroll(String form, String sigils, String magnitudes, String durations, String name, Item item) {
         ItemStack stack = new ItemStack(item);
         if ( !Objects.equals(name, NBT_KEY_NULL_NAME) ) stack.setHoverName(Component.literal(name));
         CompoundTag tag = stack.getOrCreateTag();
         tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, form);
-        tag.putString(ParchmentItem.NBT_KEY_SPELL_RUNES, runes);
+        tag.putString(ParchmentItem.NBT_KEY_SPELL_SIGILS, sigils);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES, magnitudes);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_DURATIONS, durations);
         return stack;
@@ -152,7 +152,7 @@ public class SpellBookItem extends Item implements ModDyeableItem {
         ItemStack book = ogBook.copy();
         if ( book.hasTag() ) {
             if ( book.getTag().contains(NBT_KEY_BOOK_FORMS) ) book.getTag().remove(NBT_KEY_BOOK_FORMS);
-            if ( book.getTag().contains(NBT_KEY_BOOK_RUNES) ) book.getTag().remove(NBT_KEY_BOOK_RUNES);
+            if ( book.getTag().contains(NBT_KEY_BOOK_SIGILS) ) book.getTag().remove(NBT_KEY_BOOK_SIGILS);
             if ( book.getTag().contains(NBT_KEY_BOOK_MAGNITUDES) ) book.getTag().remove(NBT_KEY_BOOK_MAGNITUDES);
             if ( book.getTag().contains(NBT_KEY_BOOK_DURATIONS) ) book.getTag().remove(NBT_KEY_BOOK_DURATIONS);
             if ( book.getTag().contains(ParchmentItem.NBT_KEY_SPELL_NAME) ) book.getTag().remove(ParchmentItem.NBT_KEY_SPELL_NAME);
@@ -168,8 +168,8 @@ public class SpellBookItem extends Item implements ModDyeableItem {
         String formString = scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_FORM);
         addSpellTagsToBook(bookTag, formString, NBT_KEY_BOOK_FORMS);
 
-        String runeString = scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_RUNES);
-        addSpellTagsToBook(bookTag, runeString, NBT_KEY_BOOK_RUNES);
+        String runeString = scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_SIGILS);
+        addSpellTagsToBook(bookTag, runeString, NBT_KEY_BOOK_SIGILS);
 
         String magString = scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES);
         addSpellTagsToBook(bookTag, magString, NBT_KEY_BOOK_MAGNITUDES);

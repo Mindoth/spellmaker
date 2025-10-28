@@ -3,7 +3,7 @@ package net.mindoth.spellmaker.entity;
 import net.mindoth.shadowizardlib.client.particle.ember.EmberParticleProvider;
 import net.mindoth.shadowizardlib.event.LightEvents;
 import net.mindoth.shadowizardlib.event.ShadowEvents;
-import net.mindoth.spellmaker.item.RuneItem;
+import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -188,11 +188,11 @@ public abstract class AbstractSpellEntity extends Projectile {
         return map;
     }
 
-    public LinkedHashMap<RuneItem, List<Integer>> getMap() {
-        List<RuneItem> runeList = DataHelper.getRuneListFromString(this.entityData.get(RUNE_LIST));
+    public LinkedHashMap<SigilItem, List<Integer>> getMap() {
+        List<SigilItem> sigilList = DataHelper.getSigilListFromString(this.entityData.get(SIGIL_LIST));
         List<Integer> magnitudes = DataHelper.getStatsFromString(this.entityData.get(MAGNITUDES));
         List<Integer> durations = DataHelper.getStatsFromString(this.entityData.get(DURATIONS));
-        return DataHelper.createMapFromLists(runeList, magnitudes, durations);
+        return DataHelper.createMapFromLists(sigilList, magnitudes, durations);
     }
 
     public float getSpeed() {
@@ -213,7 +213,7 @@ public abstract class AbstractSpellEntity extends Projectile {
     public static final EntityDataAccessor<Integer> BLUE = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.INT);
 
-    public static final EntityDataAccessor<String> RUNE_LIST = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String> SIGIL_LIST = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> MAGNITUDES = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> DURATIONS = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.STRING);
 
@@ -225,7 +225,7 @@ public abstract class AbstractSpellEntity extends Projectile {
         this.entityData.set(BLUE, compound.getInt("blue"));
         this.entityData.set(TYPE, compound.getInt("type"));
 
-        this.entityData.set(RUNE_LIST, compound.getString("rune_list"));
+        this.entityData.set(SIGIL_LIST, compound.getString("sigil_list"));
         this.entityData.set(MAGNITUDES, compound.getString("magnitudes"));
         this.entityData.set(DURATIONS, compound.getString("durations"));
     }
@@ -238,7 +238,7 @@ public abstract class AbstractSpellEntity extends Projectile {
         compound.putInt("blue", this.entityData.get(BLUE));
         compound.putInt("type", this.entityData.get(TYPE));
 
-        compound.putString("rune_list", this.entityData.get(RUNE_LIST));
+        compound.putString("sigil_list", this.entityData.get(SIGIL_LIST));
         compound.putString("magnitudes", this.entityData.get(MAGNITUDES));
         compound.putString("durations", this.entityData.get(DURATIONS));
     }
@@ -250,7 +250,7 @@ public abstract class AbstractSpellEntity extends Projectile {
         this.entityData.define(BLUE, -1);
         this.entityData.define(TYPE, 1);
 
-        this.entityData.define(RUNE_LIST, "");
+        this.entityData.define(SIGIL_LIST, "");
         this.entityData.define(MAGNITUDES, "");
         this.entityData.define(DURATIONS, "");
     }

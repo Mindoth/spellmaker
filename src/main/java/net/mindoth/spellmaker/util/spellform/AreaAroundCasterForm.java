@@ -5,8 +5,7 @@ import net.mindoth.shadowizardlib.event.LightEvents;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
-import net.mindoth.spellmaker.item.RuneItem;
-import net.mindoth.spellmaker.util.SpellForm;
+import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -17,23 +16,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class AreaAroundCasterForm extends SpellForm {
+public class AreaAroundCasterForm extends AbstractSpellForm {
     public AreaAroundCasterForm(int cost) {
         super(cost);
     }
 
     @Override
-    public void castMagick(Entity caster, LinkedHashMap<RuneItem, List<Integer>> map) {
+    public void castMagick(Entity caster, LinkedHashMap<SigilItem, List<Integer>> map) {
         Level level = caster.level();
         AABB box = caster.getBoundingBox().inflate(1.0D, 0.0D, 1.0D);
         for ( Entity entity : level.getEntities(caster, box).stream().filter((entity -> entity instanceof LivingEntity)).toList() ) {
-            for ( RuneItem rune : map.keySet() ) {
-                rune.effectOnEntity(map.get(rune), new MultiEntityHitResult(caster, Collections.singletonList(entity), new DimVec3(entity.position(), entity.level())));
+            for ( SigilItem sigil : map.keySet() ) {
+                sigil.effectOnEntity(map.get(sigil), new MultiEntityHitResult(caster, Collections.singletonList(entity), new DimVec3(entity.position(), entity.level())));
             }
         }
         List<BlockPos> blocks = getBlockPos(caster);
         MultiBlockHitResult mResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(caster.position(), level));
-        for ( RuneItem rune : map.keySet() ) rune.effectOnBlock(map.get(rune), mResult);
+        for ( SigilItem sigil : map.keySet() ) sigil.effectOnBlock(map.get(sigil), mResult);
         LightEvents.addAoeParticles(true, level, box, 0.15F, 8, getColorStats(map));
     }
 
