@@ -357,7 +357,7 @@ public class SpellBookScreen extends ModScreen {
                     if ( stack.getItem() instanceof ParchmentItem ) {
                         if ( this.slotButtonList.get(i).isHovered() ) {
                             renderItemWithDecorations(graphics, stack, xPos, yPos);
-                            graphics.fill(RenderType.guiOverlay(), xPos, yPos, xPos + 16, yPos + 16, Integer.MAX_VALUE);
+                            graphics.fill(RenderType.guiOverlay(), xPos, yPos, xPos + 16, yPos + 16, Integer.MIN_VALUE);
                             graphics.renderTooltip(this.font, stack, mouseX, mouseY);
                         }
                         else {
