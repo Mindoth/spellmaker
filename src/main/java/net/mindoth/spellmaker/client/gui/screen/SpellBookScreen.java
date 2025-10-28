@@ -396,7 +396,7 @@ public class SpellBookScreen extends ModScreen {
 
     private ResourceLocation getSpellIcon(ItemStack scroll) {
         AbstractSpellForm form = DataHelper.getFormFromNbt(scroll.getTag());
-        List<SigilItem> sigilList = DataHelper.getSigilListFromString(scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_SIGILS));
+        List<ItemStack> sigilList = DataHelper.getSpellStackFromTag(scroll.getTag());
         List<Integer> magnitudeList = DataHelper.getStatsFromString(scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
         List<Integer> durationList = DataHelper.getStatsFromString(scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
         return SpellColor.getSpellIcon(form, sigilList, magnitudeList, durationList);

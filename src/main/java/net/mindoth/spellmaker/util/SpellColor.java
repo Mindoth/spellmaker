@@ -1,10 +1,10 @@
 package net.mindoth.spellmaker.util;
 
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
@@ -48,10 +48,10 @@ public enum SpellColor {
         this.string = string;
     }
 
-    public static ResourceLocation getSpellIcon(AbstractSpellForm form, List<SigilItem> sigilList, List<Integer> magnitudeList, List<Integer> durationList) {
+    public static ResourceLocation getSpellIcon(AbstractSpellForm form, List<ItemStack> sigilList, List<Integer> magnitudeList, List<Integer> durationList) {
         ResourceLocation icon = SpellColor.getSpellIconPath(form, SpellColor.MIX);
         if ( !sigilList.isEmpty() ) {
-            SigilItem highestCostSigil = ParchmentItem.getHighestCostSigil(DataHelper.createMapFromLists(sigilList, magnitudeList, durationList));
+            SigilItem highestCostSigil = AbstractSpellForm.getHighestCostSigil(DataHelper.createMapFromStackLists(sigilList, magnitudeList, durationList));
             if ( highestCostSigil != null ) icon = SpellColor.getSpellIconPath(form, highestCostSigil.getColor());
         }
         return icon;

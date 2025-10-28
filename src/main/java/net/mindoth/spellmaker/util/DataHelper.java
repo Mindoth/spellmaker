@@ -60,6 +60,12 @@ public abstract class DataHelper {
         return map;
     }
 
+    public static LinkedHashMap<SigilItem, List<Integer>> createMapFromStackLists(List<ItemStack> sigilList, List<Integer> magnitudes, List<Integer> durations) {
+        LinkedHashMap<SigilItem, List<Integer>> map = new LinkedHashMap<>();
+        for ( int i = 0; i < sigilList.size(); i++ ) if ( sigilList.get(i).getItem() instanceof SigilItem sigil ) map.put(sigil, Arrays.asList(magnitudes.get(i), durations.get(i)));
+        return map;
+    }
+
     public static String getStringFromSigilList(List<SigilItem> list) {
         StringBuilder stringBuilder = new StringBuilder();
         for ( int i = 0; i < list.size(); i++ ) {

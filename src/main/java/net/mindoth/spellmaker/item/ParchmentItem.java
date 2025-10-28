@@ -69,23 +69,6 @@ public class ParchmentItem extends Item {
         return totalCost;
     }
 
-    public static SigilItem getHighestCostSigil(LinkedHashMap<SigilItem, List<Integer>> map) {
-        SigilItem state = null;
-        int highestCost = 0;
-        for ( SigilItem sigil : map.keySet() ) {
-            int cost = sigil.getCost();
-            List<Integer> stats = map.get(sigil);
-            if ( sigil.getMaxMagnitude() > 0 ) cost += stats.get(0) * sigil.getMagnitudeMultiplier();
-            if ( sigil.getMaxDuration() > 0 ) cost += stats.get(1) * sigil.getDurationMultiplier();
-            if ( cost == highestCost ) return null;
-            if ( cost > highestCost ) {
-                highestCost = cost;
-                state = sigil;
-            }
-        }
-        return state;
-    }
-
     @Override
     public boolean isFoil(ItemStack pStack) {
         return pStack.isEnchanted() || (pStack.hasTag() && pStack.getTag().contains(NBT_KEY_SPELL_FORM));

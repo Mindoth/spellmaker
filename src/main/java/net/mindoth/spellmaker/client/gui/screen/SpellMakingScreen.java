@@ -389,9 +389,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     }
 
     private ResourceLocation getSpellIcon() {
-        AbstractSpellForm form =this.menu.getSpellForm();
-        List<SigilItem> sigilList = Lists.newArrayList();
-        for ( Slot slot : this.menu.slots ) if ( slot instanceof SigilSlot && slot.getItem().getItem() instanceof SigilItem ) sigilList.add((SigilItem)slot.getItem().getItem());
+        AbstractSpellForm form = this.menu.getSpellForm();
+        List<ItemStack> sigilList = Lists.newArrayList();
+        for ( Slot slot : this.menu.slots ) if ( slot instanceof SigilSlot ) sigilList.add(slot.getItem());
         List<Integer> magnitudeList = this.menu.getMagnitude();
         List<Integer> durationList = this.menu.getDuration();
         return SpellColor.getSpellIcon(form, sigilList, magnitudeList, durationList);
