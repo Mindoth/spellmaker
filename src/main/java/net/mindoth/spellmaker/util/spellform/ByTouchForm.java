@@ -31,10 +31,15 @@ public class ByTouchForm extends AbstractSpellForm {
         if ( target != null ) {
             MultiEntityHitResult mResult = new MultiEntityHitResult(caster, Collections.singletonList(target), new DimVec3(target.position(), target.level()));
             for ( SigilItem sigil : map.keySet() ) sigil.effectOnEntity(map.get(sigil), mResult);
+            LightEvents.addEnchantParticles(target, 0.15F, getColorStats(map));
         }
         else {
             MultiBlockHitResult mResult = getPOVHitResult(caster.getEyePosition(), caster.getLookAngle(), caster, caster.level(), ClipContext.Fluid.SOURCE_ONLY, 4.5F);
             for ( SigilItem sigil : map.keySet() ) sigil.effectOnBlock(map.get(sigil), mResult);
+            if ( mResult.getBlocks().size() == 1 ) {
+                BlockPos blockPos = mResult.getBlocks().get(0);
+                LightEvents.addAoeParticles(true, caster.level(), new AABB(blockPos), 0.15F, 8, getColorStats(map));
+            }
         }
     }
 
@@ -56,13 +61,13 @@ public class ByTouchForm extends AbstractSpellForm {
         double listedEntityY = center.y();
         double listedEntityZ = center.z();
         int particleInterval = (int)Math.round(position.distanceToSqr(center));
-        Vec3 startPos = position.add(direction);
-        Vec3 endPos = center;
+        //Vec3 startPos = position.add(direction);
+        //Vec3 endPos = center;
         for ( int k = 1; k < (1 + particleInterval); k++ ) {
             double lineX = playerX * (1 - ((double) k / particleInterval)) + listedEntityX * ((double) k / particleInterval);
             double lineY = playerY * (1 - ((double) k / particleInterval)) + listedEntityY * ((double) k / particleInterval);
             double lineZ = playerZ * (1 - ((double) k / particleInterval)) + listedEntityZ * ((double) k / particleInterval);
-            endPos = new Vec3(lineX, lineY, lineZ);
+            //endPos = new Vec3(lineX, lineY, lineZ);
             Vec3 start = new Vec3(lineX + error, lineY + error, lineZ + error);
             Vec3 end = new Vec3(lineX - error, lineY - error, lineZ - error);
             AABB area = new AABB(start, end);
@@ -82,7 +87,7 @@ public class ByTouchForm extends AbstractSpellForm {
             if ( stopsAtLiquid && level.getBlockState(new BlockPos(Mth.floor(lineX), Mth.floor(lineY), Mth.floor(lineZ))).getBlock() instanceof LiquidBlock) break;
             if ( stopsAtSolid && level.getBlockState(new BlockPos(Mth.floor(lineX), Mth.floor(lineY), Mth.floor(lineZ))).isSolid() ) break;
         }
-        LightEvents.summonParticleLine(startPos, endPos, particleInterval, startPos, level, 0.1F, 8, getColorStats(map));
+        //LightEvents.summonParticleLine(startPos, endPos, particleInterval, startPos, level, 0.1F, 8, getColorStats(map));
         return returnEntity;
     }
 }

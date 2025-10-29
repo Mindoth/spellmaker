@@ -2,7 +2,6 @@ package net.mindoth.spellmaker.item.sigil;
 
 import com.mojang.authlib.GameProfile;
 import net.mindoth.shadowizardlib.util.DimVec3;
-import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,7 +26,7 @@ public class ExcavationSigilItem extends SigilItem {
     @Override
     public void effectOnAllBlocksInList(BlockPos target, List<Integer> stats, DimVec3 location, Direction direction, boolean isInside) {
         int magnitude = stats.get(0);
-        handleMine(target, location.getLevel(), magnitude);
+        if ( magnitude > 0 ) handleMine(target, location.getLevel(), magnitude);
     }
 
     private static final GameProfile FAKE_PROFILE = new GameProfile(UUID.fromString("fdc17a6f-5d46-484e-9343-820f43c7b101"), "am_fake_player_profile");
@@ -45,11 +44,10 @@ public class ExcavationSigilItem extends SigilItem {
     }
 
     private ItemStack getToolFromStrength(int power) {
-        if ( power < 1 ) return ItemStack.EMPTY;
-        else if ( power == 1 ) return new ItemStack(Items.WOODEN_PICKAXE);
-        else if ( power == 2 ) return new ItemStack(Items.STONE_PICKAXE);
-        else if ( power == 3 ) return new ItemStack(Items.IRON_PICKAXE);
-        else if ( power == 4 ) return new ItemStack(Items.DIAMOND_PICKAXE);
-        else return new ItemStack(Items.NETHERITE_PICKAXE);
+        if ( power == 1 ) return ItemStack.EMPTY;
+        else if ( power == 2 ) return new ItemStack(Items.WOODEN_PICKAXE);
+        else if ( power == 3 ) return new ItemStack(Items.STONE_PICKAXE);
+        else if ( power == 4 ) return new ItemStack(Items.IRON_PICKAXE);
+        else return new ItemStack(Items.DIAMOND_PICKAXE);
     }
 }
