@@ -25,7 +25,7 @@ public class ModItems {
     public static final RegistryObject<Item> RUNE_ESSENCE = ITEMS.register("rune_essence",
             () -> new Item(new Item.Properties()));
 
-    public static final RegistryObject<Item> ARCANE_CLOTH = ITEMS.register("arcane_cloth",
+    public static final RegistryObject<Item> WOOL_CLOTH = ITEMS.register("wool_cloth",
             () -> new Item(new Item.Properties()));
 
     public static final RegistryObject<Item> PARCHMENT = ITEMS.register("parchment",
@@ -52,7 +52,7 @@ public class ModItems {
 
     //Runes
     public static final RegistryObject<Item> EXCAVATION_SIGIL = ITEMS.register("excavation_sigil",
-            () -> new ExcavationSigilItem(new Item.Properties(), SpellColor.NATURE, 0, 5, 5, 0, 0));
+            () -> new ExcavationSigilItem(new Item.Properties(), SpellColor.NATURE, 0, 4, 5, 0, 0));
 
     public static final RegistryObject<Item> FIRE_SIGIL = ITEMS.register("fire_sigil",
             () -> new FireSigilItem(new Item.Properties(), SpellColor.FIRE, 0, 64, 1, 64, 1));

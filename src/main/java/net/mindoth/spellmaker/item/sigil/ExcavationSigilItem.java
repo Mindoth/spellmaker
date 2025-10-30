@@ -44,10 +44,9 @@ public class ExcavationSigilItem extends SigilItem {
     }
 
     private ItemStack getToolFromStrength(int power) {
-        if ( power == 1 ) return ItemStack.EMPTY;
-        else if ( power == 2 ) return new ItemStack(Items.WOODEN_PICKAXE);
-        else if ( power == 3 ) return new ItemStack(Items.STONE_PICKAXE);
-        else if ( power == 4 ) return new ItemStack(Items.IRON_PICKAXE);
+        if ( power == 1 ) return new ItemStack(Items.WOODEN_PICKAXE);
+        else if ( power == 2 ) return new ItemStack(Items.STONE_PICKAXE);
+        else if ( power == 3 ) return new ItemStack(Items.IRON_PICKAXE);
         else return new ItemStack(Items.DIAMOND_PICKAXE);
     }
 }

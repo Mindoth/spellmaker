@@ -1,11 +1,7 @@
 package net.mindoth.spellmaker.entity;
 
-import net.mindoth.shadowizardlib.client.particle.ember.EmberParticleProvider;
-import net.mindoth.shadowizardlib.event.LightEvents;
-import net.mindoth.shadowizardlib.event.ShadowEvents;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.util.DataHelper;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -32,7 +28,6 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Predicate;
 
 public abstract class AbstractSpellEntity extends Projectile {
@@ -131,29 +126,6 @@ public abstract class AbstractSpellEntity extends Projectile {
     }
 
     protected void doClientTickEffects() {
-        if ( isRemoved() ) return;
-        if ( !level().isClientSide ) return;
-        ClientLevel world = (ClientLevel)level();
-        Vec3 center = ShadowEvents.getEntityCenter(this);
-        Vec3 pos = new Vec3(center.x, getY(), center.z);
-
-        Vec3 vec3 = getDeltaMovement();
-        double d5 = vec3.x;
-        double d6 = vec3.y;
-        double d1 = vec3.z;
-        double speed = 0.05D;
-        for ( int j = 0; j < 4; j++ ) {
-            if ( -this.tickCount < j - 4 ) {
-                double variable = 1.0D;
-                double vecX = new Random().nextDouble(variable - -variable) + -variable;
-                double vecY = new Random().nextDouble(variable - -variable) + -variable;
-                double vecZ = new Random().nextDouble(variable - -variable) + -variable;
-                int life = 8;
-                world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(getParticleStats()), 0.1F, life, false, LightEvents.getParticleType(getParticleStats())),
-                        pos.x + d5 * (double) j / 4.0D, pos.y + d6 * (double) j / 4.0D, pos.z + d1 * (double) j / 4.0D,
-                        vecX * speed, vecY * speed, vecZ * speed);
-            }
-        }
     }
 
     protected void doClientHitEffects() {
@@ -200,7 +172,7 @@ public abstract class AbstractSpellEntity extends Projectile {
     }
 
     public int getLife() {
-        return 100;
+        return 160;
     }
 
     public float getGravity() {
