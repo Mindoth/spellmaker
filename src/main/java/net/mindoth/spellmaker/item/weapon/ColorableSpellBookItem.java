@@ -1,8 +1,6 @@
 package net.mindoth.spellmaker.item.weapon;
 
-import net.mindoth.spellmaker.item.ModDyeableItem;
-
-public class ColorableStaffItem extends StaffItem implements ModDyeableItem {
+public class ColorableSpellBookItem extends SpellBookItem {
 
     private final int defaultColor;
 
@@ -11,7 +9,7 @@ public class ColorableStaffItem extends StaffItem implements ModDyeableItem {
         return this.defaultColor;
     }
 
-    public ColorableStaffItem(Properties pProperties, int defaultColor) {
+    public ColorableSpellBookItem(Properties pProperties, int defaultColor) {
         super(pProperties);
         this.defaultColor = defaultColor;
     }

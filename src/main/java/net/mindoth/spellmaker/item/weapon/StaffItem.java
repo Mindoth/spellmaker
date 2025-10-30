@@ -4,7 +4,6 @@ import net.mindoth.spellmaker.capability.ModCapabilities;
 import net.mindoth.spellmaker.capability.playermagic.PlayerMagickProvider;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
-import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
@@ -79,14 +77,6 @@ public class StaffItem extends Item {
         }
     }
 
-    /*@Override
-    public void onUseTick(Level level, LivingEntity caster, ItemStack staff, int timeLeft) {
-        if ( level.isClientSide ) return;
-        if ( !(caster instanceof ServerPlayer player) ) return;
-        if ( player.getCooldowns().isOnCooldown(staff.getItem()) ) return;
-        castMagick(player, staff);
-    }*/
-
     private static void handleCooldowns(LivingEntity caster, ItemStack staff, int cooldown) {
         caster.stopUsingItem();
         addCastingCooldown(caster, staff.getItem(), cooldown);
@@ -137,22 +127,12 @@ public class StaffItem extends Item {
     }
 
     @Override
-    public int getUseDuration(ItemStack pStack) {
-        return 72000;
-    }
-
-    @Override
-    public UseAnim getUseAnimation(ItemStack pStack) {
-        return UseAnim.BOW;
-    }
-
-    @Override
     public boolean isEnchantable(@Nonnull ItemStack stack) {
         return false;
     }
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return false;
+        return slotChanged;
     }
 }

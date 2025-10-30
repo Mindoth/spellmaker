@@ -21,16 +21,16 @@ public class ModSpellForms {
             () -> new CasterOnlyForm(0));
 
     public static final RegistryObject<AbstractSpellForm> BY_TOUCH = SPELL_FORMS.register("by_touch",
-            () -> new ByTouchForm(0));
+            () -> new ByTouchForm(1));
 
     public static final RegistryObject<AbstractSpellForm> SINGLE_TARGET_AT_RANGE = SPELL_FORMS.register("single_target_at_range",
-            () -> new SingleTargetAtRangeForm(0));
+            () -> new SingleTargetAtRangeForm(5));
 
     public static final RegistryObject<AbstractSpellForm> AREA_AROUND_CASTER = SPELL_FORMS.register("area_around_caster",
-            () -> new AreaAroundCasterForm(0));
+            () -> new AreaAroundCasterForm(10));
 
     public static final RegistryObject<AbstractSpellForm> AREA_AT_RANGE = SPELL_FORMS.register("area_at_range",
-            () -> new AreaAtRangeForm(0));
+            () -> new AreaAtRangeForm(10));
 
     public static final Supplier<IForgeRegistry<AbstractSpellForm>> SPELL_FORM_REGISTRY = SPELL_FORMS.makeRegistry(() -> new RegistryBuilder<AbstractSpellForm>().disableSaving().disableOverrides());
 }

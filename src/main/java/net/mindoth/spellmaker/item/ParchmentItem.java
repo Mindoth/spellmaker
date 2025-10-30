@@ -73,19 +73,4 @@ public class ParchmentItem extends Item {
     public boolean isFoil(ItemStack pStack) {
         return pStack.isEnchanted() || (pStack.hasTag() && pStack.getTag().contains(NBT_KEY_SPELL_FORM));
     }
-
-    //ONLY FOR TESTING
-    /*@Override
-    @Nonnull
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, @Nonnull InteractionHand hand) {
-        InteractionResultHolder<ItemStack> result = InteractionResultHolder.fail(player.getItemInHand(hand));
-        if ( !level.isClientSide ) {
-            ItemStack stack = player.getItemInHand(hand);
-            if ( stack.hasTag() && stack.getTag().contains(NBT_KEY_SPELL_FORM) ) {
-                SpellForm form = DataHelper.getFormFromNbt(stack.getTag());
-                form.castMagick(player, DataHelper.createMapFromTag(stack.getTag()));
-            }
-        }
-        return result;
-    }*/
 }

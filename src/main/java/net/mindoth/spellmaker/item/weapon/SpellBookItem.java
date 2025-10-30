@@ -1,6 +1,8 @@
-package net.mindoth.spellmaker.item;
+package net.mindoth.spellmaker.item.weapon;
 
 import com.google.common.collect.Lists;
+import net.mindoth.spellmaker.item.ModDyeableItem;
+import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.network.PacketOpenSpellBook;
 import net.mindoth.spellmaker.registries.ModItems;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class SpellBookItem extends Item implements ModDyeableItem {
+
     public SpellBookItem(Properties pProperties) {
         super(pProperties);
     }

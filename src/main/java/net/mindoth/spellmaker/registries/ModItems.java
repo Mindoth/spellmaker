@@ -1,12 +1,13 @@
 package net.mindoth.spellmaker.registries;
 
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.item.ModDyeableItem;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.item.armor.ColorableArmorItem;
 import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
-import net.mindoth.spellmaker.item.weapon.ColorableStaffItem;
 import net.mindoth.spellmaker.item.sigil.*;
+import net.mindoth.spellmaker.item.weapon.ColorableSpellBookItem;
+import net.mindoth.spellmaker.item.weapon.ColorableStaffItem;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ArmorItem;
@@ -32,22 +33,22 @@ public class ModItems {
 
     //Equipment
     public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book",
-            () -> new SpellBookItem(new Item.Properties()));
+            () -> new ColorableSpellBookItem(new Item.Properties(), ModDyeableItem.BLUE));
 
     public static final RegistryObject<Item> STAFF = ITEMS.register("staff",
-            () -> new ColorableStaffItem(new Item.Properties().durability(512)));
+            () -> new ColorableStaffItem(new Item.Properties().durability(512), ModDyeableItem.GRAY));
 
-    public static final RegistryObject<Item> ROBE_HOOD = ITEMS.register("robe_hood",
-            () -> new ColorableArmorItem(ModArmorMaterials.ROBE, ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> SIMPLE_ROBE_HOOD = ITEMS.register("simple_robe_hood",
+            () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.HELMET, new Item.Properties(), ModDyeableItem.GRAY));
 
-    public static final RegistryObject<Item> ROBE_TOP = ITEMS.register("robe_top",
-            () -> new ColorableArmorItem(ModArmorMaterials.ROBE, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistryObject<Item> SIMPLE_ROBE_TOP = ITEMS.register("simple_robe_top",
+            () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.CHESTPLATE, new Item.Properties(), ModDyeableItem.GRAY));
 
-    public static final RegistryObject<Item> ROBE_BOTTOM = ITEMS.register("robe_bottom",
-            () -> new ColorableArmorItem(ModArmorMaterials.ROBE, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final RegistryObject<Item> SIMPLE_ROBE_BOTTOM = ITEMS.register("simple_robe_bottom",
+            () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.LEGGINGS, new Item.Properties(), ModDyeableItem.GRAY));
 
-    public static final RegistryObject<Item> ROBE_BOOTS = ITEMS.register("robe_boots",
-            () -> new ColorableArmorItem(ModArmorMaterials.ROBE, ArmorItem.Type.BOOTS, new Item.Properties()));
+    public static final RegistryObject<Item> SIMPLE_ROBE_BOOTS = ITEMS.register("simple_robe_boots",
+            () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.BOOTS, new Item.Properties(), ModDyeableItem.GRAY));
 
     //Runes
     public static final RegistryObject<Item> EXCAVATION_SIGIL = ITEMS.register("excavation_sigil",

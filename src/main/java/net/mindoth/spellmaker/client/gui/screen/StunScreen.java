@@ -33,9 +33,9 @@ public class StunScreen extends Screen {
         super(pTitle);
     }
 
-    public int stunScreenLeftPos = 0;
+    public int stunScreenLeftPos = 2;
     public int stunScreenImageWidth = 0;
-    public int stunScreenTopPos = 0;
+    public int stunScreenTopPos = 2;
 
     @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
@@ -44,7 +44,7 @@ public class StunScreen extends Screen {
     }
 
     private void renderEffects(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
-        int i = this.stunScreenLeftPos + this.stunScreenImageWidth + 2;
+        int i = this.stunScreenLeftPos + this.stunScreenImageWidth;
         int j = this.width - i;
         Collection<MobEffectInstance> collection = this.minecraft.player.getActiveEffects();
         if ( !collection.isEmpty() && j >= 32 ) {

@@ -7,7 +7,7 @@ import net.mindoth.spellmaker.client.model.SimpleRobeModel;
 import net.mindoth.spellmaker.entity.ProjectileSpellMultiRenderer;
 import net.mindoth.spellmaker.entity.ProjectileSpellSingleRenderer;
 import net.mindoth.spellmaker.item.ModDyeableItem;
-import net.mindoth.spellmaker.item.SpellBookItem;
+import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.network.PacketAskToOpenSpellBook;
 import net.mindoth.spellmaker.registries.ModEntities;
@@ -42,7 +42,7 @@ public class SpellMakerClient {
 
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         for ( Item item : ForgeRegistries.ITEMS.getValues() ) {
-            if ( item instanceof ModDyeableItem ) event.getItemColors().register((color, armor) -> armor > 0 ? -1 : ((ModDyeableItem)color.getItem()).getColor(color), item);
+            if ( item instanceof ModDyeableItem modItem ) event.getItemColors().register((color, armor) -> armor > 0 ? -1 : modItem.getColor(color), item);
         }
     }
 

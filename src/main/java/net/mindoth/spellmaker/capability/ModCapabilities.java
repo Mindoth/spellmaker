@@ -75,7 +75,7 @@ public class ModCapabilities {
             serverPlayer.getCapability(PlayerMagickProvider.PLAYER_MAGICK).ifPresent(magic -> {
                 final double maxMana = serverPlayer.getAttributeValue(ModAttributes.MANA_MAX.get());
                 final double currentMana = magic.getCurrentMana();
-                final double manaRegen = 1;
+                final double manaRegen = serverPlayer.getAttributeValue(ModAttributes.MANA_REGENERATION.get());
                 if ( player.tickCount % 20 == 0 ) changeMana(player, manaRegen);
                 if ( currentMana > maxMana ) changeMana(player, maxMana - currentMana);
             });

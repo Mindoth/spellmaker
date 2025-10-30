@@ -18,10 +18,10 @@
 
   "item.spellmaker.staff": "Staff",
   "item.spellmaker.spell_book": "Spell Book",
-  "item.spellmaker.robe_hood": "Robe Hood",
-  "item.spellmaker.robe_top": "Robe Top",
-  "item.spellmaker.robe_bottom": "Robe Bottom",
-  "item.spellmaker.robe_boots": "Robe Boots",
+  "item.spellmaker.simple_robe_hood": "Simple Robe Hood",
+  "item.spellmaker.simple_robe_top": "Simple Robe Top",
+  "item.spellmaker.simple_robe_bottom": "Simple Robe Bottom",
+  "item.spellmaker.simple_robe_boots": "Simple Robe Boots",
 
   "item.spellmaker.excavation_sigil": "Excavation Sigil",
   "item.spellmaker.fire_sigil": "Fire Sigil",
@@ -54,5 +54,6 @@
   "tooltip.spellmaker.magnitude": "Magnitude",
   "tooltip.spellmaker.duration": "Duration",
 
-  "attribute.spellmaker.mana_max": "\u00A79Magick\u00A7r"
+  "attribute.spellmaker.mana_max": "\u00A79Magick\u00A7r",
+  "attribute.spellmaker.mana_regeneration": "\u00A79Magick Regeneration\u00A7r"
 }
