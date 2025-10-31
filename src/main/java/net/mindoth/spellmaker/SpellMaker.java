@@ -1,5 +1,6 @@
 package net.mindoth.spellmaker;
 
+import net.mindoth.spellmaker.registries.ModBlockEntities;
 import net.mindoth.spellmaker.item.ModCreativeTab;
 import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.registries.*;
@@ -29,6 +30,7 @@ public class SpellMaker {
         ModCreativeTab.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModEntities.ENTITIES.register(modEventBus);
         ModEffects.EFFECTS.register(modEventBus);
         ModAttributes.ATTRIBUTES.register(modEventBus);

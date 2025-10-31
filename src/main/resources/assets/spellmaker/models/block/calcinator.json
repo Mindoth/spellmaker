@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "spellmaker:block/calcinator_front",
+    "side": "spellmaker:block/calcinator_side",
+    "top": "spellmaker:block/calcinator_top"
+  }
+}

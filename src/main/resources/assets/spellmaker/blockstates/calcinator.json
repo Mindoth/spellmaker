@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,lit=false": {
+      "model": "spellmaker:block/calcinator",
+      "y": 90
+    },
+    "facing=east,lit=true": {
+      "model": "spellmaker:block/calcinator_on",
+      "y": 90
+    },
+    "facing=north,lit=false": {
+      "model": "spellmaker:block/calcinator"
+    },
+    "facing=north,lit=true": {
+      "model": "spellmaker:block/calcinator_on"
+    },
+    "facing=south,lit=false": {
+      "model": "spellmaker:block/calcinator",
+      "y": 180
+    },
+    "facing=south,lit=true": {
+      "model": "spellmaker:block/calcinator_on",
+      "y": 180
+    },
+    "facing=west,lit=false": {
+      "model": "spellmaker:block/calcinator",
+      "y": 270
+    },
+    "facing=west,lit=true": {
+      "model": "spellmaker:block/calcinator_on",
+      "y": 270
+    }
+  }
+}
