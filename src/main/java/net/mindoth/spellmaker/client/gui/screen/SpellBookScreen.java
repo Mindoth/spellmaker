@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
-public class SpellBookScreen extends ModScreen {
+public class SpellBookScreen extends AbstractModScreen {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spell_book_screen.png");
 

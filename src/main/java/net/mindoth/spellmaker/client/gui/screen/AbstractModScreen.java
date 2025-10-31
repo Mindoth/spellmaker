@@ -14,15 +14,10 @@ import java.util.Arrays;
 import java.util.List;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
-public class ModScreen extends Screen {
+public abstract class AbstractModScreen extends Screen {
 
-    protected ModScreen(Component pTitle) {
+    protected AbstractModScreen(Component pTitle) {
         super(pTitle);
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
     }
 
     protected void renderItemWithDecorations(GuiGraphics graphics, ItemStack stack, int xPos, int yPos) {

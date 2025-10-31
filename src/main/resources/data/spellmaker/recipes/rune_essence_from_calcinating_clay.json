@@ -1,0 +1,11 @@
+{
+  "type": "spellmaker:calcinating",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "group": "copper_ingot",
+  "ingredient": {
+    "item": "minecraft:clay_ball"
+  },
+  "result": "spellmaker:rune_essence"
+}

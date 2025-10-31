@@ -1,6 +1,7 @@
 package net.mindoth.spellmaker.registries;
 
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.recipe.CalcinatingRecipe;
 import net.mindoth.spellmaker.recipe.SpellBookAddRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
@@ -13,4 +14,7 @@ public class ModRecipes {
 
     public static final RegistryObject<SimpleCraftingRecipeSerializer<SpellBookAddRecipe>> SPELL_BOOK_ADD_RECIPE =
             SERIALIZERS.register("spell_book_add_crafting", () -> new SimpleCraftingRecipeSerializer<>(SpellBookAddRecipe::new));
+
+    public static final RegistryObject<RecipeSerializer<CalcinatingRecipe>> CALCINATING_RECIPE =
+            SERIALIZERS.register("calcinating", () -> CalcinatingRecipe.Serializer.INSTANCE);
 }

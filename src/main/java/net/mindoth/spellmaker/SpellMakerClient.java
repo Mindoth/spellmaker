@@ -1,6 +1,7 @@
 package net.mindoth.spellmaker;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.mindoth.spellmaker.client.gui.screen.CalcinatorScreen;
 import net.mindoth.spellmaker.client.gui.screen.HudMana;
 import net.mindoth.spellmaker.client.gui.screen.SpellMakingScreen;
 import net.mindoth.spellmaker.client.model.SimpleRobeModel;
@@ -99,6 +100,7 @@ public class SpellMakerClient {
 
         @SubscribeEvent
         public static void registerScreens(FMLClientSetupEvent event) {
+            MenuScreens.register(ModMenus.CALCINATOR_MENU.get(), CalcinatorScreen::new);
             MenuScreens.register(ModMenus.SPELL_MAKING_MENU.get(), SpellMakingScreen::new);
         }
     }
