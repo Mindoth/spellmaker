@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.mindoth.spellmaker.client.gui.screen.HudMana;
 import net.mindoth.spellmaker.client.gui.screen.SpellMakingScreen;
 import net.mindoth.spellmaker.client.model.SimpleRobeModel;
+import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.entity.ProjectileSpellMultiRenderer;
 import net.mindoth.spellmaker.entity.ProjectileSpellSingleRenderer;
 import net.mindoth.spellmaker.item.ModDyeableItem;
@@ -26,7 +27,9 @@ import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -38,6 +41,7 @@ public class SpellMakerClient {
         modBus.addListener(SpellMakerClient::registerEntityRenderers);
         modBus.addListener(SpellMakerClient::registerItemColors);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modBus.addListener(SpellMakerClient::registerLayerDefinitions));
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ModClientConfig.SPEC, "spellmaker-client.toml");
     }
 
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {

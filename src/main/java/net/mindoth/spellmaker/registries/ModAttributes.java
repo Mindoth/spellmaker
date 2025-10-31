@@ -21,11 +21,14 @@ public class ModAttributes {
 
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.ATTRIBUTES, SpellMaker.MOD_ID);
 
+    public static final RegistryObject<Attribute> MANA_REGENERATION = ATTRIBUTES.register("mana_regeneration",
+            () -> (new MagickAttribute("attribute.spellmaker.mana_regeneration", 1.0D, 0.0D, Integer.MAX_VALUE).setSyncable(true)));
+
     public static final RegistryObject<Attribute> MANA_MAX = ATTRIBUTES.register("mana_max",
             () -> (new MagickAttribute("attribute.spellmaker.mana_max", 100.0D, 0.0D, Integer.MAX_VALUE).setSyncable(true)));
 
-    public static final RegistryObject<Attribute> MANA_REGENERATION = ATTRIBUTES.register("mana_regeneration",
-            () -> (new MagickAttribute("attribute.spellmaker.mana_regeneration", 1.0D, 0.0D, Integer.MAX_VALUE).setSyncable(true)));
+    public static final RegistryObject<Attribute> MANA_COST_MULTIPLIER = ATTRIBUTES.register("mana_cost_multiplier",
+            () -> (new MagickAttribute("attribute.spellmaker.mana_cost_multiplier", 1.0D, 1.0D, Integer.MAX_VALUE).setSyncable(true)));
 
     @SubscribeEvent
     public static void modifyEntityAttributes(EntityAttributeModificationEvent event) {

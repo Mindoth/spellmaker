@@ -17,8 +17,8 @@ public enum ModArmorMaterials implements CustomArmorMaterial {
 
     SIMPLE_ROBE("simple_robe", 4, new int[]{ 0, 0, 0, 0 }, 25, SoundEvents.ARMOR_EQUIP_LEATHER,
             0, 0, () -> Ingredient.of(ModItems.WOOL_CLOTH.get()), Map.of(
-            ModAttributes.MANA_REGENERATION.get(), new AttributeModifier("Mana Regeneration", 1.0D, AttributeModifier.Operation.ADDITION),
-            ModAttributes.MANA_MAX.get(), new AttributeModifier("Mana Max", 25.0D, AttributeModifier.Operation.ADDITION)
+            ModAttributes.MANA_MAX.get(), new AttributeModifier("Mana Max", 25.0D, AttributeModifier.Operation.ADDITION),
+            ModAttributes.MANA_COST_MULTIPLIER.get(), new AttributeModifier("Mana Discount", 0.05D, AttributeModifier.Operation.MULTIPLY_BASE)
     ));
 
     private final String name;

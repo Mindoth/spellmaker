@@ -16,12 +16,12 @@ public abstract class AbstractSpellForm {
     public String getName() {
         return ModSpellForms.SPELL_FORM_REGISTRY.get().getKey(this).getPath();
     }
-    private final int cost;
-    public int getCost() {
+    private final float cost;
+    public float getCost() {
         return this.cost;
     }
 
-    public AbstractSpellForm(int cost) {
+    public AbstractSpellForm(float cost) {
         this.cost = cost;
     }
 

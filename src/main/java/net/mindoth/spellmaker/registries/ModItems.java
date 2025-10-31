@@ -55,13 +55,13 @@ public class ModItems {
             () -> new ExcavationSigilItem(new Item.Properties(), SpellColor.NATURE, 0, 4, 5, 0, 0));
 
     public static final RegistryObject<Item> FIRE_SIGIL = ITEMS.register("fire_sigil",
-            () -> new FireSigilItem(new Item.Properties(), SpellColor.FIRE, 0, 64, 1, 64, 1));
+            () -> new FireSigilItem(new Item.Properties(), SpellColor.FIRE, 0, 64, 2, 64, 1));
 
     public static final RegistryObject<Item> FROST_SIGIL = ITEMS.register("frost_sigil",
-            () -> new FrostSigilItem(new Item.Properties(), SpellColor.FROST, 0, 64, 1, 64, 1));
+            () -> new FrostSigilItem(new Item.Properties(), SpellColor.FROST, 0, 64, 2, 64, 1));
 
     public static final RegistryObject<Item> SHOCK_SIGIL = ITEMS.register("shock_sigil",
-            () -> new ShockSigilItem(new Item.Properties(), SpellColor.LIGHTNING, 0, 64, 2, 64, 2));
+            () -> new ShockSigilItem(new Item.Properties(), SpellColor.LIGHTNING, 0, 64, 2, 64, 4));
 
     public static final RegistryObject<Item> SLEEP_SIGIL = ITEMS.register("sleep_sigil",
             () -> new SleepSigilItem(new Item.Properties(), SpellColor.ARCANE, 0, 0, 0, 64, 1));

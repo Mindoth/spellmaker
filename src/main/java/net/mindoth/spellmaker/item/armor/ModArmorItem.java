@@ -1,9 +1,11 @@
 package net.mindoth.spellmaker.item.armor;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import net.mindoth.spellmaker.SpellMakerClient;
 import net.mindoth.spellmaker.client.model.SimpleRobeModel;
+import net.mindoth.spellmaker.registries.ModAttributes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.util.LazyLoadedValue;
@@ -20,6 +22,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.fml.DistExecutor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -58,7 +61,12 @@ public class ModArmorItem extends ArmorItem {
             builder.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(uuid, "Armor knockback resistance",
                     knockbackResistance, AttributeModifier.Operation.ADDITION));
         }
-        for ( Map.Entry<Attribute, AttributeModifier> modifierEntry : pMaterial.getAdditionalAttributes().entrySet() ) {
+        List<Map.Entry<Attribute, AttributeModifier>> entries = Lists.newArrayList();
+        for ( Map.Entry<Attribute, AttributeModifier> entry : pMaterial.getAdditionalAttributes().entrySet() ) {
+            if ( entry.getKey() == ModAttributes.MANA_MAX.get() ) entries.add(0, entry);
+            else entries.add(entry);
+        }
+        for ( Map.Entry<Attribute, AttributeModifier> modifierEntry : entries ) {
             AttributeModifier modifier = modifierEntry.getValue();
             modifier = new AttributeModifier(uuid, modifier.getName(), modifier.getAmount(), modifier.getOperation());
             builder.put(modifierEntry.getKey(), modifier);

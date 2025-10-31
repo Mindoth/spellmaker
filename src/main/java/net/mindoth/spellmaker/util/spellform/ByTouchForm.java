@@ -21,7 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ByTouchForm extends AbstractSpellForm {
-    public ByTouchForm(int cost) {
+    public ByTouchForm(float cost) {
         super(cost);
     }
 

@@ -68,6 +68,11 @@ public class ModCapabilities {
     }
 
     @SubscribeEvent
+    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
+        event.register(PlayerMagick.class);
+    }
+
+    @SubscribeEvent
     public static void baseManaRegen(TickEvent.LevelTickEvent event) {
         if ( event.phase != TickEvent.Phase.END || event.level.isClientSide ) return;
         event.level.players().stream().toList().forEach(player -> {
@@ -92,10 +97,5 @@ public class ModCapabilities {
             magic.setCurrentMana(newMana);
             ModNetwork.sendToPlayer(new PacketSyncClientMana(newMana), serverPlayer);
         });
-    }
-
-    @SubscribeEvent
-    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
-        event.register(PlayerMagick.class);
     }
 }

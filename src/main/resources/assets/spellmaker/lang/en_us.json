@@ -55,5 +55,6 @@
   "tooltip.spellmaker.duration": "Duration",
 
   "attribute.spellmaker.mana_max": "\u00A79Magick\u00A7r",
+  "attribute.spellmaker.mana_cost_multiplier": "\u00A79Magick Discount\u00A7r",
   "attribute.spellmaker.mana_regeneration": "\u00A79Magick Regeneration\u00A7r"
 }

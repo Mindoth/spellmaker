@@ -2,9 +2,10 @@ package net.mindoth.spellmaker.client.gui.screen;
 
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.playermagic.ClientMagickData;
-import net.mindoth.spellmaker.item.weapon.StaffItem;
+import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.item.armor.ModArmorItem;
 import net.mindoth.spellmaker.item.sigil.FishTransformationSigilItem;
+import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -38,7 +39,7 @@ public class HudMana implements IGuiOverlay {
         int barWidth = Math.max(0, Math.min(barPercentage, 79));
         graphics.blit(MANA_EMPTY_BAR, posX, posY, 0, 0, 81, 9, 81, 9);
         graphics.blit(MANA_FULL_BAR, posX + 1, posY + 1, 0, 0, barWidth, 7, 79, 7);
-        graphics.drawString(gui.getFont(), mana, posX + 20, posY - 9, 8370139);
+        if ( ModClientConfig.SHOW_MAGICK_NUMBER_VALUE.get() ) graphics.drawString(gui.getFont(), mana, posX + 20, posY - 9, 8370139);
     }
 
     private static boolean shouldDisplayMana() {
@@ -47,6 +48,6 @@ public class HudMana implements IGuiOverlay {
         ItemStack off = player.getOffhandItem();
         return !(player.isSpectator() || player.isCreative())
                 && (ClientMagickData.getCurrentMana() < player.getAttributeValue(ModAttributes.MANA_MAX.get())
-                || StaffItem.isValidCastingItem(main) || StaffItem.isValidCastingItem(off) || ModArmorItem.isWearingMagicArmor(player));
+                || !StaffItem.getHeldCastingItem(player).isEmpty() || ModArmorItem.isWearingMagicArmor(player));
     }
 }

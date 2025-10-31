@@ -7,6 +7,7 @@ import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -60,13 +61,13 @@ public class ParchmentItem extends Item {
     public static int calculateSpellCost(AbstractSpellForm form, LinkedHashMap<SigilItem, List<Integer>> map) {
         int totalCost = 0;
         for ( SigilItem sigil : map.keySet() ) {
-            int cost = sigil.getCost() + form.getCost();
+            int cost = sigil.getCost();
             List<Integer> stats = map.get(sigil);
             if ( sigil.getMaxMagnitude() > 0 ) cost += stats.get(0) * sigil.getMagnitudeMultiplier();
             if ( sigil.getMaxDuration() > 0 ) cost += stats.get(1) * sigil.getDurationMultiplier();
             totalCost += cost;
         }
-        return totalCost;
+        return Mth.ceil(totalCost * form.getCost());
     }
 
     @Override

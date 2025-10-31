@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class AreaAroundCasterForm extends AbstractSpellForm {
-    public AreaAroundCasterForm(int cost) {
+    public AreaAroundCasterForm(float cost) {
         super(cost);
     }
 

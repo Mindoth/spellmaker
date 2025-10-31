@@ -1,9 +1,11 @@
 package net.mindoth.spellmaker.item.weapon;
 
+import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.ModCapabilities;
 import net.mindoth.spellmaker.capability.playermagic.PlayerMagickProvider;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.registries.ModAttributes;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -11,6 +13,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -21,14 +24,23 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+@Mod.EventBusSubscriber(modid = SpellMaker.MOD_ID)
 public class StaffItem extends Item {
     public StaffItem(Properties pProperties) {
         super(pProperties);
+    }
+
+    @SubscribeEvent
+    public static void disableStaffInteraction(PlayerInteractEvent.EntityInteract event) {
+        if ( isValidCastingItem(event.getEntity().getItemInHand(event.getHand())) ) event.setCanceled(true);
     }
 
     @Override
@@ -53,7 +65,9 @@ public class StaffItem extends Item {
             if ( scroll != null && scroll.hasTag() ) {
                 AbstractSpellForm form = DataHelper.getFormFromNbt(scroll.getTag());
                 LinkedHashMap<SigilItem, List<Integer>> map = DataHelper.createMapFromTag(scroll.getTag());
-                int cost = ParchmentItem.calculateSpellCost(form, map);
+                double baseCost = ParchmentItem.calculateSpellCost(form, map);
+                double discount = player.getAttributeValue(ModAttributes.MANA_COST_MULTIPLIER.get()) - ModAttributes.MANA_COST_MULTIPLIER.get().getDefaultValue();
+                int cost = Mth.ceil(baseCost * (1.0D - discount));
                 player.getCapability(PlayerMagickProvider.PLAYER_MAGICK).ifPresent(magic -> {
                     if ( cost <= magic.getCurrentMana() || player.isCreative() ) {
                         form.castMagick(player, map);
@@ -124,6 +138,11 @@ public class StaffItem extends Item {
 
     public static boolean isValidCastingItem(ItemStack staff) {
         return staff.getItem() instanceof StaffItem;
+    }
+
+    public static @Nonnull ItemStack getHeldCastingItem(LivingEntity playerEntity) {
+        ItemStack staff = isValidCastingItem(playerEntity.getMainHandItem()) ? playerEntity.getMainHandItem() : null;
+        return staff == null ? (isValidCastingItem(playerEntity.getOffhandItem()) ? playerEntity.getOffhandItem() : ItemStack.EMPTY) : staff;
     }
 
     @Override

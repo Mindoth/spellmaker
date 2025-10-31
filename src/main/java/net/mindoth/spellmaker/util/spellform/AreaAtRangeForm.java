@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class AreaAtRangeForm extends AbstractSpellForm {
-    public AreaAtRangeForm(int cost) {
+    public AreaAtRangeForm(float cost) {
         super(cost);
     }
 
