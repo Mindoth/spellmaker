@@ -50,14 +50,14 @@ public class StaffItem extends Item {
         if ( !level.isClientSide ) {
             ItemStack staff = player.getItemInHand(hand);
             if ( !player.getCooldowns().isOnCooldown(staff.getItem()) ) {
-                castMagick(player, staff);
+                startCasting(player, staff);
                 result = InteractionResultHolder.success(player.getItemInHand(hand));
             }
         }
         return result;
     }
 
-    private static void castMagick(Player player, ItemStack staff) {
+    private static void startCasting(Player player, ItemStack staff) {
         ItemStack book = SpellBookItem.getSpellBookSlot(player);
         if ( !book.isEmpty() && book.hasTag() && book.getTag().contains(SpellBookItem.NBT_KEY_BOOK_SLOT)
                 && book.getTag().getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) >= 0 && SpellBookItem.getActiveScrollFromBook(book) != null ) {
@@ -70,7 +70,7 @@ public class StaffItem extends Item {
                 int cost = Mth.ceil(baseCost * (1.0D - discount));
                 player.getCapability(PlayerMagickProvider.PLAYER_MAGICK).ifPresent(magic -> {
                     if ( cost <= magic.getCurrentMana() || player.isCreative() ) {
-                        form.castMagick(player, map);
+                        form.castMagick(player, player, map);
                         handleCooldowns(player, staff, 20);
                         if ( !player.isCreative() ) {
                             addItemDamage(staff, 1, player);

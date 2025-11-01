@@ -15,7 +15,7 @@ public class SleepSigilItem extends SigilItem {
     }
 
     @Override
-    public void effectOnAllEntitiesInList(Entity target, List<Integer> stats, Entity source, DimVec3 location) {
+    public void effectOnAllEntitiesInList(Entity source, Entity directSource, Entity target, List<Integer> stats, DimVec3 location) {
         if ( !target.isAttackable() || !target.isAlive() ) return;
         int duration = stats.get(1);
         int sleepTicks = duration * 20;

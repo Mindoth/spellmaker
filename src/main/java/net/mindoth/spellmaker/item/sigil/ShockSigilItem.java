@@ -3,6 +3,7 @@ package net.mindoth.spellmaker.item.sigil;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.util.SpellColor;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,10 +16,10 @@ public class ShockSigilItem extends SigilItem {
     }
 
     @Override
-    public void effectOnAllEntitiesInList(Entity target, List<Integer> stats, Entity source, DimVec3 location) {
+    public void effectOnAllEntitiesInList(Entity source, Entity directSource, Entity target, List<Integer> stats, DimVec3 location) {
         if ( !target.isAttackable() || !target.isAlive() ) return;
         int magnitude = stats.get(0);
-        if ( magnitude > 0 ) target.hurt(target.damageSources().lightningBolt(), magnitude);
+        if ( magnitude > 0 ) target.hurt(getSource(DamageTypes.LIGHTNING_BOLT, source, directSource), magnitude);
         int duration = stats.get(1);
         int paralysisTicks = duration * 20;
         if ( target instanceof LivingEntity living && living.isInWaterOrRain() ) {

@@ -4,6 +4,7 @@ import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
@@ -21,10 +22,10 @@ public class FireSigilItem extends SigilItem {
     }
 
     @Override
-    public void effectOnAllEntitiesInList(Entity target, List<Integer> stats, Entity source, DimVec3 location) {
+    public void effectOnAllEntitiesInList(Entity source, Entity directSource, Entity target, List<Integer> stats, DimVec3 location) {
         if ( !target.isAttackable() || !target.isAlive() || target.fireImmune() ) return;
         int magnitude = stats.get(0);
-        if ( magnitude > 0 ) target.hurt(target.damageSources().onFire(), magnitude);
+        if ( magnitude > 0 ) target.hurt(getSource(DamageTypes.ON_FIRE, source, directSource), magnitude);
         int duration = stats.get(1);
         int fireTicks = duration * 20;
         if ( target.getRemainingFireTicks() > 0 && target.getRemainingFireTicks() < fireTicks ) {
@@ -34,7 +35,7 @@ public class FireSigilItem extends SigilItem {
     }
 
     @Override
-    public void effectOnAllBlocksInList(BlockPos target, List<Integer> stats, DimVec3 location, Direction direction, boolean isInside) {
+    public void effectOnAllBlocksInList(Entity source, Entity directSource, BlockPos target, List<Integer> stats, DimVec3 location, Direction direction, boolean isInside) {
         Level level = location.getLevel();
         BlockState blockState = level.getBlockState(target);
         if ( !CampfireBlock.canLight(blockState) && !CandleBlock.canLight(blockState) && !CandleCakeBlock.canLight(blockState) ) {

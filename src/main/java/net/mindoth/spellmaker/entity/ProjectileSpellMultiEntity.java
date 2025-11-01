@@ -44,7 +44,7 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
         List<Entity> list = new ArrayList<>(level.getEntities(this, box).stream().filter((entity -> entity instanceof LivingEntity)).toList());
         if ( !list.contains(result.getEntity()) ) list.add(result.getEntity());
         MultiEntityHitResult mEntityResult = new MultiEntityHitResult(this, list, new DimVec3(this.position(), this.level()));
-        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnEntity(getMap().get(sigil), mEntityResult);
+        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnEntity(this.getOwner(), this, getMap().get(sigil), mEntityResult);
 
         List<BlockPos> blocks = Lists.newArrayList();
         for ( int x = this.getBlockX() -1; x < this.getBlockX() + 2; x++ ) {
@@ -55,7 +55,7 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
             }
         }
         MultiBlockHitResult mBlockResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(position(), level));
-        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(getMap().get(sigil), mBlockResult);
+        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(this.getOwner(), this, getMap().get(sigil), mBlockResult);
         aoeEntitySpellParticles(level, box, (float)box.getYsize() * 0.5F, getParticleStats());
     }
 
@@ -65,7 +65,7 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
         AABB box = this.getBoundingBox().inflate(2.2D, 2.2D, 2.2D);
         List<Entity> list = new ArrayList<>(level.getEntities(this, box).stream().filter((entity -> entity instanceof LivingEntity)).toList());
         MultiEntityHitResult mEntityResult = new MultiEntityHitResult(this, list, new DimVec3(this.position(), this.level()));
-        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnEntity(getMap().get(sigil), mEntityResult);
+        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnEntity(this.getOwner(), this, getMap().get(sigil), mEntityResult);
 
         List<BlockPos> blocks = Lists.newArrayList();
         BlockPos blockPos = getPosOfFace(result.getBlockPos(), result.getDirection());
@@ -77,7 +77,7 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
             }
         }
         MultiBlockHitResult mBlockResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(position(), level));
-        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(getMap().get(sigil), mBlockResult);
+        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(this.getOwner(), this, getMap().get(sigil), mBlockResult);
         aoeEntitySpellParticles(level, box, (float)box.getYsize() * 0.5F, getParticleStats());
     }
 

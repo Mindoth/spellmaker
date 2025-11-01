@@ -25,7 +25,7 @@ public abstract class AbstractSpellForm {
         this.cost = cost;
     }
 
-    public void castMagick(Entity caster, LinkedHashMap<SigilItem, List<Integer>> map) {
+    public void castMagick(Entity source, Entity directSource, LinkedHashMap<SigilItem, List<Integer>> map) {
     }
 
     public static SigilItem getHighestCostSigil(LinkedHashMap<SigilItem, List<Integer>> map) {

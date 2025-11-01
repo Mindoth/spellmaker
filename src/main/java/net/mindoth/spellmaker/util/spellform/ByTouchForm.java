@@ -26,19 +26,19 @@ public class ByTouchForm extends AbstractSpellForm {
     }
 
     @Override
-    public void castMagick(Entity caster, LinkedHashMap<SigilItem, List<Integer>> map) {
-        Entity target = getPointedEntity(caster.getEyePosition(), caster.getLookAngle(), caster, caster.level(), 4.5F, 0.25F, true, true, map);
+    public void castMagick(Entity source, Entity directSource, LinkedHashMap<SigilItem, List<Integer>> map) {
+        Entity target = getPointedEntity(source.getEyePosition(), source.getLookAngle(), source, source.level(), 4.5F, 0.25F, true, true, map);
         if ( target != null ) {
-            MultiEntityHitResult mResult = new MultiEntityHitResult(caster, Collections.singletonList(target), new DimVec3(target.position(), target.level()));
-            for ( SigilItem sigil : map.keySet() ) sigil.effectOnEntity(map.get(sigil), mResult);
+            MultiEntityHitResult mResult = new MultiEntityHitResult(source, Collections.singletonList(target), new DimVec3(target.position(), target.level()));
+            for ( SigilItem sigil : map.keySet() ) sigil.effectOnEntity(source, directSource, map.get(sigil), mResult);
             LightEvents.addEnchantParticles(target, 0.15F, getColorStats(map));
         }
         else {
-            MultiBlockHitResult mResult = getPOVHitResult(caster.getEyePosition(), caster.getLookAngle(), caster, caster.level(), ClipContext.Fluid.SOURCE_ONLY, 4.5F);
-            for ( SigilItem sigil : map.keySet() ) sigil.effectOnBlock(map.get(sigil), mResult);
+            MultiBlockHitResult mResult = getPOVHitResult(source.getEyePosition(), source.getLookAngle(), source, source.level(), ClipContext.Fluid.SOURCE_ONLY, 4.5F);
+            for ( SigilItem sigil : map.keySet() ) sigil.effectOnBlock(source, directSource, map.get(sigil), mResult);
             if ( mResult.getBlocks().size() == 1 ) {
                 BlockPos blockPos = mResult.getBlocks().get(0);
-                LightEvents.addAoeParticles(true, caster.level(), new AABB(blockPos), 0.15F, 8, getColorStats(map));
+                LightEvents.addAoeParticles(true, source.level(), new AABB(blockPos), 0.15F, 8, getColorStats(map));
             }
         }
     }

@@ -17,9 +17,10 @@ public class AreaAtRangeForm extends AbstractSpellForm {
     }
 
     @Override
-    public void castMagick(Entity caster, LinkedHashMap<SigilItem, List<Integer>> map) {
-        Level level = caster.level();
+    public void castMagick(Entity source, Entity directSource, LinkedHashMap<SigilItem, List<Integer>> map) {
+        Level level = source.level();
         ProjectileSpellMultiEntity projectile = new ProjectileSpellMultiEntity(level);
+        projectile.setOwner(source);
         projectile.getEntityData().set(AbstractSpellEntity.RED, (int)Math.floor(getColorStats(map).get("red")));
         projectile.getEntityData().set(AbstractSpellEntity.GREEN, (int)Math.floor(getColorStats(map).get("green")));
         projectile.getEntityData().set(AbstractSpellEntity.BLUE, (int)Math.floor(getColorStats(map).get("blue")));
@@ -33,8 +34,8 @@ public class AreaAtRangeForm extends AbstractSpellForm {
         }
         projectile.getEntityData().set(AbstractSpellEntity.MAGNITUDES, DataHelper.getStringFromStats(magnitudes));
         projectile.getEntityData().set(AbstractSpellEntity.DURATIONS, DataHelper.getStringFromStats(durations));
-        projectile.setPos(caster.getEyePosition());
-        projectile.shoot(caster.getLookAngle().x, caster.getLookAngle().y, caster.getLookAngle().z, projectile.getSpeed(), 0.0F);
+        projectile.setPos(source.getEyePosition());
+        projectile.shoot(source.getLookAngle().x, source.getLookAngle().y, source.getLookAngle().z, projectile.getSpeed(), 0.0F);
         level.addFreshEntity(projectile);
     }
 }

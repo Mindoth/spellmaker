@@ -6,6 +6,7 @@ import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -24,7 +25,7 @@ public class ExcavationSigilItem extends SigilItem {
     }
 
     @Override
-    public void effectOnAllBlocksInList(BlockPos target, List<Integer> stats, DimVec3 location, Direction direction, boolean isInside) {
+    public void effectOnAllBlocksInList(Entity source, Entity directSource, BlockPos target, List<Integer> stats, DimVec3 location, Direction direction, boolean isInside) {
         int magnitude = stats.get(0);
         if ( magnitude > 0 ) handleMine(target, location.getLevel(), magnitude);
     }

@@ -23,24 +23,24 @@ public class AreaAroundCasterForm extends AbstractSpellForm {
     }
 
     @Override
-    public void castMagick(Entity caster, LinkedHashMap<SigilItem, List<Integer>> map) {
-        Level level = caster.level();
-        AABB box = caster.getBoundingBox().inflate(2.0D, 0.0D, 2.0D);
-        List<Entity> list = level.getEntities(caster, box).stream().filter((entity -> entity instanceof LivingEntity)).toList();
-        MultiEntityHitResult mEntityResult = new MultiEntityHitResult(caster, list, new DimVec3(caster.position(), caster.level()));
-        for ( SigilItem sigil : map.keySet() ) sigil.effectOnEntity(map.get(sigil), mEntityResult);
+    public void castMagick(Entity source, Entity directSource, LinkedHashMap<SigilItem, List<Integer>> map) {
+        Level level = source.level();
+        AABB box = source.getBoundingBox().inflate(2.0D, 0.0D, 2.0D);
+        List<Entity> list = level.getEntities(source, box).stream().filter((entity -> entity instanceof LivingEntity)).toList();
+        MultiEntityHitResult mEntityResult = new MultiEntityHitResult(source, list, new DimVec3(source.position(), source.level()));
+        for ( SigilItem sigil : map.keySet() ) sigil.effectOnEntity(source, directSource, map.get(sigil), mEntityResult);
 
         List<BlockPos> blocks = Lists.newArrayList();
-        for ( int x = caster.getBlockX() -1; x < caster.getBlockX() + 2; x++ ) {
-            for ( int y = caster.getBlockY(); y < caster.getBlockY() + 2; y++ ) {
-                for ( int z = caster.getBlockZ() - 1; z < caster.getBlockZ() + 2; z++ ) {
+        for ( int x = source.getBlockX() -1; x < source.getBlockX() + 2; x++ ) {
+            for ( int y = source.getBlockY(); y < source.getBlockY() + 2; y++ ) {
+                for ( int z = source.getBlockZ() - 1; z < source.getBlockZ() + 2; z++ ) {
                     BlockPos newPos = new BlockPos(x, y, z);
-                    if ( !newPos.equals(caster.getOnPos()) && !newPos.equals(caster.getOnPos().above()) ) blocks.add(newPos);
+                    if ( !newPos.equals(source.getOnPos()) && !newPos.equals(source.getOnPos().above()) ) blocks.add(newPos);
                 }
             }
         }
-        MultiBlockHitResult mBlockResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(caster.position(), level));
-        for ( SigilItem sigil : map.keySet() ) sigil.effectOnBlock(map.get(sigil), mBlockResult);
+        MultiBlockHitResult mBlockResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(source.position(), level));
+        for ( SigilItem sigil : map.keySet() ) sigil.effectOnBlock(source, directSource, map.get(sigil), mBlockResult);
         ProjectileSpellMultiEntity.aoeEntitySpellParticles(level, box, (float)box.getYsize() * 0.5F, getColorStats(map));
     }
 }
