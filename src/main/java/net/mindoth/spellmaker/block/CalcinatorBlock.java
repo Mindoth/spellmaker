@@ -58,7 +58,7 @@ public class CalcinatorBlock extends AbstractFurnaceBlock {
             double d5 = direction$axis == Direction.Axis.X ? (double)direction.getStepX() * 0.52D : d4;
             double d6 = pRandom.nextDouble() * 6.0D / 16.0D;
             double d7 = direction$axis == Direction.Axis.Z ? (double)direction.getStepZ() * 0.52D : d4;
-            pLevel.addParticle(ParticleTypes.SMOKE, d0 + d5, d1 + d6, d2 + d7, 0.0D, 0.0D, 0.0D);
+            pLevel.addParticle(ParticleTypes.SMOKE, d0, d1 + 1.0D, d2, 0.0D, 0.0D, 0.0D);
             pLevel.addParticle(ParticleTypes.FLAME, d0 + d5, d1 + d6, d2 + d7, 0.0D, 0.0D, 0.0D);
         }
     }
