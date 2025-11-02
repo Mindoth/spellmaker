@@ -1,0 +1,9 @@
+{
+  "type": "spellmaker:calcinating",
+  "cookingtime": 200,
+  "experience": 0.0,
+  "ingredient": {
+    "tag": "minecraft:logs_that_burn"
+  },
+  "result": "spellmaker:wood_ash"
+}

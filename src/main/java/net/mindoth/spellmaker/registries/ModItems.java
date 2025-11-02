@@ -31,6 +31,9 @@ public class ModItems {
     public static final RegistryObject<Item> PARCHMENT = ITEMS.register("parchment",
             () -> new ParchmentItem(new Item.Properties(), 3));
 
+    public static final RegistryObject<Item> WOOD_ASH = ITEMS.register("wood_ash",
+            () -> new Item(new Item.Properties()));
+
     //Equipment
     public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book",
             () -> new ColorableSpellBookItem(new Item.Properties(), ModDyeableItem.BLUE));
