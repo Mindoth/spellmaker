@@ -1,9 +1,0 @@
-{
-  "type": "spellmaker:calcinating",
-  "cookingtime": 200,
-  "experience": 0.7,
-  "ingredient": {
-    "item": "minecraft:clay_ball"
-  },
-  "result": "spellmaker:rune_essence"
-}

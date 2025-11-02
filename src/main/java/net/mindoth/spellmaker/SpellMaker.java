@@ -1,6 +1,5 @@
 package net.mindoth.spellmaker;
 
-import net.mindoth.spellmaker.registries.ModBlockEntities;
 import net.mindoth.spellmaker.item.ModCreativeTab;
 import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.registries.*;
@@ -23,6 +22,8 @@ public class SpellMaker {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         if ( FMLEnvironment.dist == Dist.CLIENT ) SpellMakerClient.registerHandlers();
         addRegistries(modEventBus);
+        modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(this::addCreative);
     }
 
 
@@ -37,9 +38,6 @@ public class SpellMaker {
         ModMenus.MENUS.register(modEventBus);
         ModSpellForms.SPELL_FORMS.register(modEventBus);
         ModRecipes.SERIALIZERS.register(modEventBus);
-        //KEEP THESE LAST
-        modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::addCreative);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

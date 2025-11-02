@@ -21,8 +21,8 @@ public class CalcinatingRecipe extends AbstractCookingRecipe {
     private final ItemStack output;
     private final ResourceLocation id;
 
-    public CalcinatingRecipe(ResourceLocation pId, Ingredient pIngredient, ItemStack pResult, float pExperience, int pCookingTime) {
-        super(Type.CALCINATING, pId, "", CookingBookCategory.MISC, pIngredient, pResult, pExperience, pCookingTime);
+    public CalcinatingRecipe(ResourceLocation pId, String pGroup, CookingBookCategory pCategory, Ingredient pIngredient, ItemStack pResult, float pExperience, int pCookingTime) {
+        super(Type.CALCINATING, pId, pGroup, pCategory, pIngredient, pResult, pExperience, pCookingTime);
         this.input = pIngredient;
         this.output = pResult;
         this.id = pId;
@@ -82,6 +82,8 @@ public class CalcinatingRecipe extends AbstractCookingRecipe {
 
         @Override
         public CalcinatingRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
+            String group = GsonHelper.getAsString(pJson, "group", "");
+            CookingBookCategory category = CookingBookCategory.CODEC.byName(GsonHelper.getAsString(pJson, "category", (String)null), CookingBookCategory.MISC);
             JsonElement jsonelement = (JsonElement)(GsonHelper.isArrayNode(pJson, "ingredient") ? GsonHelper.getAsJsonArray(pJson, "ingredient") : GsonHelper.getAsJsonObject(pJson, "ingredient"));
             Ingredient ingredient = Ingredient.fromJson(jsonelement, false);
             if ( !pJson.has("result") ) throw new com.google.gson.JsonSyntaxException("Missing result, expected to find a string or object");
@@ -96,20 +98,24 @@ public class CalcinatingRecipe extends AbstractCookingRecipe {
             }
             float exp = GsonHelper.getAsFloat(pJson, "experience", 0.0F);
             int time = GsonHelper.getAsInt(pJson, "cookingtime", 200);
-            return new CalcinatingRecipe(pRecipeId, ingredient, itemstack, exp, time);
+            return new CalcinatingRecipe(pRecipeId, group, category, ingredient, itemstack, exp, time);
         }
 
         @Override
         public @Nullable CalcinatingRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
+            String group = pBuffer.readUtf();
+            CookingBookCategory category = pBuffer.readEnum(CookingBookCategory.class);
             Ingredient ingredient = Ingredient.fromNetwork(pBuffer);
             ItemStack output = pBuffer.readItem();
             float exp = pBuffer.readFloat();
             int time = pBuffer.readVarInt();
-            return new CalcinatingRecipe(pRecipeId, ingredient, output, exp, time);
+            return new CalcinatingRecipe(pRecipeId, group, category, ingredient, output, exp, time);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf pBuffer, CalcinatingRecipe pRecipe) {
+            pBuffer.writeUtf(pRecipe.group);
+            pBuffer.writeEnum(pRecipe.category());
             pRecipe.ingredient.toNetwork(pBuffer);
             pBuffer.writeItem(pRecipe.result);
             pBuffer.writeFloat(pRecipe.experience);

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "# #",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "spellmaker:wool_cloth"
+    }
+  },
+  "result": {
+    "item": "spellmaker:simple_robe_top",
+    "count": 1
+  }
+}

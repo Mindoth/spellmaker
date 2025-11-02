@@ -38,7 +38,7 @@ public class ModItems {
     public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book",
             () -> new ColorableSpellBookItem(new Item.Properties(), ModDyeableItem.BLUE));
 
-    public static final RegistryObject<Item> STAFF = ITEMS.register("staff",
+    public static final RegistryObject<Item> WOODEN_STAFF = ITEMS.register("wooden_staff",
             () -> new ColorableStaffItem(new Item.Properties().durability(512), ModDyeableItem.GRAY));
 
     public static final RegistryObject<Item> SIMPLE_ROBE_HOOD = ITEMS.register("simple_robe_hood",

@@ -5,7 +5,6 @@ import net.mindoth.spellmaker.item.ModDyeableItem;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.network.PacketOpenSpellBook;
-import net.mindoth.spellmaker.registries.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -62,7 +61,7 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, @Nonnull InteractionHand handIn) {
         InteractionResultHolder<ItemStack> result = InteractionResultHolder.fail(player.getItemInHand(handIn));
         if ( !level.isClientSide && player instanceof ServerPlayer serverPlayer ) {
-            if ( !serverPlayer.isHolding(ModItems.STAFF.get()) ) {
+            if ( StaffItem.getHeldCastingItem(serverPlayer).isEmpty() ) {
                 ItemStack book = serverPlayer.getItemInHand(handIn);
                 openSpellBook(serverPlayer, book);
             }
