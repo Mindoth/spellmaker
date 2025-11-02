@@ -1,5 +1,7 @@
 package net.mindoth.spellmaker.item.weapon;
 
+import net.mindoth.spellmaker.item.SpellBookItem;
+
 public class ColorableSpellBookItem extends SpellBookItem {
 
     private final int defaultColor;

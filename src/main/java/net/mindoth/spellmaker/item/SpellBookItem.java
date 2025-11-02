@@ -1,8 +1,7 @@
-package net.mindoth.spellmaker.item.weapon;
+package net.mindoth.spellmaker.item;
 
 import com.google.common.collect.Lists;
-import net.mindoth.spellmaker.item.ModDyeableItem;
-import net.mindoth.spellmaker.item.ParchmentItem;
+import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.network.PacketOpenSpellBook;
 import net.minecraft.ChatFormatting;
@@ -198,6 +197,16 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     }
 
     public static ItemStack getSpellBookSlot(Player player) {
+        ItemStack offHand = player.getOffhandItem();
+        if ( offHand.getItem() instanceof SpellBookItem ) return offHand;
+        for ( int i = 0; i <= player.getInventory().getContainerSize(); i++ ) {
+            ItemStack slot = player.getInventory().getItem(i);
+            if ( slot.getItem() instanceof SpellBookItem ) return slot;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    public static ItemStack getTaggedSpellBookSlot(Player player) {
         ItemStack offHand = player.getOffhandItem();
         if ( offHand.getItem() instanceof SpellBookItem && offHand.hasTag() && offHand.getTag().contains(NBT_KEY_BOOK_FORMS)
                 && !offHand.getTag().getString(NBT_KEY_BOOK_FORMS).isEmpty() ) return offHand;

@@ -3,7 +3,7 @@ package net.mindoth.spellmaker.client.gui.screen;
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.weapon.SpellBookItem;
+import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.network.PacketRemoveScrollFromBook;
 import net.mindoth.spellmaker.network.PacketUpdateBookData;

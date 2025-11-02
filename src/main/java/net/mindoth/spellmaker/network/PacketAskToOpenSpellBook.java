@@ -1,6 +1,6 @@
 package net.mindoth.spellmaker.network;
 
-import net.mindoth.spellmaker.item.weapon.SpellBookItem;
+import net.mindoth.spellmaker.item.SpellBookItem;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -10,13 +10,18 @@ import java.util.function.Supplier;
 
 public class PacketAskToOpenSpellBook {
 
-    public PacketAskToOpenSpellBook() {
+    public boolean tagged;
+
+    public PacketAskToOpenSpellBook(boolean tagged) {
+        this.tagged = tagged;
     }
 
     public PacketAskToOpenSpellBook(FriendlyByteBuf buf) {
+        this.tagged = buf.readBoolean();
     }
 
     public void encode(FriendlyByteBuf buf) {
+        buf.writeBoolean(this.tagged);
     }
 
     public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
@@ -25,7 +30,7 @@ public class PacketAskToOpenSpellBook {
             if ( context.getSender() != null ) {
                 ServerPlayer player = context.getSender();
                 player.stopUsingItem();
-                ItemStack book = SpellBookItem.getSpellBookSlot(player);
+                ItemStack book = this.tagged ? SpellBookItem.getTaggedSpellBookSlot(player) : SpellBookItem.getSpellBookSlot(player);
                 SpellBookItem.openSpellBook(player, book);
             }
         });

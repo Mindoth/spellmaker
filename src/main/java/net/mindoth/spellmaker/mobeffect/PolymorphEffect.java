@@ -3,7 +3,7 @@ package net.mindoth.spellmaker.mobeffect;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.item.weapon.SpellBookItem;
+import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.item.sigil.PolymorphSigilItem;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.mixin.EntityMixin;

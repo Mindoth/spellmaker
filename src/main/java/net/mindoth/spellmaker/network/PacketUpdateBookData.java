@@ -1,7 +1,7 @@
 package net.mindoth.spellmaker.network;
 
 import com.google.common.collect.Lists;
-import net.mindoth.spellmaker.item.weapon.SpellBookItem;
+import net.mindoth.spellmaker.item.SpellBookItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

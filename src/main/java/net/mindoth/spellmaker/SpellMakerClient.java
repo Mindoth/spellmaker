@@ -9,7 +9,7 @@ import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.entity.ProjectileSpellMultiRenderer;
 import net.mindoth.spellmaker.entity.ProjectileSpellSingleRenderer;
 import net.mindoth.spellmaker.item.ModDyeableItem;
-import net.mindoth.spellmaker.item.weapon.SpellBookItem;
+import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.network.PacketAskToOpenSpellBook;
 import net.mindoth.spellmaker.registries.ModEntities;
@@ -80,7 +80,8 @@ public class SpellMakerClient {
         private static void onInput(Minecraft mc, int key, int keyAction) {
             Player player = mc.player;
             if ( mc.screen == null && keyAction == 0 && key == OPEN_SPELL_BOOK.getKey().getValue() ) {
-                if ( !SpellBookItem.getSpellBookSlot(player).isEmpty() ) ModNetwork.sendToServer(new PacketAskToOpenSpellBook());
+                if ( !SpellBookItem.getTaggedSpellBookSlot(player).isEmpty() ) ModNetwork.sendToServer(new PacketAskToOpenSpellBook(true));
+                else if ( !SpellBookItem.getSpellBookSlot(player).isEmpty() ) ModNetwork.sendToServer(new PacketAskToOpenSpellBook(false));
             }
         }
     }

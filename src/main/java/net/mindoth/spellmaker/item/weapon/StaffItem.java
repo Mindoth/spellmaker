@@ -4,6 +4,7 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.ModCapabilities;
 import net.mindoth.spellmaker.capability.playermagic.PlayerMagickProvider;
 import net.mindoth.spellmaker.item.ParchmentItem;
+import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
 import net.mindoth.spellmaker.util.DataHelper;
@@ -58,7 +59,7 @@ public class StaffItem extends Item {
     }
 
     private static void startCasting(Player player, ItemStack staff) {
-        ItemStack book = SpellBookItem.getSpellBookSlot(player);
+        ItemStack book = SpellBookItem.getTaggedSpellBookSlot(player);
         if ( !book.isEmpty() && book.hasTag() && book.getTag().contains(SpellBookItem.NBT_KEY_BOOK_SLOT)
                 && book.getTag().getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) >= 0 && SpellBookItem.getActiveScrollFromBook(book) != null ) {
             ItemStack scroll = SpellBookItem.getActiveScrollFromBook(book);
