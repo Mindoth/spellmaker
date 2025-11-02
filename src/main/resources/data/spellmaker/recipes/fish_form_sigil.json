@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "spellmaker:rune_essence"
+    },
+    {
+      "item": "spellmaker:alteration_dust"
+    },
+    {
+      "tag": "minecraft:fishes"
+    }
+  ],
+  "result": {
+    "item": "spellmaker:fish_form_sigil"
+  }
+}

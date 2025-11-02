@@ -33,7 +33,7 @@ public class FishTransformationSigilItem extends PolymorphSigilItem {
 
     public static boolean isFish(LivingEntity living) {
         if ( !(living instanceof Player player) ) return false;
-        return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getTransformationSigil(player) == ModItems.FISH_TRANSFORMATION_SIGIL.get();
+        return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getTransformationSigil(player) == ModItems.FISH_FORM_SIGIL.get();
     }
 
     @SubscribeEvent

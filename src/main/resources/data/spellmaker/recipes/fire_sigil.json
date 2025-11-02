@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "spellmaker:rune_essence"
+    },
+    {
+      "item": "spellmaker:destruction_dust"
+    },
+    {
+      "item": "minecraft:coal"
+    }
+  ],
+  "result": {
+    "item": "spellmaker:fire_sigil"
+  }
+}

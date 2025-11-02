@@ -34,6 +34,15 @@ public class ModItems {
     public static final RegistryObject<Item> WOOD_ASH = ITEMS.register("wood_ash",
             () -> new Item(new Item.Properties()));
 
+    public static final RegistryObject<Item> DESTRUCTION_DUST = ITEMS.register("destruction_dust",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistryObject<Item> ALTERATION_DUST = ITEMS.register("alteration_dust",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistryObject<Item> RESTORATION_DUST = ITEMS.register("restoration_dust",
+            () -> new Item(new Item.Properties()));
+
     //Equipment
     public static final RegistryObject<Item> SPELL_BOOK = ITEMS.register("spell_book",
             () -> new ColorableSpellBookItem(new Item.Properties(), ModDyeableItem.BLUE));
@@ -69,11 +78,11 @@ public class ModItems {
     public static final RegistryObject<Item> SLEEP_SIGIL = ITEMS.register("sleep_sigil",
             () -> new SleepSigilItem(new Item.Properties(), SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1));
 
-    public static final RegistryObject<Item> SHEEP_TRANSFORMATION_SIGIL = ITEMS.register("sheep_transformation_sigil",
+    public static final RegistryObject<Item> SHEEP_FORM_SIGIL = ITEMS.register("sheep_form_sigil",
             () -> new SheepTransformationSigilItem(new Item.Properties(), SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
                     UUID.fromString("84527dc5-d3e5-4550-98ed-c8186c5d3089"), EntityType.SHEEP));
 
-    public static final RegistryObject<Item> FISH_TRANSFORMATION_SIGIL = ITEMS.register("fish_transformation_sigil",
+    public static final RegistryObject<Item> FISH_FORM_SIGIL = ITEMS.register("fish_form_sigil",
             () -> new FishTransformationSigilItem(new Item.Properties(), SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
                     UUID.fromString("b2bc1fd5-a121-42cf-b7cb-d29c61e3211c"), EntityType.COD));
 }

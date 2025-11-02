@@ -2,6 +2,6 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "spellmaker:item/rune_essence",
-    "layer1": "spellmaker:item/sigil/fish_transformation"
+    "layer1": "spellmaker:item/sigil/sheep_form"
   }
 }

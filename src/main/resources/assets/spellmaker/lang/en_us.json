@@ -18,6 +18,9 @@
   "item.spellmaker.wool_cloth": "Wool Cloth",
   "item.spellmaker.parchment": "Parchment",
   "item.spellmaker.wood_ash": "Wood Ash",
+  "item.spellmaker.destruction_dust": "Destruction Dust",
+  "item.spellmaker.alteration_dust": "Alteration Dust",
+  "item.spellmaker.restoration_dust": "Restoration Dust",
 
   "item.spellmaker.wooden_staff": "Wooden Staff",
   "item.spellmaker.spell_book": "Spell Book",
@@ -31,8 +34,8 @@
   "item.spellmaker.frost_sigil": "Frost Sigil",
   "item.spellmaker.shock_sigil": "Shock Sigil",
   "item.spellmaker.sleep_sigil": "Sleep Sigil",
-  "item.spellmaker.sheep_transformation_sigil": "Sheep Transformation Sigil",
-  "item.spellmaker.fish_transformation_sigil": "Fish Transformation Sigil",
+  "item.spellmaker.sheep_form_sigil": "Sheep Form Sigil",
+  "item.spellmaker.fish_form_sigil": "Fish Form Sigil",
 
 
   "spellform.spellmaker.caster_only": "Caster only",

@@ -1,0 +1,11 @@
+{
+  "type": "spellmaker:calcinating",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.0,
+  "group": "calcinating",
+  "ingredient": {
+    "item": "minecraft:fermented_spider_eye"
+  },
+  "result": "spellmaker:alteration_dust"
+}
