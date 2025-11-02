@@ -31,6 +31,56 @@ import java.util.List;
 
 public class SpellMakingMenu extends AbstractContainerMenu {
 
+    public class ParchmentSlot extends Slot {
+        public ParchmentSlot(Container pContainer, int pSlot, int pXPosition, int pYPosition) {
+            super(pContainer, pSlot, pXPosition, pYPosition);
+        }
+        @Override
+        public boolean mayPlace(ItemStack stack) {
+            return !this.hasItem() && stack.getItem() instanceof ParchmentItem;
+        }
+        @Override
+        public int getMaxStackSize() {
+            return 1;
+        }
+    }
+
+    public class SigilSlot extends Slot {
+        public boolean isOpen;
+        public SigilSlot(Container pContainer, int pSlot, int pX, int pY, boolean isOpen) {
+            super(pContainer, pSlot, pX, pY);
+            this.isOpen = isOpen;
+        }
+        @Override
+        public boolean mayPlace(ItemStack stack) {
+            return this.isOpen && stack.getItem() instanceof SigilItem;
+        }
+        @Override
+        public void setByPlayer(ItemStack pStack) {
+            resetStatsForSlot(getSlotIndex());
+            super.setByPlayer(pStack);
+        }
+        @Override
+        public int getMaxStackSize() {
+            return 1;
+        }
+    }
+
+    public void resetStatsForSlot(int i) {
+        if ( getMagnitude().get(i - 1) != 0 ) {
+            List<Integer> list = Lists.newArrayList();
+            list.addAll(getMagnitude());
+            list.set(i - 1, 0);
+            this.magnitude = list;
+        }
+        if ( getDuration().get(i - 1) != 0 ) {
+            List<Integer> list = Lists.newArrayList();
+            list.addAll(getDuration());
+            list.set(i - 1, 0);
+            this.duration = list;
+        }
+    }
+
     private static final int RESULT_SLOT = 0;
     private static final int CRAFT_SLOT_START = 0;
     private static final int CRAFT_SLOT_END = 4;
@@ -159,6 +209,10 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
     public boolean dumpSpell() {
         if ( isReadyToDump() ) {
+            ItemStack stack = this.craftSlots.getItem(0);
+            this.spellForm = DataHelper.getFormFromNbt(stack.getTag());
+            this.magnitude = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
+            this.duration = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
             ModNetwork.sendToServer(new PacketDumpSpell());
             return true;
         }
@@ -171,21 +225,20 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                 if ( isReadyToDump() ) {
                     ItemStack stack = this.craftSlots.getItem(0);
                     List<ItemStack> list = DataHelper.getSpellStackFromTag(stack.getTag());
-                    for ( int i = 0; i < this.slots.size(); i++ ) {
-                        if ( i == 0 ) {
-                            this.spellForm = DataHelper.getFormFromNbt(stack.getTag());
-                            this.magnitude = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
-                            this.duration = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
-                            cleanScroll(level, stack);
-                        }
-                        else {
-                            Slot slot = this.slots.get(i);
-                            if ( slot instanceof SigilSlot) {
-                                ItemStack sigil = list.get(i - 1);
-                                setSlotContent(level, i, sigil);
-                            }
+                    AbstractSpellForm form = DataHelper.getFormFromNbt(stack.getTag());
+                    List<Integer> magnitude = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
+                    List<Integer> duration = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
+                    cleanScroll(level, stack);
+                    for ( int i = 1; i < this.slots.size(); i++ ) {
+                        Slot slot = this.slots.get(i);
+                        if ( slot instanceof SigilSlot ) {
+                            ItemStack sigil = list.get(i - 1);
+                            setSlotContent(level, i, sigil);
                         }
                     }
+                    this.spellForm = form;
+                    this.magnitude = magnitude;
+                    this.duration = duration;
                 }
             }
         });
@@ -230,12 +283,11 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         return count;
     }
 
-    //TODO: Make stats reset for a row when a rune is removed
     @Override
     public void slotsChanged(Container pInventory) {
         this.access.execute((level, pos) -> {
             ItemStack stack = getCraftSlots().getItem(0);
-            if ( isCleanParchment(stack) ) {
+            if ( isReadyToMake() ) {
                 final int slotsToOpen = ((ParchmentItem)stack.getItem()).getSize();
                 for ( Slot slot : this.slots ) {
                     if ( howManySigilSlotsOpen() >= slotsToOpen ) break;
@@ -251,13 +303,6 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                         }
                         if ( sigilSlot.isOpen ) sigilSlot.isOpen = false;
                     }
-                }
-            }
-            if ( level.isClientSide ) {
-                if ( isReadyToDump() ) {
-                    editSpellForm(stack.getTag());
-                    editSpellStats((byte)0, DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES)));
-                    editSpellStats((byte)1, DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS)));
                 }
             }
         });

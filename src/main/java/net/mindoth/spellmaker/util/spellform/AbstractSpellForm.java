@@ -35,8 +35,8 @@ public abstract class AbstractSpellForm {
         for ( SigilItem sigil : map.keySet() ) {
             int cost = sigil.getCost();
             List<Integer> stats = map.get(sigil);
-            if ( sigil.getMaxMagnitude() > 0 ) cost += stats.get(0) * sigil.getMagnitudeMultiplier();
-            if ( sigil.getMaxDuration() > 0 ) cost += stats.get(1) * sigil.getDurationMultiplier();
+            if ( sigil.canModifyMagnitude() ) cost += Math.abs(stats.get(0)) * sigil.getMagnitudeMultiplier();
+            if ( sigil.canModifyDuration() ) cost += Math.abs(stats.get(1)) * sigil.getDurationMultiplier();
             if ( cost > highestCost ) {
                 highestCost = cost;
                 state = sigil;

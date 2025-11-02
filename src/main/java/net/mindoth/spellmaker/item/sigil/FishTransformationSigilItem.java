@@ -16,8 +16,9 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = SpellMaker.MOD_ID)
 public class FishTransformationSigilItem extends PolymorphSigilItem {
-    public FishTransformationSigilItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier, UUID uuid, EntityType entityType) {
-        super(pProperties, color, cost, maxMagnitude, magnitudeMultiplier, maxDuration, durationMultiplier, uuid, entityType);
+
+    public FishTransformationSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier, UUID uuid, EntityType entityType) {
+        super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier, uuid, entityType);
     }
 
     @Override

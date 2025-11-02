@@ -3,7 +3,6 @@ package net.mindoth.spellmaker.client.gui.screen;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.client.gui.menu.SigilSlot;
 import net.mindoth.spellmaker.client.gui.menu.SpellMakingMenu;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
@@ -315,9 +314,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         boolean showMag = false;
         boolean showDur = false;
         for ( int i = 0; i < this.menu.slots.size(); i++ ) {
-            if ( this.menu.slots.get(i) instanceof SigilSlot sigilSlot && sigilSlot.getItem().getItem() instanceof SigilItem sigil ) {
-                if ( !showMag && sigil.getMaxMagnitude() > 0 ) showMag = true;
-                if ( !showDur && sigil.getMaxDuration() > 0 ) showDur = true;
+            if ( this.menu.slots.get(i) instanceof SpellMakingMenu.SigilSlot sigilSlot && sigilSlot.getItem().getItem() instanceof SigilItem sigil ) {
+                if ( !showMag && sigil.canModifyMagnitude() ) showMag = true;
+                if ( !showDur && sigil.canModifyDuration() ) showDur = true;
             }
         }
         //Stat name plate
@@ -330,13 +329,13 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         }
         for ( int i = 0; i < this.maxSlots; i++ ) {
             //Magnitude plates
-            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil && sigil.getMaxMagnitude() > 0 ) {
+            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil && sigil.canModifyMagnitude() ) {
                 int magX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 53;
                 int magY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
                 graphics.blit(TEXTURE, magX, magY + 18 * i, 176, 70, 18, 18, 256, 256);
             }
             //Duration plates
-            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil && sigil.getMaxDuration() > 0 ) {
+            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil && sigil.canModifyDuration() ) {
                 int durX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 107;
                 int durY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
                 graphics.blit(TEXTURE, durX, durY + 18 * i, 176, 70, 18, 18, 256, 256);
@@ -354,14 +353,14 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                         stringX + 54, stringY - 7 + this.font.lineHeight, 16777215);
             }
 
-            for (int i = 0; i < this.menu.howManySigilSlotsOpen(); i++ ) {
+            for ( int i = 0; i < this.menu.howManySigilSlotsOpen(); i++ ) {
                 if ( this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil ) {
                     int numOffY = 18 * i;
-                    if ( sigil.getMaxMagnitude() > 0 ) {
+                    if ( sigil.canModifyMagnitude() ) {
                         graphics.drawCenteredString(this.font, String.valueOf(this.menu.getMagnitude().get(i)),
                                 x + LEFT_MAGNITUDE_BUTTON_OFFSET_X + 17, y + MAGNITUDE_BUTTON_OFFSET_Y - 7 + this.font.lineHeight + numOffY, 16777215);
                     }
-                    if ( sigil.getMaxDuration() > 0 ) {
+                    if ( sigil.canModifyDuration() ) {
                         graphics.drawCenteredString(this.font, String.valueOf(this.menu.getDuration().get(i)),
                                 x + LEFT_DURATION_BUTTON_OFFSET_X + 17, y + DURATION_BUTTON_OFFSET_Y - 7 + this.font.lineHeight + numOffY, 16777215);
                     }
@@ -371,7 +370,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         //Locked Slots
         int off = 1;
         for ( int i = 0; i < this.menu.slots.size(); i++ ) {
-            if ( this.menu.getSlot(i) instanceof SigilSlot slot ) {
+            if ( this.menu.getSlot(i) instanceof SpellMakingMenu.SigilSlot slot ) {
                 int xPos = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
                 int yPos = y + SPELL_FORM_BUTTON_OFFSET_Y - 2 + 18 * off;
                 int u = this.menu.isReadyToMake() ? 176 : 192;
@@ -391,7 +390,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     private ResourceLocation getSpellIcon() {
         AbstractSpellForm form = this.menu.getSpellForm();
         List<ItemStack> sigilList = Lists.newArrayList();
-        for ( Slot slot : this.menu.slots ) if ( slot instanceof SigilSlot ) sigilList.add(slot.getItem());
+        for ( Slot slot : this.menu.slots ) if ( slot instanceof SpellMakingMenu.SigilSlot ) sigilList.add(slot.getItem());
         List<Integer> magnitudeList = this.menu.getMagnitude();
         List<Integer> durationList = this.menu.getDuration();
         return SpellColor.getSpellIcon(form, sigilList, magnitudeList, durationList);
@@ -408,7 +407,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         else {
             if ( this.craftButton.visible ) this.craftButton.visible = false;
         }
-
         if ( this.leftSpellFormButton.isFocused() ) this.leftSpellFormButton.setFocused(false);
         if ( this.rightSpellFormButton.isFocused() ) this.rightSpellFormButton.setFocused(false);
         if ( this.menu.isReadyToMake() ) {
@@ -465,9 +463,17 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     private boolean canEditStat(byte flag, int index, boolean isIncrease, int stat) {
         if ( !this.menu.isReadyToMake() || this.menu.getCraftSlots().getItem(index + 1).isEmpty() ) return false;
         if ( !(this.menu.getCraftSlots().getItem(index + 1).getItem() instanceof SigilItem sigil) ) return false;
-        if ( !isIncrease && stat <= 0 ) return false;
+        if ( flag == 0 ) {
+            if ( isIncrease ) return stat < sigil.getMaxMagnitude();
+            else return stat > sigil.getMinMagnitude();
+        }
+        else if ( flag == 1 ) {
+            if ( isIncrease ) return stat < sigil.getMaxDuration();
+            else return stat > sigil.getMinDuration();
+        }
+        /*if ( !isIncrease && stat <= 0 ) return false;
         if ( (flag == 0 && sigil.getMaxMagnitude() <= 0 ) || (flag == 1 && sigil.getMaxDuration() <= 0) ) return false;
-        if ( (flag == 0 && isIncrease && stat >= sigil.getMaxMagnitude()) || (flag == 1 && isIncrease && stat >= sigil.getMaxDuration()) ) return false;
+        if ( (flag == 0 && isIncrease && stat >= sigil.getMaxMagnitude()) || (flag == 1 && isIncrease && stat >= sigil.getMaxDuration()) ) return false;*/
         return true;
     }
 

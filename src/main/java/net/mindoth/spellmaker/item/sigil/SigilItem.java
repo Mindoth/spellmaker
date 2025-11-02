@@ -26,6 +26,10 @@ public abstract class SigilItem extends Item {
     public int getCost() {
         return this.cost;
     }
+    private final int minMagnitude;
+    public int getMinMagnitude() {
+        return this.minMagnitude;
+    }
     private final int maxMagnitude;
     public int getMaxMagnitude() {
         return this.maxMagnitude;
@@ -33,6 +37,10 @@ public abstract class SigilItem extends Item {
     private final int magnitudeMultiplier;
     public int getMagnitudeMultiplier() {
         return this.magnitudeMultiplier;
+    }
+    private final int minDuration;
+    public int getMinDuration() {
+        return this.minDuration;
     }
     private final int maxDuration;
     public int getMaxDuration() {
@@ -43,12 +51,22 @@ public abstract class SigilItem extends Item {
         return this.durationMultiplier;
     }
 
-    public SigilItem(Properties pProperties, SpellColor color, int cost, int maxMagnitude, int magnitudeMultiplier, int maxDuration, int durationMultiplier) {
+    public boolean canModifyMagnitude() {
+        return this.getMaxMagnitude() > 0 || this.getMinMagnitude() < 0;
+    }
+
+    public boolean canModifyDuration() {
+        return this.getMaxDuration() > 0 || this.getMinDuration() < 0;
+    }
+
+    public SigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier) {
         super(pProperties);
         this.color = color;
         this.cost = cost;
+        this.minMagnitude = minMagnitude;
         this.maxMagnitude = maxMagnitude;
         this.magnitudeMultiplier = magnitudeMultiplier;
+        this.minDuration = minDuration;
         this.maxDuration = maxDuration;
         this.durationMultiplier = durationMultiplier;
     }
