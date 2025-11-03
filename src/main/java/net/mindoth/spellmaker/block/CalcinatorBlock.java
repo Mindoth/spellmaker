@@ -1,7 +1,6 @@
 package net.mindoth.spellmaker.block;
 
 import net.mindoth.spellmaker.block.entity.CalcinatorBlockEntity;
-import net.mindoth.spellmaker.registries.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;

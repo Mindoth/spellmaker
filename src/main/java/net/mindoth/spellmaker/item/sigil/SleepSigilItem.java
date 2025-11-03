@@ -20,7 +20,7 @@ public class SleepSigilItem extends SigilItem {
         int duration = stats.get(1);
         int sleepTicks = duration * 20;
         if ( target instanceof LivingEntity living ) {
-            living.addEffect(new MobEffectInstance(ModEffects.SLEEP.get(), sleepTicks, 0, false, false));
+            living.addEffect(new MobEffectInstance(ModEffects.SLEEP, sleepTicks, 0, false, false));
         }
     }
 }

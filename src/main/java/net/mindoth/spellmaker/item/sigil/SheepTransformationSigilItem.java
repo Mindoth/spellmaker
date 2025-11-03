@@ -13,6 +13,6 @@ public class SheepTransformationSigilItem extends PolymorphSigilItem {
 
     @Override
     protected AttributeModifier getSpeedModifier() {
-        return new AttributeModifier(POLYMORPH_SPEED_MODIFIER_UUID, "Polymorph Speed", -0.05D, AttributeModifier.Operation.ADDITION);
+        return new AttributeModifier(POLYMORPH_SPEED_MODIFIER_UUID, -0.05D, AttributeModifier.Operation.ADD_VALUE);
     }
 }

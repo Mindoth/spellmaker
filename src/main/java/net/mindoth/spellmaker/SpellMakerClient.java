@@ -8,47 +8,39 @@ import net.mindoth.spellmaker.client.model.SimpleRobeModel;
 import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.entity.ProjectileSpellMultiRenderer;
 import net.mindoth.spellmaker.entity.ProjectileSpellSingleRenderer;
-import net.mindoth.spellmaker.item.ModDyeableItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.network.ModNetwork;
-import net.mindoth.spellmaker.network.PacketAskToOpenSpellBook;
+import net.mindoth.spellmaker.network.AskToOpenSpellBookPacket;
 import net.mindoth.spellmaker.registries.ModEntities;
 import net.mindoth.spellmaker.registries.ModMenus;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.*;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import org.lwjgl.glfw.GLFW;
 
 public class SpellMakerClient {
-    public static void registerHandlers() {
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public static void registerHandlers(IEventBus modBus, ModContainer modContainer) {
         modBus.addListener(SpellMakerClient::registerEntityRenderers);
         modBus.addListener(SpellMakerClient::registerItemColors);
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modBus.addListener(SpellMakerClient::registerLayerDefinitions));
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ModClientConfig.SPEC, "spellmaker-client.toml");
+        modBus.addListener(SpellMakerClient::registerLayerDefinitions);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, ModClientConfig.SPEC);
     }
 
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        for ( Item item : ForgeRegistries.ITEMS.getValues() ) {
+        /*for ( Item item : ForgeRegistries.ITEMS.getValues() ) {
             if ( item instanceof ModDyeableItem modItem ) event.getItemColors().register((color, armor) -> armor > 0 ? -1 : modItem.getColor(color), item);
-        }
+        }*/
     }
 
     private static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
@@ -56,18 +48,13 @@ public class SpellMakerClient {
         event.registerEntityRenderer(ModEntities.SPELL_PROJECTILE_MULTI.get(), ProjectileSpellMultiRenderer::new);
     }
 
-    public static final ModelLayerLocation SIMPLE_ROBE = new ModelLayerLocation(new ResourceLocation(SpellMaker.MOD_ID, "main"), "simple_robe");
+    public static final ModelLayerLocation SIMPLE_ROBE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "main"), "simple_robe");
 
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(SIMPLE_ROBE, SimpleRobeModel::createBodyLayer);
     }
 
-    public static final String KEY_OPEN_SPELL_BOOK = "key.spellmaker.open_spell_book";
-    public static final String KEY_CATEGORY_SPELLMAKER = "key.category.spellmaker";
-    public static final KeyMapping OPEN_SPELL_BOOK = new KeyMapping(KEY_OPEN_SPELL_BOOK, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_B, KEY_CATEGORY_SPELLMAKER);
-
-    @Mod.EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
     public static class ClientForgeEvents {
 
         @SubscribeEvent
@@ -80,13 +67,18 @@ public class SpellMakerClient {
         private static void onInput(Minecraft mc, int key, int keyAction) {
             Player player = mc.player;
             if ( mc.screen == null && keyAction == 0 && key == OPEN_SPELL_BOOK.getKey().getValue() ) {
-                if ( !SpellBookItem.getTaggedSpellBookSlot(player).isEmpty() ) ModNetwork.sendToServer(new PacketAskToOpenSpellBook(true));
-                else if ( !SpellBookItem.getSpellBookSlot(player).isEmpty() ) ModNetwork.sendToServer(new PacketAskToOpenSpellBook(false));
+                if ( !SpellBookItem.getTaggedSpellBookSlot(player).isEmpty() ) ModNetwork.sendToServer(new AskToOpenSpellBookPacket(true));
+                else if ( !SpellBookItem.getSpellBookSlot(player).isEmpty() ) ModNetwork.sendToServer(new AskToOpenSpellBookPacket(false));
             }
         }
     }
 
-    @Mod.EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static final String KEY_OPEN_SPELL_BOOK = "key.spellmaker.open_spell_book";
+    public static final String KEY_CATEGORY_SPELLMAKER = "key.category.spellmaker";
+    public static final KeyMapping OPEN_SPELL_BOOK = new KeyMapping(KEY_OPEN_SPELL_BOOK, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_B, KEY_CATEGORY_SPELLMAKER);
+
+    @EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
     public static class ClientModBusEvents {
 
         @SubscribeEvent
@@ -95,14 +87,14 @@ public class SpellMakerClient {
         }
 
         @SubscribeEvent
-        public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {
-            event.registerAbove(VanillaGuiOverlay.AIR_LEVEL.id(), "mana_hud", HudMana.OVERLAY);
+        public static void onRegisterOverlays(RegisterGuiLayersEvent event) {
+            event.registerBelow(VanillaGuiLayers.AIR_LEVEL, ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "mana_hud"), HudMana.OVERLAY);
         }
 
         @SubscribeEvent
-        public static void registerScreens(FMLClientSetupEvent event) {
-            MenuScreens.register(ModMenus.CALCINATOR_MENU.get(), CalcinatorScreen::new);
-            MenuScreens.register(ModMenus.SPELL_MAKING_MENU.get(), SpellMakingScreen::new);
+        public static void registerScreens(RegisterMenuScreensEvent event) {
+            event.register(ModMenus.CALCINATOR_MENU.get(), CalcinatorScreen::new);
+            event.register(ModMenus.SPELL_MAKING_MENU.get(), SpellMakingScreen::new);
         }
     }
 }

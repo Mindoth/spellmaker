@@ -183,7 +183,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
     public boolean makeSpell(String string) {
         if ( isReadyToMake() ) {
-            ModNetwork.sendToServer(new PacketMakeSpell(getItemName(string)));
+            ModNetwork.sendToServer(new MakeSpellPacket(getItemName(string)));
             return true;
         }
         else return false;
@@ -213,7 +213,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             this.spellForm = DataHelper.getFormFromNbt(stack.getTag());
             this.magnitude = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
             this.duration = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
-            ModNetwork.sendToServer(new PacketDumpSpell());
+            ModNetwork.sendToServer(new DumpSpellPacket());
             return true;
         }
         else return false;
@@ -310,7 +310,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
     public void editSpellForm(CompoundTag tag) {
         this.spellForm = DataHelper.getFormFromNbt(tag);
-        ModNetwork.sendToServer(new PacketEditSpellForm(tag));
+        ModNetwork.sendToServer(new EditSpellFormPacket(tag));
     }
 
     public void processSpellFormEditing(CompoundTag tag) {
@@ -322,7 +322,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
     public void editSpellStats(byte flag, List<Integer> list) {
         if ( flag == 0 ) this.magnitude = list;
         else if ( flag == 1 ) this.duration = list;
-        ModNetwork.sendToServer(new PacketEditSpellStats(flag, list));
+        ModNetwork.sendToServer(new EditSpellStatsPacket(flag, list));
     }
 
     public void processSpellStatEditing(byte flag, List<Integer> list) {

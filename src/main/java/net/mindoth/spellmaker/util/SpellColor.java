@@ -65,6 +65,6 @@ public enum SpellColor {
         stringBuilder.append("_");
         stringBuilder.append(color.string);
         stringBuilder.append(".png");
-        return new ResourceLocation(SpellMaker.MOD_ID, stringBuilder.toString());
+        return ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, stringBuilder.toString());
     }
 }

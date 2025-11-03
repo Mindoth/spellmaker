@@ -1,7 +1,6 @@
 package net.mindoth.spellmaker.util.spellform;
 
 import com.google.common.collect.Lists;
-import net.mindoth.shadowizardlib.event.LightEvents;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;

@@ -18,7 +18,6 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -52,14 +51,14 @@ public class PolymorphEffect extends MobEffect {
     public static final String NBT_KEY_RE_POLYMORPH = "sm_re_polymorphed_entity";
 
     public static void doPolymorph(LivingEntity living, AttributeModifier nameTagModifier) {
-        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.getHolder().get());
         if ( nameTagDistance != null && !nameTagDistance.hasModifier(nameTagModifier) ) nameTagDistance.addPermanentModifier(nameTagModifier);
         if ( living instanceof Mob target ) polymorphMob(target, nameTagModifier);
         else if ( living instanceof Player player ) polymorphPlayer(player, nameTagModifier);
     }
 
     private static void polymorphPlayer(Player player, AttributeModifier nameTagModifier) {
-        PolymorphSigilItem sigil = getSigilFromUUID(nameTagModifier.getId());
+        PolymorphSigilItem sigil = getSigilFromUUID(nameTagModifier.id());
         if ( sigil != null ) {
             sigil.addStatModifiers(player);
             PolymorphSigilItem.syncDimensions(player);
@@ -75,8 +74,8 @@ public class PolymorphEffect extends MobEffect {
 
     private static void polymorphMob(Mob target, AttributeModifier nameTagModifier) {
         if ( !(target.level() instanceof ServerLevel level) ) return;
-        if ( target.getPersistentData().contains(NBT_KEY_OLD_MOB) ) reTransformMob(target, level, getTypeFromUUID(nameTagModifier.getId()));
-        else transformMob(target, level, getTypeFromUUID(nameTagModifier.getId()));
+        if ( target.getPersistentData().contains(NBT_KEY_OLD_MOB) ) reTransformMob(target, level, getTypeFromUUID(nameTagModifier.id()));
+        else transformMob(target, level, getTypeFromUUID(nameTagModifier.id()));
     }
 
     private static void transformMob(Mob target, ServerLevel level, EntityType entityType) {
@@ -85,7 +84,7 @@ public class PolymorphEffect extends MobEffect {
         target.saveWithoutId(tag);
         Mob mob = target.convertTo(entityType, false);
         if ( mob == null ) return;
-        if ( target.hasEffect(ModEffects.POLYMORPH.get()) ) mob.addEffect(target.getEffect(ModEffects.POLYMORPH.get()));
+        if ( target.hasEffect(ModEffects.POLYMORPH.getHolder().get()) ) mob.addEffect(target.getEffect(ModEffects.POLYMORPH.get()));
         ForgeEventFactory.onFinalizeSpawn(mob, level, level.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.CONVERSION, null, null);
         mob.getPersistentData().put(NBT_KEY_OLD_MOB, tag);
     }
@@ -94,12 +93,13 @@ public class PolymorphEffect extends MobEffect {
         CompoundTag tag = target.getPersistentData().getCompound(NBT_KEY_OLD_MOB);
         Mob mob = target.convertTo(entityType, false);
         if ( mob == null ) return;
-        if ( target.hasEffect(ModEffects.POLYMORPH.get()) ) mob.addEffect(target.getEffect(ModEffects.POLYMORPH.get()));
+        if ( target.hasEffect(ModEffects.POLYMORPH.getHolder().get()) ) mob.addEffect(target.getEffect(ModEffects.POLYMORPH.get()));
         ForgeEventFactory.onFinalizeSpawn(mob, level, level.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.CONVERSION, null, null);
         mob.getPersistentData().put(NBT_KEY_OLD_MOB, tag);
     }
 
-    @Override
+    //TODO: effect on start and end
+    /*@Override
     public void addAttributeModifiers(LivingEntity living, AttributeMap map, int pAmplifier) {
         removeModifiers(living, false);
     }
@@ -112,14 +112,14 @@ public class PolymorphEffect extends MobEffect {
             else if ( mob.getPersistentData().contains(NBT_KEY_OLD_MOB) ) restoreMob(mob.getPersistentData().getCompound(NBT_KEY_OLD_MOB), level, mob);
         }
         else if ( living instanceof Player player ) removeModifiers(player, true);
-    }
+    }*/
 
     public static void removeModifiers(LivingEntity living, boolean doSync) {
-        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.getHolder().get());
         if ( nameTagDistance == null ) return;
         List<AttributeModifier> nameTagModifierList = Lists.newArrayList();
-        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( getSigilFromUUID(modifier.getId()) != null ) nameTagModifierList.add(modifier);
-        for ( AttributeModifier modifier : nameTagModifierList ) getSigilFromUUID(modifier.getId()).removeModifiers(living);
+        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( getSigilFromUUID(modifier.id()) != null ) nameTagModifierList.add(modifier);
+        for ( AttributeModifier modifier : nameTagModifierList ) getSigilFromUUID(modifier.id()).removeModifiers(living);
         if ( doSync ) PolymorphSigilItem.syncDimensions(living);
     }
 
@@ -130,7 +130,7 @@ public class PolymorphEffect extends MobEffect {
             entity.setPos(oldMob.position());
             entity.setDeltaMovement(oldMob.getDeltaMovement());
             if ( entity instanceof LivingEntity newLiving ) {
-                if ( newLiving.hasEffect(ModEffects.POLYMORPH.get()) ) newLiving.removeEffect(ModEffects.POLYMORPH.get());
+                if ( newLiving.hasEffect(ModEffects.POLYMORPH.getHolder().get()) ) newLiving.removeEffect(ModEffects.POLYMORPH.getHolder().get());
                 removeModifiers(newLiving, false);
             }
             level.addFreshEntity(entity);
@@ -142,14 +142,14 @@ public class PolymorphEffect extends MobEffect {
     @SubscribeEvent
     public static void preventAttackWhilePolymorphed(AttackEntityEvent event) {
         Player player = event.getEntity();
-        if ( !player.hasEffect(ModEffects.POLYMORPH.get()) ) return;
+        if ( !player.hasEffect(ModEffects.POLYMORPH.getHolder().get()) ) return;
         event.setCanceled(true);
     }
 
     @SubscribeEvent
     public static void preventInteractWhilePolymorphed(PlayerInteractEvent event) {
         Player player = event.getEntity();
-        if ( !player.hasEffect(ModEffects.POLYMORPH.get()) ) return;
+        if ( !player.hasEffect(ModEffects.POLYMORPH.getHolder().get()) ) return;
         if ( event instanceof PlayerInteractEvent.RightClickItem itemEvent
                 && (itemEvent.getItemStack().getItem() instanceof StaffItem || itemEvent.getItemStack().getItem() instanceof SpellBookItem) ) return;
         if ( event.isCancelable() ) event.setCanceled(true);
@@ -165,10 +165,10 @@ public class PolymorphEffect extends MobEffect {
     @SubscribeEvent
     public static void renderPolymorphedPlayer(RenderPlayerEvent.Pre event) {
         Player player = event.getEntity();
-        AttributeInstance nameTagDistance = player.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        AttributeInstance nameTagDistance = player.getAttribute(ForgeMod.NAMETAG_DISTANCE.getHolder().get());
         if ( nameTagDistance == null ) return;
         for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) {
-            if ( getTypeFromUUID(modifier.getId()) != null && getTypeFromUUID(modifier.getId()).create(player.level()) instanceof LivingEntity living ) {
+            if ( getTypeFromUUID(modifier.id()) != null && getTypeFromUUID(modifier.id()).create(player.level()) instanceof LivingEntity living ) {
                 renderPolymorphModel(living, player, event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
                 event.setCanceled(true);
                 break;
@@ -242,7 +242,7 @@ public class PolymorphEffect extends MobEffect {
         double amount = 0;
         for ( AttributeInstance instance : player.getAttributes().getSyncableAttributes() ) {
             for ( AttributeModifier modifier : instance.getModifiers() ) {
-                if ( Objects.equals(modifier.getId().toString(), PolymorphSigilItem.POLYMORPH_SPEED_MODIFIER_UUID.toString()) ) amount += modifier.getAmount();
+                if ( Objects.equals(modifier.id().toString(), PolymorphSigilItem.POLYMORPH_SPEED_MODIFIER_UUID.toString()) ) amount += modifier.getAmount();
             }
         }
         if ( amount != 0 ) event.setNewFovModifier(newFovCalc(player, amount));
@@ -283,28 +283,28 @@ public class PolymorphEffect extends MobEffect {
 
     public static boolean isPolymorphed(LivingEntity living) {
         if ( living.getAttributes() == null ) return false;
-        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.getHolder().get());
         if ( nameTagDistance == null ) return false;
-        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( getSigilFromUUID(modifier.getId()) != null ) return true;
+        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( getSigilFromUUID(modifier.id()) != null ) return true;
         return false;
     }
 
     public static PolymorphSigilItem getTransformationSigil(LivingEntity living) {
         if ( living.getAttributes() == null ) return null;
-        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.getHolder().get());
         if ( nameTagDistance == null ) return null;
-        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( PolymorphEffect.getTypeFromUUID(modifier.getId()) != null ) {
-            return PolymorphEffect.getSigilFromUUID(modifier.getId());
+        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( PolymorphEffect.getTypeFromUUID(modifier.id()) != null ) {
+            return PolymorphEffect.getSigilFromUUID(modifier.id());
         }
         return null;
     }
 
     public static EntityType getPolymorphType(LivingEntity living) {
         if ( living.getAttributes() == null ) return null;
-        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+        AttributeInstance nameTagDistance = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.getHolder().get());
         if ( nameTagDistance == null ) return null;
-        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( PolymorphEffect.getTypeFromUUID(modifier.getId()) != null ) {
-            return PolymorphEffect.getTypeFromUUID(modifier.getId());
+        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( PolymorphEffect.getTypeFromUUID(modifier.id()) != null ) {
+            return PolymorphEffect.getTypeFromUUID(modifier.id());
         }
         return null;
     }

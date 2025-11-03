@@ -29,13 +29,13 @@ public class LivingEntityMixin {
     @Inject(method = "checkBedExists", at = @At(value = "HEAD"), cancellable = true)
     public void allowSleepWithMobEffect(CallbackInfoReturnable<Boolean> callback) {
         LivingEntity living = (LivingEntity)(Object)this;
-        if ( living.hasEffect(ModEffects.SLEEP.get()) ) callback.setReturnValue(true);
+        if ( living.hasEffect(ModEffects.SLEEP) ) callback.setReturnValue(true);
     }
 
     @Inject(method = "stopSleeping", at = @At(value = "HEAD"), cancellable = true)
     public void stopWakingUpWhileSleeping(CallbackInfo callback) {
         LivingEntity living = (LivingEntity)(Object)this;
-        if ( living.hasEffect(ModEffects.SLEEP.get()) ) callback.cancel();
+        if ( living.hasEffect(ModEffects.SLEEP) ) callback.cancel();
     }
 
     @Unique

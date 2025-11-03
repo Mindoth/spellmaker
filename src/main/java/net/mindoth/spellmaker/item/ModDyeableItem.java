@@ -1,11 +1,7 @@
 package net.mindoth.spellmaker.item;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.DyeableLeatherItem;
-import net.minecraft.world.item.ItemStack;
-
-public interface ModDyeableItem extends DyeableLeatherItem {
-    String TAG_COLOR = "color";
+public interface ModDyeableItem /*extends DyeableLeatherItem*/ {
+    /*String TAG_COLOR = "color";
     String TAG_DISPLAY = "display";
     int WHITE = 16777215;
     int GRAY = 11711154;
@@ -39,5 +35,5 @@ public interface ModDyeableItem extends DyeableLeatherItem {
     @Override
     default void setColor(ItemStack pStack, int pColor) {
         pStack.getOrCreateTagElement(TAG_DISPLAY).putInt(TAG_COLOR, pColor);
-    }
+    }*/
 }

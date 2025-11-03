@@ -2,7 +2,6 @@ package net.mindoth.spellmaker.block.entity;
 
 import net.mindoth.spellmaker.client.gui.menu.CalcinatorMenu;
 import net.mindoth.spellmaker.recipe.CalcinatingRecipe;
-import net.mindoth.spellmaker.registries.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;

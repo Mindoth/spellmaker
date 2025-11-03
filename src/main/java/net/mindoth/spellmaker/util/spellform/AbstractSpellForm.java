@@ -14,7 +14,7 @@ import java.util.List;
 public abstract class AbstractSpellForm {
 
     public String getName() {
-        return ModSpellForms.SPELL_FORM_REGISTRY.get().getKey(this).getPath();
+        return ModSpellForms.SPELL_FORM_REGISTRY.getKey(this).getPath();
     }
     private final float cost;
     public float getCost() {

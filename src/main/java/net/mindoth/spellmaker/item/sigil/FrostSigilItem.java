@@ -40,7 +40,7 @@ public class FrostSigilItem extends SigilItem {
         Level level = location.getLevel();
         BlockState blockState = level.getBlockState(target);
         BlockState frozenBlock = Blocks.FROSTED_ICE.defaultBlockState();
-        if ( blockState.getBlock() instanceof LiquidBlock liquid && liquid.getFluid() == Fluids.WATER && frozenBlock.canSurvive(level, target)
+        if ( blockState.getBlock() instanceof LiquidBlock liquid && liquid.fluid == Fluids.WATER && frozenBlock.canSurvive(level, target)
                 && level.isUnobstructed(frozenBlock, target, CollisionContext.empty()) ) {
             level.setBlockAndUpdate(target, frozenBlock);
             level.scheduleTick(target, Blocks.FROSTED_ICE, freezeTicks);

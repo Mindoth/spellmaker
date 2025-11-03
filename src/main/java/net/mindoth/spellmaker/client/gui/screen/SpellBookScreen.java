@@ -5,8 +5,8 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.network.ModNetwork;
-import net.mindoth.spellmaker.network.PacketRemoveScrollFromBook;
-import net.mindoth.spellmaker.network.PacketUpdateBookData;
+import net.mindoth.spellmaker.network.RemoveScrollFromBookPacket;
+import net.mindoth.spellmaker.network.UpdateBookDataPacket;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
@@ -176,7 +176,7 @@ public class SpellBookScreen extends AbstractModScreen {
     private void handleSelectButton(Button button) {
         if ( !this.selectButtonList.contains(button) ) return;
         int index = this.selectButtonList.indexOf(button) + (SpellBookItem.pageSize * (this.spreadNumber));
-        ModNetwork.sendToServer(new PacketUpdateBookData(this.book, this.scrollList, index));
+        ModNetwork.sendToServer(new UpdateBookDataPacket(this.book, this.scrollList, index));
         this.book.getTag().putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, index);
     }
 
@@ -195,7 +195,7 @@ public class SpellBookScreen extends AbstractModScreen {
         Item item = stack.getItem();
         if ( item instanceof ParchmentItem ) {
             int index = this.scrollList.indexOf(stack);
-            ModNetwork.sendToServer(new PacketRemoveScrollFromBook(this.book, this.scrollList, index));
+            ModNetwork.sendToServer(new RemoveScrollFromBookPacket(this.book, this.scrollList, index));
             this.scrollList.remove(index);
 
             int newSlot = SpellBookItem.getNewSlotFromScrollRemoval(index, getSelectedSlot());
@@ -262,7 +262,7 @@ public class SpellBookScreen extends AbstractModScreen {
             }
             this.scrollList.set(index, second);
 
-            ModNetwork.sendToServer(new PacketUpdateBookData(this.book, this.scrollList, newSlot));
+            ModNetwork.sendToServer(new UpdateBookDataPacket(this.book, this.scrollList, newSlot));
             this.book.getTag().putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, newSlot);
 
             createPages(true);

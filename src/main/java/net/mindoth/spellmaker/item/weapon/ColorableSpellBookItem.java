@@ -6,10 +6,10 @@ public class ColorableSpellBookItem extends SpellBookItem {
 
     private final int defaultColor;
 
-    @Override
+    /*@Override
     public int getDefaultColor() {
         return this.defaultColor;
-    }
+    }*/
 
     public ColorableSpellBookItem(Properties pProperties, int defaultColor) {
         super(pProperties);

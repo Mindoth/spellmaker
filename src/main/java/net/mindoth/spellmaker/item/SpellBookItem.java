@@ -3,8 +3,12 @@ package net.mindoth.spellmaker.item;
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.network.ModNetwork;
-import net.mindoth.spellmaker.network.PacketOpenSpellBook;
+import net.mindoth.spellmaker.network.OpenSpellBookPacket;
+import net.mindoth.spellmaker.registries.ModData;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -16,12 +20,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,13 +51,16 @@ public class SpellBookItem extends Item implements ModDyeableItem {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flagIn) {
-        if ( stack.hasTag() && stack.getTag().contains(NBT_KEY_OWNER_NAME) ) {
-            String name = stack.getTag().getString(NBT_KEY_OWNER_NAME);
-            tooltip.add(Component.translatable("tooltip.spellmaker.book_owner").withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal(name).withStyle(ChatFormatting.GRAY)));
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+        if ( ModData.getLegacyTag(stack) != null ) {
+            CompoundTag tag = ModData.getLegacyTag(stack);
+            if ( tag.contains(NBT_KEY_OWNER_NAME) ) {
+                String name = tag.getString(NBT_KEY_OWNER_NAME);
+                tooltip.add(Component.translatable("tooltip.spellmaker.book_owner").withStyle(ChatFormatting.GRAY)
+                        .append(Component.literal(name).withStyle(ChatFormatting.GRAY)));
+            }
         }
-        super.appendHoverText(stack, world, tooltip, flagIn);
+        super.appendHoverText(stack, context, tooltip, flagIn);
     }
 
     @Override
@@ -70,15 +77,16 @@ public class SpellBookItem extends Item implements ModDyeableItem {
 
     public static void openSpellBook(ServerPlayer player, ItemStack book) {
         handleSignature(player, book);
-        int slot = book.getTag().getInt(NBT_KEY_BOOK_SLOT);
+        CompoundTag tag = ModData.getLegacyTag(book);
+        int slot = tag.getInt(NBT_KEY_BOOK_SLOT);
         int page = 0;
         if ( slot >= pageSize ) {
-            for ( int i = pageSize; i < getScrollListFromBook(book.getTag()).size(); i++ ) {
+            for ( int i = pageSize; i < getScrollListFromBook(tag).size(); i++ ) {
                 if ( i % pageSize == 0 ) page++;
                 if ( i == slot ) break;
             }
         }
-        ModNetwork.sendToPlayer(new PacketOpenSpellBook(book, page), player);
+        PacketDistributor.sendToPlayer(player, new OpenSpellBookPacket(book, page));
     }
 
     public static int getNewSlotFromScrollRemoval(int oldSlot, int bookSlot) {
@@ -88,7 +96,7 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     }
 
     public static ItemStack getActiveScrollFromBook(ItemStack book) {
-        CompoundTag tag = book.getTag();
+        CompoundTag tag = ModData.getLegacyTag(book);
         if ( !tag.contains(NBT_KEY_BOOK_SLOT) ) return null;
         int slot = tag.getInt(NBT_KEY_BOOK_SLOT);
         List<ItemStack> scrollList = SpellBookItem.getScrollListFromBook(tag);
@@ -97,7 +105,7 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     }
 
     public static void handleSignature(ServerPlayer serverPlayer, ItemStack stack) {
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = ModData.getOrCreateLegacyTag(stack);
         if ( !tag.contains(NBT_KEY_BOOK_SLOT) ) tag.putInt(NBT_KEY_BOOK_SLOT, -1);
         if ( !tag.contains(NBT_KEY_OWNER_UUID) ){
             tag.putUUID(NBT_KEY_OWNER_UUID, serverPlayer.getUUID());
@@ -132,7 +140,8 @@ public class SpellBookItem extends Item implements ModDyeableItem {
         List<String> itemList = List.of(item.split(";"));
 
         for ( int i = 0; i < sigilList.size(); i++ ) {
-            ItemStack stack = constructSpellScroll(formList.get(i), sigilList.get(i), magList.get(i), durList.get(i), nameList.get(i), ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemList.get(i))));
+            ItemStack stack = constructSpellScroll(formList.get(i), sigilList.get(i), magList.get(i), durList.get(i), nameList.get(i),
+                    BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemList.get(i))));
             scrollList.add(stack);
         }
         return scrollList;
@@ -140,8 +149,8 @@ public class SpellBookItem extends Item implements ModDyeableItem {
 
     public static ItemStack constructSpellScroll(String form, String sigils, String magnitudes, String durations, String name, Item item) {
         ItemStack stack = new ItemStack(item);
-        if ( !Objects.equals(name, NBT_KEY_NULL_NAME) ) stack.setHoverName(Component.literal(name));
-        CompoundTag tag = stack.getOrCreateTag();
+        if ( !Objects.equals(name, NBT_KEY_NULL_NAME) ) stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
+        CompoundTag tag = ModData.getOrCreateLegacyTag(stack);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, form);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_SIGILS, sigils);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES, magnitudes);
@@ -151,39 +160,41 @@ public class SpellBookItem extends Item implements ModDyeableItem {
 
     public static ItemStack constructBook(ItemStack ogBook, List<ItemStack> scrolls) {
         ItemStack book = ogBook.copy();
-        if ( book.hasTag() ) {
-            if ( book.getTag().contains(NBT_KEY_BOOK_FORMS) ) book.getTag().remove(NBT_KEY_BOOK_FORMS);
-            if ( book.getTag().contains(NBT_KEY_BOOK_SIGILS) ) book.getTag().remove(NBT_KEY_BOOK_SIGILS);
-            if ( book.getTag().contains(NBT_KEY_BOOK_MAGNITUDES) ) book.getTag().remove(NBT_KEY_BOOK_MAGNITUDES);
-            if ( book.getTag().contains(NBT_KEY_BOOK_DURATIONS) ) book.getTag().remove(NBT_KEY_BOOK_DURATIONS);
-            if ( book.getTag().contains(ParchmentItem.NBT_KEY_SPELL_NAME) ) book.getTag().remove(ParchmentItem.NBT_KEY_SPELL_NAME);
-            if ( book.getTag().contains(ParchmentItem.NBT_KEY_PAPER_TIER) ) book.getTag().remove(ParchmentItem.NBT_KEY_PAPER_TIER);
+        if ( ModData.getLegacyTag(book) != null ) {
+            CompoundTag tag = ModData.getLegacyTag(book);
+            if ( tag.contains(NBT_KEY_BOOK_FORMS) ) tag.remove(NBT_KEY_BOOK_FORMS);
+            if ( tag.contains(NBT_KEY_BOOK_SIGILS) ) tag.remove(NBT_KEY_BOOK_SIGILS);
+            if ( tag.contains(NBT_KEY_BOOK_MAGNITUDES) ) tag.remove(NBT_KEY_BOOK_MAGNITUDES);
+            if ( tag.contains(NBT_KEY_BOOK_DURATIONS) ) tag.remove(NBT_KEY_BOOK_DURATIONS);
+            if ( tag.contains(ParchmentItem.NBT_KEY_SPELL_NAME) ) tag.remove(ParchmentItem.NBT_KEY_SPELL_NAME);
+            if ( tag.contains(ParchmentItem.NBT_KEY_PAPER_TIER) ) tag.remove(ParchmentItem.NBT_KEY_PAPER_TIER);
         }
         for ( ItemStack scroll : scrolls ) addSpellToBook(book, scroll);
         return book;
     }
 
     public static void addSpellToBook(ItemStack book, ItemStack scroll) {
-        CompoundTag bookTag = book.getOrCreateTag();
+        CompoundTag bookTag = ModData.getOrCreateLegacyTag(book);
+        CompoundTag scrollTag = ModData.getLegacyTag(scroll);
 
-        String formString = scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_FORM);
+        String formString = scrollTag.getString(ParchmentItem.NBT_KEY_SPELL_FORM);
         addSpellTagsToBook(bookTag, formString, NBT_KEY_BOOK_FORMS);
 
-        String runeString = scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_SIGILS);
+        String runeString = scrollTag.getString(ParchmentItem.NBT_KEY_SPELL_SIGILS);
         addSpellTagsToBook(bookTag, runeString, NBT_KEY_BOOK_SIGILS);
 
-        String magString = scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES);
+        String magString = scrollTag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES);
         addSpellTagsToBook(bookTag, magString, NBT_KEY_BOOK_MAGNITUDES);
 
-        String durString = scroll.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS);
+        String durString = scrollTag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS);
         addSpellTagsToBook(bookTag, durString, NBT_KEY_BOOK_DURATIONS);
 
         String name;
-        if ( scroll.hasCustomHoverName() ) name = scroll.getHoverName().getString();
+        if ( scroll.get(DataComponents.CUSTOM_NAME) != null ) name = scroll.getHoverName().getString();
         else name = NBT_KEY_NULL_NAME;
         addSpellTagsToBook(bookTag, name, ParchmentItem.NBT_KEY_SPELL_NAME);
 
-        String item = ForgeRegistries.ITEMS.getKey(scroll.getItem()).toString();
+        String item = BuiltInRegistries.ITEM.getKey(scroll.getItem()).toString();
         addSpellTagsToBook(bookTag, item, ParchmentItem.NBT_KEY_PAPER_TIER);
     }
 
@@ -208,12 +219,14 @@ public class SpellBookItem extends Item implements ModDyeableItem {
 
     public static ItemStack getTaggedSpellBookSlot(Player player) {
         ItemStack offHand = player.getOffhandItem();
-        if ( offHand.getItem() instanceof SpellBookItem && offHand.hasTag() && offHand.getTag().contains(NBT_KEY_BOOK_FORMS)
-                && !offHand.getTag().getString(NBT_KEY_BOOK_FORMS).isEmpty() ) return offHand;
+        CompoundTag offTag = ModData.getLegacyTag(offHand);
+        if ( offHand.getItem() instanceof SpellBookItem && offTag != null && offTag.contains(NBT_KEY_BOOK_FORMS)
+                && !offTag.getString(NBT_KEY_BOOK_FORMS).isEmpty() ) return offHand;
         for ( int i = 0; i <= player.getInventory().getContainerSize(); i++ ) {
             ItemStack slot = player.getInventory().getItem(i);
-            if ( slot.getItem() instanceof SpellBookItem && slot.hasTag() && slot.getTag().contains(NBT_KEY_BOOK_FORMS)
-                    && !slot.getTag().getString(NBT_KEY_BOOK_FORMS).isEmpty() ) return slot;
+            CompoundTag slotTag = ModData.getLegacyTag(slot);
+            if ( slot.getItem() instanceof SpellBookItem && ModData.getLegacyTag(slot) != null && slotTag.contains(NBT_KEY_BOOK_FORMS)
+                    && !slotTag.getString(NBT_KEY_BOOK_FORMS).isEmpty() ) return slot;
         }
         return ItemStack.EMPTY;
     }

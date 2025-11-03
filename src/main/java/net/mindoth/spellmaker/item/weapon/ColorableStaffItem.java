@@ -6,10 +6,10 @@ public class ColorableStaffItem extends StaffItem implements ModDyeableItem {
 
     private final int defaultColor;
 
-    @Override
+    /*@Override
     public int getDefaultColor() {
         return this.defaultColor;
-    }
+    }*/
 
     public ColorableStaffItem(Properties pProperties, int defaultColor) {
         super(pProperties);

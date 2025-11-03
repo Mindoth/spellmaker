@@ -1,101 +1,55 @@
 package net.mindoth.spellmaker.item.armor;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import net.mindoth.spellmaker.SpellMakerClient;
-import net.mindoth.spellmaker.client.model.SimpleRobeModel;
+import com.google.common.base.Suppliers;
 import net.mindoth.spellmaker.registries.ModAttributes;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.util.LazyLoadedValue;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.fml.DistExecutor;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ModArmorItem extends ArmorItem {
+    private final Supplier<ItemAttributeModifiers> defaultModifiers;
 
-    private static final UUID[] ARMOR_MODIFIER_UUID_PER_SLOT = new UUID[] {
-            UUID.fromString("b2d4bf45-19c1-4ffb-a031-57c0bd41ab8c"),
-            UUID.fromString("a7d05f11-1d9e-4a9a-80df-7f31150fcb01"),
-            UUID.fromString("734de32d-a8fd-4ecc-8d7e-bc2ed7e53742"),
-            UUID.fromString("66a66e68-3655-4a5a-a3ff-4e518a7ad1b3")
-    };
-
-    private final Multimap<Attribute, AttributeModifier> defaultModifiers;
-
-    @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
-        return slot == this.type.getSlot() ? this.defaultModifiers : ImmutableMultimap.of();
-    }
-
-    @Override
-    public boolean isEnchantable(ItemStack pStack) {
-        return true;
-    }
-
-    public ModArmorItem(ModArmorMaterials pMaterial, Type pType, Properties pProperties) {
+    public ModArmorItem(Holder<ArmorMaterial> pMaterial, Type pType, Properties pProperties, AttributeContainer... attributes) {
         super(pMaterial, pType, pProperties);
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        float defense = pMaterial.getDefenseForType(pType);
-        float toughness = pMaterial.getToughness();
-        float knockbackResistance = pMaterial.getKnockbackResistance();
-        UUID uuid = ARMOR_MODIFIER_UUID_PER_SLOT[pType.getSlot().getIndex()];
-        builder.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", defense, AttributeModifier.Operation.ADDITION));
-        builder.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", toughness, AttributeModifier.Operation.ADDITION));
-        if ( knockbackResistance > 0 ) {
-            builder.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(uuid, "Armor knockback resistance",
-                    knockbackResistance, AttributeModifier.Operation.ADDITION));
-        }
-        List<Map.Entry<Attribute, AttributeModifier>> entries = Lists.newArrayList();
-        for ( Map.Entry<Attribute, AttributeModifier> entry : pMaterial.getAdditionalAttributes().entrySet() ) {
-            if ( entry.getKey() == ModAttributes.MANA_MAX.get() ) entries.add(0, entry);
-            else entries.add(entry);
-        }
-        for ( Map.Entry<Attribute, AttributeModifier> modifierEntry : entries ) {
-            AttributeModifier modifier = modifierEntry.getValue();
-            modifier = new AttributeModifier(uuid, modifier.getName(), modifier.getAmount(), modifier.getOperation());
-            builder.put(modifierEntry.getKey(), modifier);
-        }
-        this.defaultModifiers = builder.build();
 
-        this.model = DistExecutor.unsafeRunForDist(() -> () -> new LazyLoadedValue<>(this::provideArmorModelForSlot), () -> () -> null);
+        this.defaultModifiers = Suppliers.memoize(
+                () -> {
+                    int i = pMaterial.value().getDefense(pType);
+                    float f = pMaterial.value().toughness();
+                    ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
+                    EquipmentSlotGroup equipmentslotgroup = EquipmentSlotGroup.bySlot(pType.getSlot());
+                    ResourceLocation resourcelocation = ResourceLocation.withDefaultNamespace("armor." + pType.getName());
+                    builder.add(
+                            Attributes.ARMOR, new AttributeModifier(resourcelocation, i, AttributeModifier.Operation.ADD_VALUE), equipmentslotgroup
+                    );
+                    builder.add(
+                            Attributes.ARMOR_TOUGHNESS, new AttributeModifier(resourcelocation, f, AttributeModifier.Operation.ADD_VALUE), equipmentslotgroup
+                    );
+                    float f1 = pMaterial.value().knockbackResistance();
+                    if (f1 > 0.0F) {
+                        builder.add(
+                                Attributes.KNOCKBACK_RESISTANCE,
+                                new AttributeModifier(resourcelocation, f1, AttributeModifier.Operation.ADD_VALUE),
+                                equipmentslotgroup
+                        );
+                    }
+                    for (AttributeContainer holder : attributes) {
+                        builder.add(holder.attribute(), holder.createModifier(pType.getSlot().getName()), equipmentslotgroup);
+                    }
+                    return builder.build();
+                }
+        );
     }
 
-    private final LazyLoadedValue<HumanoidModel<?>> model;
-
-    @OnlyIn(Dist.CLIENT)
-    public HumanoidModel<?> provideArmorModelForSlot() {
-        return new SimpleRobeModel(Minecraft.getInstance().getEntityModels().bakeLayer(SpellMakerClient.SIMPLE_ROBE));
-    }
-
-    @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(new IClientItemExtensions() {
-
-            @Override
-            public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-                return model.get();
-            }
-        });
-    }
-
-    public static boolean isWearingMagicArmor(Player player) {
-        for ( ItemStack slot : player.getArmorSlots() ) if ( slot.getItem() instanceof ColorableArmorItem ) return true;
-        return false;
+    public static AttributeContainer[] withMagickAttributes(int mana, double discount) {
+        return new AttributeContainer[]{new AttributeContainer(ModAttributes.MANA_MAX, mana, AttributeModifier.Operation.ADD_VALUE),
+                new AttributeContainer(ModAttributes.MANA_COST_MULTIPLIER, discount, AttributeModifier.Operation.ADD_MULTIPLIED_BASE)};
     }
 }

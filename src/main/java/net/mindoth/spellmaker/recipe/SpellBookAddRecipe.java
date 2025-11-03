@@ -3,12 +3,13 @@ package net.mindoth.spellmaker.recipe;
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
+import net.mindoth.spellmaker.registries.ModData;
 import net.mindoth.spellmaker.registries.ModRecipes;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -17,19 +18,20 @@ import java.util.List;
 
 public class SpellBookAddRecipe extends CustomRecipe {
 
-    public SpellBookAddRecipe(ResourceLocation pId, CraftingBookCategory category) {
-        super(pId, category);
+    public SpellBookAddRecipe(CraftingBookCategory category) {
+        super(category);
     }
 
     @Override
-    public boolean matches(CraftingContainer container, Level level) {
+    public boolean matches(CraftingInput input, Level level) {
         List<ItemStack> bookList = Lists.newArrayList();
         List<ItemStack> paperList = Lists.newArrayList();
         List<ItemStack> restList = Lists.newArrayList();
-        for ( int i = 0; i < container.getContainerSize(); i++ ) {
-            ItemStack stack = container.getItem(i);
+        for ( int i = 0; i < input.size(); i++ ) {
+            ItemStack stack = input.getItem(i);
             if ( !stack.isEmpty() ) {
-                boolean paperHasSpell = stack.hasTag() && stack.getTag().contains(ParchmentItem.NBT_KEY_SPELL_FORM);
+                CompoundTag tag = ModData.getLegacyTag(stack);
+                boolean paperHasSpell = tag != null && tag.contains(ParchmentItem.NBT_KEY_SPELL_FORM);
                 if ( stack.getItem() instanceof SpellBookItem) bookList.add(stack);
                 else if ( stack.getItem() instanceof ParchmentItem && paperHasSpell ) paperList.add(stack);
                 else restList.add(stack);
@@ -39,14 +41,15 @@ public class SpellBookAddRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer container, RegistryAccess regAcc) {
+    public ItemStack assemble(CraftingInput input, HolderLookup.Provider regAcc) {
         List<ItemStack> bookList = Lists.newArrayList();
         List<ItemStack> paperList = Lists.newArrayList();
         List<ItemStack> restList = Lists.newArrayList();
-        for ( int i = 0; i < container.getContainerSize(); i++ ) {
-            ItemStack stack = container.getItem(i);
+        for ( int i = 0; i < input.size(); i++ ) {
+            ItemStack stack = input.getItem(i);
             if ( !stack.isEmpty() ) {
-                boolean paperHasSpell = stack.hasTag() && stack.getTag().contains(ParchmentItem.NBT_KEY_SPELL_FORM);
+                CompoundTag tag = ModData.getLegacyTag(stack);
+                boolean paperHasSpell = tag != null && tag.contains(ParchmentItem.NBT_KEY_SPELL_FORM);
                 if ( stack.getItem() instanceof SpellBookItem) bookList.add(stack);
                 else if ( stack.getItem() instanceof ParchmentItem && paperHasSpell ) paperList.add(stack);
                 else restList.add(stack);

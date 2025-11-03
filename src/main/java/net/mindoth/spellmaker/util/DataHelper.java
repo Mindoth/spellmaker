@@ -5,11 +5,11 @@ import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.registries.ModSpellForms;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -18,12 +18,12 @@ import java.util.List;
 public abstract class DataHelper {
 
     public static String getStringFromForm(AbstractSpellForm form) {
-        return ModSpellForms.SPELL_FORM_REGISTRY.get().getKey(form).toString();
+        return ModSpellForms.SPELL_FORM_REGISTRY.getKey(form).toString();
     }
 
     public static AbstractSpellForm getFormFromNbt(CompoundTag tag) {
-        ResourceLocation key = new ResourceLocation(tag.getString(ParchmentItem.NBT_KEY_SPELL_FORM));
-        return ModSpellForms.SPELL_FORM_REGISTRY.get().getValue(key);
+        ResourceLocation key = ResourceLocation.parse(tag.getString(ParchmentItem.NBT_KEY_SPELL_FORM));
+        return ModSpellForms.SPELL_FORM_REGISTRY.get(key);
     }
 
     public static String getStringFromSpellStack(List<ItemStack> list) {
@@ -31,7 +31,7 @@ public abstract class DataHelper {
         for ( int i = 0; i < list.size(); i++ ) {
             Item item = list.get(i).getItem();
             if ( i > 0 ) stringBuilder.append(",");
-            stringBuilder.append(ForgeRegistries.ITEMS.getKey(item).toString());
+            stringBuilder.append(BuiltInRegistries.ITEM.getKey(item));
         }
         return stringBuilder.toString();
     }
@@ -40,7 +40,7 @@ public abstract class DataHelper {
         String stringList = tag.getString(ParchmentItem.NBT_KEY_SPELL_SIGILS);
         List<ItemStack> list = Lists.newArrayList();
         for ( String string : List.of(stringList.split(",")) ) {
-            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(string));
+            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(string));
             ItemStack stack = new ItemStack(item);
             if ( stack.getItem() instanceof SigilItem || stack.isEmpty() ) list.add(stack);
         }
@@ -71,7 +71,7 @@ public abstract class DataHelper {
         for ( int i = 0; i < list.size(); i++ ) {
             Item item = list.get(i);
             if ( i > 0 ) stringBuilder.append(",");
-            stringBuilder.append(ForgeRegistries.ITEMS.getKey(item).toString());
+            stringBuilder.append(BuiltInRegistries.ITEM.getKey(item).toString());
         }
         return stringBuilder.toString();
     }
@@ -79,7 +79,7 @@ public abstract class DataHelper {
     public static List<SigilItem> getSigilListFromString(String stringList) {
         List<SigilItem> list = Lists.newArrayList();
         for ( String string : List.of(stringList.split(",")) ) {
-            if ( ForgeRegistries.ITEMS.getValue(new ResourceLocation(string)) instanceof SigilItem sigil ) list.add(sigil);
+            if ( BuiltInRegistries.ITEM.get(ResourceLocation.parse(string)) instanceof SigilItem sigil ) list.add(sigil);
         }
         return list;
     }

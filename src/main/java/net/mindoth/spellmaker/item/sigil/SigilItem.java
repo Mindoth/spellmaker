@@ -13,7 +13,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -86,10 +86,10 @@ public abstract class SigilItem extends Item {
     }
 
     protected DamageSource getSource(ResourceKey<DamageType> key, Entity source, Entity directSource) {
-        return new DamageSource(getDataDrivenRegistry(Registries.DAMAGE_TYPE).getHolderOrThrow(key), directSource, source);
+        return new DamageSource(getDataDrivenRegistry(directSource.level(), Registries.DAMAGE_TYPE).getHolderOrThrow(key), directSource, source);
     }
 
-    public static <T> Registry<T> getDataDrivenRegistry(ResourceKey<? extends Registry<T>> key) {
-        return ServerLifecycleHooks.getCurrentServer().registryAccess().registry(key).get();
+    public static <T> Registry<T> getDataDrivenRegistry(Level level, ResourceKey<? extends Registry<T>> key) {
+        return level.registryAccess().registry(key).get();
     }
 }

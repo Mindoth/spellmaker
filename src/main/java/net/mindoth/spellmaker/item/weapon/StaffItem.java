@@ -2,22 +2,27 @@ package net.mindoth.spellmaker.item.weapon;
 
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.ModCapabilities;
+import net.mindoth.spellmaker.capability.playermagic.MagickData;
 import net.mindoth.spellmaker.capability.playermagic.PlayerMagickProvider;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.SpellBookItem;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
+import net.mindoth.spellmaker.registries.ModData;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -25,15 +30,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = SpellMaker.MOD_ID)
+@EventBusSubscriber(modid = SpellMaker.MOD_ID)
 public class StaffItem extends Item {
     public StaffItem(Properties pProperties) {
         super(pProperties);
@@ -60,30 +65,31 @@ public class StaffItem extends Item {
 
     private static void startCasting(Player player, ItemStack staff) {
         ItemStack book = SpellBookItem.getTaggedSpellBookSlot(player);
-        if ( !book.isEmpty() && book.hasTag() && book.getTag().contains(SpellBookItem.NBT_KEY_BOOK_SLOT)
-                && book.getTag().getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) >= 0 && SpellBookItem.getActiveScrollFromBook(book) != null ) {
+        CompoundTag bookTag = ModData.getLegacyTag(book);
+        if ( !book.isEmpty() && bookTag != null && bookTag.contains(SpellBookItem.NBT_KEY_BOOK_SLOT)
+                && bookTag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) >= 0 && SpellBookItem.getActiveScrollFromBook(book) != null ) {
             ItemStack scroll = SpellBookItem.getActiveScrollFromBook(book);
-            if ( scroll != null && scroll.hasTag() ) {
-                AbstractSpellForm form = DataHelper.getFormFromNbt(scroll.getTag());
-                LinkedHashMap<SigilItem, List<Integer>> map = DataHelper.createMapFromTag(scroll.getTag());
+            if ( scroll != null && ModData.getLegacyTag(scroll) != null ) {
+                CompoundTag scrollTag = ModData.getLegacyTag(scroll);
+                AbstractSpellForm form = DataHelper.getFormFromNbt(scrollTag);
+                LinkedHashMap<SigilItem, List<Integer>> map = DataHelper.createMapFromTag(scrollTag);
                 double baseCost = ParchmentItem.calculateSpellCost(form, map);
-                double discount = player.getAttributeValue(ModAttributes.MANA_COST_MULTIPLIER.get()) - ModAttributes.MANA_COST_MULTIPLIER.get().getDefaultValue();
+                double discount = player.getAttributeValue(ModAttributes.MANA_COST_MULTIPLIER) - ModAttributes.MANA_COST_MULTIPLIER.get().getDefaultValue();
                 int cost = Mth.ceil(baseCost * (1.0D - discount));
-                player.getCapability(PlayerMagickProvider.PLAYER_MAGICK).ifPresent(magic -> {
-                    if ( cost <= magic.getCurrentMana() || player.isCreative() ) {
-                        form.castMagick(player, player, map);
-                        handleCooldowns(player, staff, 20);
-                        if ( !player.isCreative() ) {
-                            addItemDamage(staff, 1, player);
-                            ModCapabilities.changeMana(player, -cost);
-                        }
-                        playCastingSound(player);
+                MagickData magick = MagickData.getPlayerMagickData(player);
+                if ( cost <= magick.getCurrentMana() || player.isCreative() ) {
+                    form.castMagick(player, player, map);
+                    handleCooldowns(player, staff, 20);
+                    if ( !player.isCreative() ) {
+                        addItemDamage(staff, 1, player);
+                        ModCapabilities.changeMana(player, -cost);
                     }
-                    else if ( !player.isCreative() ) {
-                        handleCooldowns(player, staff, 20);
-                        whiffSpell(player);
-                    }
-                });
+                    playCastingSound(player);
+                }
+                else if ( !player.isCreative() ) {
+                    handleCooldowns(player, staff, 20);
+                    whiffSpell(player);
+                }
             }
         }
         else {
@@ -98,7 +104,11 @@ public class StaffItem extends Item {
     }
 
     private static void addItemDamage(ItemStack castingItem, int amount, LivingEntity living) {
-        castingItem.hurtAndBreak(amount, living, (holder) -> holder.broadcastBreakEvent(living.getUsedItemHand()));
+        if ( living instanceof ServerPlayer player && player.level() instanceof ServerLevel level ) {
+            EquipmentSlot slot = player.getUsedItemHand() == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
+            castingItem.hurtAndBreak(amount, level, player,
+                    (holder) -> player.onEquippedItemBroken(castingItem.getItem(), slot));
+        }
     }
 
     public static void whiffSpell(Entity caster) {
@@ -119,8 +129,8 @@ public class StaffItem extends Item {
 
     private static void playWhiffSound(Entity caster) {
         if ( caster instanceof Player player && !player.level().isClientSide && player.level() instanceof ServerLevel level ) {
-            player.playNotifySound(SoundEvents.NOTE_BLOCK_SNARE.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
-            level.playSound(player, player.getOnPos(), SoundEvents.NOTE_BLOCK_SNARE.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
+            player.playNotifySound(SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
+            level.playSound(player, player.getOnPos(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
         }
     }
 

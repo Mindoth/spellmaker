@@ -31,7 +31,7 @@ public class FireSigilItem extends SigilItem {
         if ( target.getRemainingFireTicks() > 0 && target.getRemainingFireTicks() < fireTicks ) {
             fireTicks = target.getRemainingFireTicks() + (fireTicks - target.getRemainingFireTicks());
         }
-        if ( fireTicks > 0 ) target.setSecondsOnFire(fireTicks / 20);
+        if ( fireTicks > 0 ) target.setRemainingFireTicks(fireTicks);
     }
 
     @Override

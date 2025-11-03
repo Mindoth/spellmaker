@@ -1,142 +1,83 @@
 package net.mindoth.spellmaker.network;
 
+import net.mindoth.shadowizardlib.ShadowizardLib;
 import net.mindoth.spellmaker.SpellMaker;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.mindoth.spellmaker.registries.ModData;
+import net.minecraft.core.IdMap;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
+import java.util.Objects;
+
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = ShadowizardLib.MOD_ID)
 public class ModNetwork {
-    private static SimpleChannel CHANNEL;
 
-    private static int packetId = 0;
-    private static int id() {
-        return packetId++;
+    @SubscribeEvent
+    public static void register(final RegisterPayloadHandlersEvent event) {
+        final PayloadRegistrar payloadRegistrar = event.registrar(SpellMaker.MOD_ID).versioned("1.0.0").optional();
+
+        payloadRegistrar.playToClient(SyncClientManaPacket.TYPE, SyncClientManaPacket.STREAM_CODEC, SyncClientManaPacket::handle);
+        payloadRegistrar.playToServer(AskToOpenSpellBookPacket.TYPE, AskToOpenSpellBookPacket.STREAM_CODEC, AskToOpenSpellBookPacket::handle);
+        payloadRegistrar.playToClient(OpenSpellBookPacket.TYPE, OpenSpellBookPacket.STREAM_CODEC, OpenSpellBookPacket::handle);
+        payloadRegistrar.playToServer(RemoveScrollFromBookPacket.TYPE, RemoveScrollFromBookPacket.STREAM_CODEC, RemoveScrollFromBookPacket::handle);
+        payloadRegistrar.playToServer(UpdateBookDataPacket.TYPE, UpdateBookDataPacket.STREAM_CODEC, UpdateBookDataPacket::handle);
+        payloadRegistrar.playToServer(EditSpellFormPacket.TYPE, EditSpellFormPacket.STREAM_CODEC, EditSpellFormPacket::handle);
+        payloadRegistrar.playToServer(EditSpellStatsPacket.TYPE, EditSpellStatsPacket.STREAM_CODEC, EditSpellStatsPacket::handle);
+        payloadRegistrar.playToServer(MakeSpellPacket.TYPE, MakeSpellPacket.STREAM_CODEC, MakeSpellPacket::handle);
+        payloadRegistrar.playToServer(DumpSpellPacket.TYPE, DumpSpellPacket.STREAM_CODEC, DumpSpellPacket::handle);
+        payloadRegistrar.playToClient(SyncSizePacket.TYPE, SyncSizePacket.STREAM_CODEC, SyncSizePacket::handle);
     }
 
-    public static void init() {
-        SimpleChannel net = NetworkRegistry.ChannelBuilder
-                .named(new ResourceLocation(SpellMaker.MOD_ID, "network"))
-                .networkProtocolVersion(() -> "1.0.0")
-                .clientAcceptedVersions(s -> true)
-                .serverAcceptedVersions(s -> true)
-                .simpleChannel();
-
-        CHANNEL = net;
-
-        //Mana
-        net.messageBuilder(PacketSyncClientMana.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(PacketSyncClientMana::new)
-                .encoder(PacketSyncClientMana::encode)
-                .consumerMainThread(PacketSyncClientMana::handle)
-                .add();
-
-        //Spell Book
-        net.messageBuilder(PacketAskToOpenSpellBook.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(PacketAskToOpenSpellBook::new)
-                .encoder(PacketAskToOpenSpellBook::encode)
-                .consumerMainThread(PacketAskToOpenSpellBook::handle)
-                .add();
-        
-        net.messageBuilder(PacketOpenSpellBook.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(PacketOpenSpellBook::new)
-                .encoder(PacketOpenSpellBook::encode)
-                .consumerMainThread(PacketOpenSpellBook::handle)
-                .add();
-
-        net.messageBuilder(PacketRemoveScrollFromBook.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(PacketRemoveScrollFromBook::new)
-                .encoder(PacketRemoveScrollFromBook::encode)
-                .consumerMainThread(PacketRemoveScrollFromBook::handle)
-                .add();
-
-        net.messageBuilder(PacketUpdateBookData.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(PacketUpdateBookData::new)
-                .encoder(PacketUpdateBookData::encode)
-                .consumerMainThread(PacketUpdateBookData::handle)
-                .add();
-
-
-        //Spell making
-        net.messageBuilder(PacketEditSpellForm.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(PacketEditSpellForm::new)
-                .encoder(PacketEditSpellForm::encode)
-                .consumerMainThread(PacketEditSpellForm::handle)
-                .add();
-
-        net.messageBuilder(PacketEditSpellStats.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(PacketEditSpellStats::new)
-                .encoder(PacketEditSpellStats::encode)
-                .consumerMainThread(PacketEditSpellStats::handle)
-                .add();
-
-        net.messageBuilder(PacketMakeSpell.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(PacketMakeSpell::new)
-                .encoder(PacketMakeSpell::encode)
-                .consumerMainThread(PacketMakeSpell::handle)
-                .add();
-
-        net.messageBuilder(PacketDumpSpell.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(PacketDumpSpell::new)
-                .encoder(PacketDumpSpell::encode)
-                .consumerMainThread(PacketDumpSpell::handle)
-                .add();
-
-        //Sync
-        net.messageBuilder(PacketSyncSize.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(PacketSyncSize::new)
-                .encoder(PacketSyncSize::encode)
-                .consumerMainThread(PacketSyncSize::handle)
-                .add();
+    private static <T> T legacyReadById(FriendlyByteBuf buf, IdMap<T> pIdMap) {
+        int i = buf.readVarInt();
+        return pIdMap.byId(i);
     }
 
-    public static <MSG> void sendToServer(MSG message) {
-        CHANNEL.sendToServer(message);
+    private static <T> void legacyWriteId(FriendlyByteBuf buf, IdMap<T> pIdMap, T pValue) {
+        int i = pIdMap.getId(pValue);
+        if ( i == -1 ) throw new IllegalArgumentException("Can't find id for '" + pValue + "' in map " + pIdMap);
+        else buf.writeVarInt(i);
     }
 
-    public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
-        if ( player != null ) CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), message);
-    }
-
-    public static <MSG> void sendToPlayersTrackingEntity(MSG message, Entity entity) {
-        if ( entity != null ) sendToPlayersTrackingEntity(message, entity, false);
-    }
-
-    public static <MSG> void sendToPlayersTrackingEntity(MSG message, Entity entity, boolean sendToSource) {
-        if ( entity != null ) {
-            /*if ( sendToSource ) */CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
-            //else CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), message);
-            if ( sendToSource && entity instanceof ServerPlayer serverPlayer ) sendToPlayer(message, serverPlayer);
+    public static ItemStack readItem(FriendlyByteBuf buf) {
+        if ( !buf.readBoolean() ) return ItemStack.EMPTY;
+        else {
+            Item item = legacyReadById(buf, BuiltInRegistries.ITEM);
+            int i = buf.readByte();
+            ItemStack stack = new ItemStack(item, i);
+            ModData.setLegacyTag(stack, buf.readNbt());
+            return stack;
         }
     }
 
-    public static <MSG> void sendToNearby(MSG message, Level world, Entity caster) {
-        sendToNearby(message, world, caster.blockPosition());
-    }
-
-    public static <MSG> void sendToNearby(MSG message, Level level, Vec3 center) {
-        if ( level instanceof ServerLevel serverLevel ) {
-            BlockPos pos = new BlockPos(Mth.floor(center.x), Mth.floor(center.y), Mth.floor(center.z));
-            serverLevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).stream()
-                    .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < 64 * 64)
-                    .forEach(p -> sendToPlayer(message, p));
+    public static FriendlyByteBuf writeItemStack(FriendlyByteBuf buf, ItemStack pStack) {
+        if ( pStack.isEmpty() ) buf.writeBoolean(false);
+        else {
+            buf.writeBoolean(true);
+            Item item = pStack.getItem();
+            legacyWriteId(buf, BuiltInRegistries.ITEM, item);
+            buf.writeByte(pStack.getCount());
+            CompoundTag compoundtag = null;
+            if ( pStack.getMaxDamage() > 0 ) compoundtag = ModData.getLegacyTag(pStack);
+            buf.writeNbt(compoundtag);
         }
+        return buf;
     }
 
-    public static <MSG> void sendToNearby(MSG message, Level level, BlockPos pos) {
-        if ( level instanceof ServerLevel serverLevel ) {
-            serverLevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).stream()
-                    .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < 64 * 64)
-                    .forEach(p -> sendToPlayer(message, p));
+    //TODO: Check for capabilities
+    public static boolean isSameItemSameTags(ItemStack pStack, ItemStack pOther) {
+        if ( !pStack.is(pOther.getItem()) ) return false;
+        else {
+            CompoundTag stackTag = ModData.getLegacyTag(pStack);
+            CompoundTag otherTag = ModData.getLegacyTag(pOther);
+            return pStack.isEmpty() && pOther.isEmpty() ? true : Objects.equals(stackTag, otherTag) /*&& pStack.areCapsCompatible(pOther)*/;
         }
     }
 }
