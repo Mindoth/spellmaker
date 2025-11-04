@@ -43,7 +43,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @EventBusSubscriber(modid = SpellMaker.MOD_ID)
-public class PolymorphEffect extends MobEffect {
+public class PolymorphEffect extends MobEffect implements MobEffectEndCallback {
     public PolymorphEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
     }
@@ -51,7 +51,32 @@ public class PolymorphEffect extends MobEffect {
     public static final String NBT_KEY_OLD_MOB = "sm_polymorphed_entity";
     public static final String NBT_KEY_RE_POLYMORPH = "sm_re_polymorphed_entity";
 
+    @Override
+    public void onEffectStarted(LivingEntity living, int pAmplifier) {
+        super.onEffectAdded(living, pAmplifier);
+        removeModifiers(living, false);
+    }
+
+    public static void removeModifiers(LivingEntity living, boolean doSync) {
+        AttributeInstance nameTagDistance = living.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
+        if ( nameTagDistance == null ) return;
+        List<AttributeModifier> nameTagModifierList = Lists.newArrayList();
+        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( getSigilFromUUID(modifier.id()) != null ) nameTagModifierList.add(modifier);
+        for ( AttributeModifier modifier : nameTagModifierList ) getSigilFromUUID(modifier.id()).removeModifiers(living);
+        if ( doSync ) PolymorphSigilItem.syncDimensions(living);
+    }
+
+    @SubscribeEvent
+    public static void reAddedPolymorphEffect(MobEffectEvent.Added event) {
+        if ( !(event.getEffectInstance().getEffect().value() instanceof PolymorphEffect) ) return;
+        if ( event.getOldEffectInstance() == null ) return;
+        if ( !(event.getEntity() instanceof Mob mob) ) return;
+        System.out.println("TAG FOR NEW POLYMORPH");
+        mob.getPersistentData().putBoolean(NBT_KEY_RE_POLYMORPH, true);
+    }
+
     public static void doPolymorph(LivingEntity living, AttributeModifier nameTagModifier) {
+        System.out.println("DOING POLYMORPH");
         AttributeInstance nameTagDistance = living.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
         if ( nameTagDistance != null && !nameTagDistance.hasModifier(nameTagModifier.id()) ) nameTagDistance.addPermanentModifier(nameTagModifier);
         if ( living instanceof Mob target ) polymorphMob(target, nameTagModifier);
@@ -66,65 +91,39 @@ public class PolymorphEffect extends MobEffect {
         }
     }
 
-    @SubscribeEvent
-    public static void reAddedPolymorphEffect(MobEffectEvent.Added event) {
-        if ( !(event.getEffectInstance().getEffect() instanceof PolymorphEffect) ) return;
-        if ( event.getOldEffectInstance() == null ) return;
-        if ( event.getEntity() instanceof Mob mob ) mob.getPersistentData().putBoolean(NBT_KEY_RE_POLYMORPH, true);
-    }
-
     private static void polymorphMob(Mob target, AttributeModifier nameTagModifier) {
         if ( !(target.level() instanceof ServerLevel level) ) return;
-        if ( target.getPersistentData().contains(NBT_KEY_OLD_MOB) ) reTransformMob(target, level, getTypeFromUUID(nameTagModifier.id()));
-        else transformMob(target, level, getTypeFromUUID(nameTagModifier.id()));
+        if ( target.getPersistentData().contains(NBT_KEY_OLD_MOB) ) {
+            System.out.println("HAS OLD MOB");
+            finalizeMobTransformation(target, getTypeFromUUID(nameTagModifier.id()), level, target.getPersistentData().getCompound(NBT_KEY_OLD_MOB));
+        }
+        else {
+            System.out.println("NO OLD MOB");
+            CompoundTag tag = new CompoundTag();
+            tag.putString("id", EntityType.getKey(target.getType()).toString());
+            target.saveWithoutId(tag);
+            finalizeMobTransformation(target, getTypeFromUUID(nameTagModifier.id()), level, tag);
+        }
     }
 
-    private static void transformMob(Mob target, ServerLevel level, EntityType entityType) {
-        CompoundTag tag = new CompoundTag();
-        tag.putString("id", EntityType.getKey(target.getType()).toString());
-        target.saveWithoutId(tag);
-        Mob mob = target.convertTo(entityType, false);
+    private static void finalizeMobTransformation(Mob target, EntityType entityType, ServerLevel level, CompoundTag tag) {
+        Mob mob = HelperMethods.convertToWithEffects(target, entityType, false);
         if ( mob == null ) return;
-        if ( target.hasEffect(ModEffects.POLYMORPH) ) mob.addEffect(target.getEffect(ModEffects.POLYMORPH));
         EventHooks.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.CONVERSION, null);
         mob.getPersistentData().put(NBT_KEY_OLD_MOB, tag);
-    }
-
-    private static void reTransformMob(Mob target, ServerLevel level, EntityType entityType) {
-        CompoundTag tag = target.getPersistentData().getCompound(NBT_KEY_OLD_MOB);
-        Mob mob = target.convertTo(entityType, false);
-        if ( mob == null ) return;
-        if ( target.hasEffect(ModEffects.POLYMORPH) ) mob.addEffect(target.getEffect(ModEffects.POLYMORPH));
-        EventHooks.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.CONVERSION, null);
-        mob.getPersistentData().put(NBT_KEY_OLD_MOB, tag);
-    }
-
-    //TODO: effect on start and end
-    /*@Override
-    public void addAttributeModifiers(LivingEntity living, AttributeMap map, int pAmplifier) {
-        removeModifiers(living, false);
     }
 
     @Override
-    public void removeAttributeModifiers(LivingEntity living, AttributeMap map, int pAmplifier) {
+    public void onEffectRemoved(LivingEntity living, int pAmplifier) {
         if ( living instanceof Mob mob ) {
             if ( !(mob.level() instanceof ServerLevel level) ) return;
             if ( mob.getPersistentData().getBoolean(NBT_KEY_RE_POLYMORPH) ) mob.getPersistentData().remove(NBT_KEY_RE_POLYMORPH);
             else if ( mob.getPersistentData().contains(NBT_KEY_OLD_MOB) ) restoreMob(mob.getPersistentData().getCompound(NBT_KEY_OLD_MOB), level, mob);
         }
         else if ( living instanceof Player player ) removeModifiers(player, true);
-    }*/
-
-    public static void removeModifiers(LivingEntity living, boolean doSync) {
-        AttributeInstance nameTagDistance = living.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
-        if ( nameTagDistance == null ) return;
-        List<AttributeModifier> nameTagModifierList = Lists.newArrayList();
-        for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) if ( getSigilFromUUID(modifier.id()) != null ) nameTagModifierList.add(modifier);
-        for ( AttributeModifier modifier : nameTagModifierList ) getSigilFromUUID(modifier.id()).removeModifiers(living);
-        if ( doSync ) PolymorphSigilItem.syncDimensions(living);
     }
 
-    private void restoreMob(CompoundTag tag, ServerLevel level, LivingEntity living) {
+    private static void restoreMob(CompoundTag tag, ServerLevel level, LivingEntity living) {
         if ( tag.isEmpty() || !(living instanceof Mob oldMob) ) return;
         BuiltInRegistries.ENTITY_TYPE.get(EntityType.getKey(oldMob.getType()));
         EntityType.create(tag, level).map((entity -> {

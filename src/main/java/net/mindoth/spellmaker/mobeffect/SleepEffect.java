@@ -7,24 +7,22 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 @EventBusSubscriber(modid = SpellMaker.MOD_ID)
-public class SleepEffect extends AbstractStunEffect {
+public class SleepEffect extends AbstractStunEffect implements MobEffectEndCallback {
     public SleepEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
     }
 
-    //TODO: effect on start and end
-    /*@Override
-    public void addAttributeModifiers(LivingEntity living, AttributeMap map, int pAmplifier) {
+    @Override
+    public void onEffectStarted(LivingEntity living, int amp) {
         if ( !living.isSleeping() ) living.startSleeping(living.blockPosition());
     }
 
     @Override
-    public void removeAttributeModifiers(LivingEntity living, AttributeMap map, int pAmplifier) {
+    public void onEffectRemoved(LivingEntity living, int amp) {
         if ( living.isSleeping() ) living.stopSleeping();
-    }*/
+    }
 
     @SubscribeEvent
     public static void wakeUpWhenAttacked(LivingDamageEvent.Post event) {

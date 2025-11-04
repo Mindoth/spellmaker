@@ -36,7 +36,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @EventBusSubscriber(modid = SpellMaker.MOD_ID)
-public class PolymorphSigilItem extends SigilItem {
+public abstract class PolymorphSigilItem extends SigilItem {
 
     private final UUID uuid;
     public ResourceLocation getUUID() {
@@ -58,7 +58,9 @@ public class PolymorphSigilItem extends SigilItem {
         if ( !(target instanceof LivingEntity living) || !target.isAttackable() || !target.isAlive() ) return;
         int duration = stats.get(1);
         int polymorphTicks = duration * 20;
-        if ( living.addEffect(new MobEffectInstance(ModEffects.POLYMORPH, polymorphTicks, 0, false, false)) ) {
+        //if ( living.addEffect(new MobEffectInstance(ModEffects.POLYMORPH, polymorphTicks, 0, false, false)) ) {
+        if ( living.addEffect(new MobEffectInstance(ModEffects.POLYMORPH, polymorphTicks, 0)) ) {
+            System.out.println("EFFECT ADDED");
             PolymorphEffect.doPolymorph(living, new AttributeModifier(getUUID(), 0.0D, AttributeModifier.Operation.ADD_VALUE));
         }
     }

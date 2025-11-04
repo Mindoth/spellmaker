@@ -1,6 +1,7 @@
 package net.mindoth.spellmaker.mixin;
 
 import net.mindoth.spellmaker.mobeffect.AbstractStunEffect;
+import net.mindoth.spellmaker.mobeffect.MobEffectEndCallback;
 import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.registries.ModItems;
@@ -20,6 +21,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
+
+    @Inject(method = "onEffectRemoved", at = @At(value = "HEAD"))
+    public void onEffectRemovedCallback(MobEffectInstance effectInstance, CallbackInfo callbackInfo) {
+        LivingEntity living = (LivingEntity)(Object)this;
+        if ( !living.level().isClientSide ) {
+            if ( effectInstance.getEffect().value() instanceof MobEffectEndCallback mobEffect ) {
+                mobEffect.onEffectRemoved(living, effectInstance.getAmplifier());
+            }
+        }
+    }
 
     @Inject(method = "isImmobile", at = @At(value = "HEAD"), cancellable = true)
     public void stopMovementWhileSleeping(CallbackInfoReturnable<Boolean> callback) {

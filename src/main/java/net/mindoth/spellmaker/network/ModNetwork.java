@@ -3,9 +3,11 @@ package net.mindoth.spellmaker.network;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.registries.ModData;
 import net.minecraft.core.IdMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -53,6 +55,7 @@ public class ModNetwork {
             int i = buf.readByte();
             ItemStack stack = new ItemStack(item, i);
             ModData.setLegacyTag(stack, buf.readNbt());
+            if ( buf.readBoolean() ) stack.set(DataComponents.CUSTOM_NAME, Component.literal(buf.readUtf()));
             return stack;
         }
     }
@@ -66,6 +69,11 @@ public class ModNetwork {
             buf.writeByte(stack.getCount());
             CompoundTag compoundtag = ModData.getLegacyTag(stack);
             buf.writeNbt(compoundtag);
+            if ( stack.has(DataComponents.CUSTOM_NAME) ) {
+                buf.writeBoolean(true);
+                buf.writeUtf(stack.getHoverName().getString());
+            }
+            else buf.writeBoolean(false);
         }
     }
 
