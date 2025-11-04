@@ -8,13 +8,12 @@ import net.mindoth.spellmaker.item.sigil.*;
 import net.mindoth.spellmaker.item.weapon.ColorableSpellBookItem;
 import net.mindoth.spellmaker.item.weapon.ColorableStaffItem;
 import net.mindoth.spellmaker.util.SpellColor;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.UUID;
 
 import static net.mindoth.spellmaker.item.armor.ModArmorItem.withMagickAttributes;
 
@@ -88,9 +87,9 @@ public class ModItems {
 
     public static final DeferredItem<Item> SHEEP_FORM_SIGIL = ITEMS.register("sheep_form_sigil",
             () -> new SheepFormSigilItem(new Item.Properties(), SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
-                    UUID.fromString("84527dc5-d3e5-4550-98ed-c8186c5d3089"), EntityType.SHEEP));
+                    ResourceLocation.parse("84527dc5-d3e5-4550-98ed-c8186c5d3089"), EntityType.SHEEP));
 
     public static final DeferredItem<Item> FISH_FORM_SIGIL = ITEMS.register("fish_form_sigil",
             () -> new FishFormSigilItem(new Item.Properties(), SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
-                    UUID.fromString("b2bc1fd5-a121-42cf-b7cb-d29c61e3211c"), EntityType.COD));
+                    ResourceLocation.parse("b2bc1fd5-a121-42cf-b7cb-d29c61e3211c"), EntityType.COD));
 }
