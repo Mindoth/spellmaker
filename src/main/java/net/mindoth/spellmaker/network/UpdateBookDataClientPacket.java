@@ -2,7 +2,7 @@ package net.mindoth.spellmaker.network;
 
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.client.gui.screen.SpellBookScreen;
-import net.mindoth.spellmaker.item.SpellBookItem;
+import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.registries.ModData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;

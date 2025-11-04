@@ -8,16 +8,20 @@ import net.mindoth.spellmaker.client.model.SimpleRobeModel;
 import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.entity.ProjectileSpellMultiRenderer;
 import net.mindoth.spellmaker.entity.ProjectileSpellSingleRenderer;
-import net.mindoth.spellmaker.item.SpellBookItem;
-import net.mindoth.spellmaker.network.ModNetwork;
+import net.mindoth.spellmaker.item.ModDyeableItem;
+import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.network.AskToOpenSpellBookPacket;
 import net.mindoth.spellmaker.registries.ModEntities;
+import net.mindoth.spellmaker.registries.ModItems;
 import net.mindoth.spellmaker.registries.ModMenus;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -38,11 +42,14 @@ public class SpellMakerClient {
         modContainer.registerConfig(ModConfig.Type.CLIENT, ModClientConfig.SPEC);
     }
 
-    //TODO: implement item coloring, maybe with new DataComponents?
+    //TODO: Armor renderer to reflect dyed color
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        /*for ( Item item : ForgeRegistries.ITEMS.getValues() ) {
-            if ( item instanceof ModDyeableItem modItem ) event.getItemColors().register((color, armor) -> armor > 0 ? -1 : modItem.getColor(color), item);
-        }*/
+        for ( ResourceLocation id : ModItems.ITEMS.getRegistry().get().keySet() ) {
+            Item item = BuiltInRegistries.ITEM.get(id);
+            if ( item instanceof ModDyeableItem modItem ) {
+                event.register((stack, layer) -> layer > 0 ? -1 : DyedItemColor.getOrDefault(stack, modItem.getDefaultColor()), item);
+            }
+        }
     }
 
     private static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {

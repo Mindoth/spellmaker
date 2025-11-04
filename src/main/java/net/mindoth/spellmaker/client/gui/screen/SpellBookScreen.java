@@ -3,7 +3,7 @@ package net.mindoth.spellmaker.client.gui.screen;
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.SpellBookItem;
+import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.network.RemoveScrollFromBookPacket;
 import net.mindoth.spellmaker.network.UpdateBookDataPacket;
 import net.mindoth.spellmaker.registries.ModData;
@@ -288,17 +288,16 @@ public class SpellBookScreen extends AbstractModScreen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        //renderBackground(graphics, mouseX, mouseY, partialTicks);
         super.render(graphics, mouseX, mouseY, partialTicks);
 
         int x = minecraft.getWindow().getGuiScaledWidth() / 2;
         int y = minecraft.getWindow().getGuiScaledHeight() / 2;
 
         //Background
-        renderBackground(graphics, mouseX, mouseY, partialTicks);
         graphics.blit(TEXTURE, x - 140, y - 90, 0, 0, 280, 180, 280, 280);
 
         //Arrows
-
         if ( this.rightArrow.visible ) renderTexture(this.rightArrow, graphics, TEXTURE, x + this.rightArrowOffsetX, y + this.arrowOffsetY,
                 0, 180, 10, 18, 10, 280, 280);
         if ( this.leftArrow.visible ) renderTexture(this.leftArrow, graphics, TEXTURE, x + this.leftArrowOffsetX, y + this.arrowOffsetY,

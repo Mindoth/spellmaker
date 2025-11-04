@@ -58,12 +58,10 @@ public abstract class PolymorphSigilItem extends SigilItem {
         int duration = stats.get(1);
         int polymorphTicks = duration * 20;
         if ( living.addEffect(new MobEffectInstance(ModEffects.POLYMORPH, polymorphTicks, 0, false, false)) ) {
-            System.out.println("EFFECT ADDED");
             PolymorphEffect.doPolymorph(living, new AttributeModifier(getUUID(), 0.0D, AttributeModifier.Operation.ADD_VALUE));
         }
         else if ( living.hasEffect(ModEffects.POLYMORPH) ) {
             living.forceAddEffect(new MobEffectInstance(ModEffects.POLYMORPH, polymorphTicks, 0, false, false), null);
-            System.out.println("EFFECT FORCE ADDED");
             PolymorphEffect.doPolymorph(living, new AttributeModifier(getUUID(), 0.0D, AttributeModifier.Operation.ADD_VALUE));
         }
     }

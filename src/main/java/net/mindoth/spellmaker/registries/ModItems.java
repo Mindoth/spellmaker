@@ -1,6 +1,7 @@
 package net.mindoth.spellmaker.registries;
 
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.item.ModDyeableItem;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.armor.ColorableArmorItem;
 import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
@@ -44,30 +45,32 @@ public class ModItems {
 
     //Equipment
     public static final DeferredItem<Item> SPELL_BOOK = ITEMS.register("spell_book",
-            () -> new ColorableSpellBookItem(new Item.Properties(), 5804213));
+            () -> new ColorableSpellBookItem(new Item.Properties(),
+                    ModDyeableItem.BLUE));
 
     public static final DeferredItem<Item> WOODEN_STAFF = ITEMS.register("wooden_staff",
-            () -> new ColorableStaffItem(new Item.Properties().durability(512), 11711154));
+            () -> new ColorableStaffItem(new Item.Properties().durability(512),
+                    ModDyeableItem.GRAY));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_HOOD = ITEMS.register("simple_robe_hood",
             () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.HELMET,
                     new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(11)),
-                    11711154, withMagickAttributes(25, 0.05D)));
+                    ModDyeableItem.GRAY, withMagickAttributes(25, 0.05D)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_TOP = ITEMS.register("simple_robe_top",
             () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.CHESTPLATE,
                     new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(16)),
-                    11711154, withMagickAttributes(25, 0.05D)));
+                    ModDyeableItem.GRAY, withMagickAttributes(25, 0.05D)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_BOTTOM = ITEMS.register("simple_robe_bottom",
             () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.LEGGINGS,
                     new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(16)),
-                    11711154, withMagickAttributes(25, 0.05D)));
+                    ModDyeableItem.GRAY, withMagickAttributes(25, 0.05D)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_BOOTS = ITEMS.register("simple_robe_boots",
             () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.BOOTS,
                     new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(13)),
-                    11711154, withMagickAttributes(25, 0.05D)));
+                    ModDyeableItem.GRAY, withMagickAttributes(25, 0.05D)));
 
     //Runes
     public static final DeferredItem<Item> EXCAVATION_SIGIL = ITEMS.register("excavation_sigil",

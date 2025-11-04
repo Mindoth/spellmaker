@@ -1,7 +1,7 @@
 package net.mindoth.spellmaker.network;
 
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.item.SpellBookItem;
+import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

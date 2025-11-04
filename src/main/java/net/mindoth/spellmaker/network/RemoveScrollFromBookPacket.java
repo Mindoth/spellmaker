@@ -3,7 +3,7 @@ package net.mindoth.spellmaker.network;
 import com.google.common.collect.Lists;
 import net.mindoth.shadowizardlib.event.ShadowEvents;
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.item.SpellBookItem;
+import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.registries.ModData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -72,7 +72,7 @@ public class RemoveScrollFromBookPacket implements CustomPacketPayload {
             if ( context.player() instanceof ServerPlayer player ) {
                 if ( player.getInventory().contains(packet.book) ) {
                     ItemStack book;
-                    if ( ModNetwork.isSameItemSameTags(player.getOffhandItem(), packet.book)
+                    if ( ItemStack.isSameItemSameComponents(player.getOffhandItem(), packet.book)
                             && !(player.getMainHandItem().getItem() instanceof SpellBookItem) ) book = player.getOffhandItem();
                     else book = player.getInventory().getItem(player.getInventory().findSlotMatchingItem(packet.book));
                     if ( player.addItem(packet.scrollList.get(packet.index)) ) {

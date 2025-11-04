@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "spellmaker:spell_book",
+    "spellmaker:wooden_staff",
+    "spellmaker:simple_robe_hood",
+    "spellmaker:simple_robe_top",
+    "spellmaker:simple_robe_bottom",
+    "spellmaker:simple_robe_boots"
+  ]
+}

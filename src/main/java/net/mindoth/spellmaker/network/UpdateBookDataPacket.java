@@ -2,7 +2,7 @@ package net.mindoth.spellmaker.network;
 
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.item.SpellBookItem;
+import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.registries.ModData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -69,7 +69,7 @@ public class UpdateBookDataPacket implements CustomPacketPayload {
             if ( context.player() instanceof ServerPlayer player ) {
                 if ( player.getInventory().contains(packet.book) ) {
                     ItemStack book;
-                    if ( ModNetwork.isSameItemSameTags(player.getOffhandItem(), packet.book) && !(player.getMainHandItem().getItem() instanceof SpellBookItem) ) book = player.getOffhandItem();
+                    if ( ItemStack.isSameItemSameComponents(player.getOffhandItem(), packet.book) && !(player.getMainHandItem().getItem() instanceof SpellBookItem) ) book = player.getOffhandItem();
                     else book = player.getInventory().getItem(player.getInventory().findSlotMatchingItem(packet.book));
                     CompoundTag newTag = ModData.getLegacyTag(SpellBookItem.constructBook(packet.book, packet.scrollList));
                     if ( packet.index != newTag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) ) newTag.putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, packet.index);

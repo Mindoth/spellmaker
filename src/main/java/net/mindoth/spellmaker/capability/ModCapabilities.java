@@ -72,7 +72,6 @@ public class ModCapabilities {
         }
     }
 
-    //TODO: Max mana after death
     @SubscribeEvent
     public static void onPlayerCreatedAfterDeath(PlayerEvent.Clone event) {
         if ( !(event.getEntity() instanceof ServerPlayer serverPlayer) || !event.isWasDeath() ) return;

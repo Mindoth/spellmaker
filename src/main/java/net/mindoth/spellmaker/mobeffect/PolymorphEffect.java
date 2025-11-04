@@ -3,7 +3,7 @@ package net.mindoth.spellmaker.mobeffect;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.item.SpellBookItem;
+import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.item.sigil.PolymorphSigilItem;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.mixin.EntityMixin;
@@ -71,12 +71,10 @@ public class PolymorphEffect extends MobEffect implements MobEffectEndCallback {
         if ( !(event.getEffectInstance().getEffect().value() instanceof PolymorphEffect) ) return;
         if ( event.getOldEffectInstance() == null ) return;
         if ( !(event.getEntity() instanceof Mob mob) ) return;
-        System.out.println("TAG FOR NEW POLYMORPH");
         mob.getPersistentData().putBoolean(NBT_KEY_RE_POLYMORPH, true);
     }
 
     public static void doPolymorph(LivingEntity living, AttributeModifier nameTagModifier) {
-        System.out.println("DOING POLYMORPH");
         AttributeInstance nameTagDistance = living.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
         if ( nameTagDistance != null && !nameTagDistance.hasModifier(nameTagModifier.id()) ) nameTagDistance.addPermanentModifier(nameTagModifier);
         if ( living instanceof Mob target ) polymorphMob(target, nameTagModifier);
@@ -94,11 +92,9 @@ public class PolymorphEffect extends MobEffect implements MobEffectEndCallback {
     private static void polymorphMob(Mob target, AttributeModifier nameTagModifier) {
         if ( !(target.level() instanceof ServerLevel level) ) return;
         if ( target.getPersistentData().contains(NBT_KEY_OLD_MOB) ) {
-            System.out.println("HAS OLD MOB");
             finalizeMobTransformation(target, getTypeFromUUID(nameTagModifier.id()), level, target.getPersistentData().getCompound(NBT_KEY_OLD_MOB));
         }
         else {
-            System.out.println("NO OLD MOB");
             CompoundTag tag = new CompoundTag();
             tag.putString("id", EntityType.getKey(target.getType()).toString());
             target.saveWithoutId(tag);

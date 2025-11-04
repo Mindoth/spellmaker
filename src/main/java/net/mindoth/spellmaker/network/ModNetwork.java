@@ -15,8 +15,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-import java.util.Objects;
-
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = SpellMaker.MOD_ID)
 public class ModNetwork {
 
@@ -74,16 +72,6 @@ public class ModNetwork {
                 buf.writeUtf(stack.getHoverName().getString());
             }
             else buf.writeBoolean(false);
-        }
-    }
-
-    //TODO: Check for DataComponents
-    public static boolean isSameItemSameTags(ItemStack pStack, ItemStack pOther) {
-        if ( !pStack.is(pOther.getItem()) ) return false;
-        else {
-            CompoundTag stackTag = ModData.getLegacyTag(pStack);
-            CompoundTag otherTag = ModData.getLegacyTag(pOther);
-            return pStack.isEmpty() && pOther.isEmpty() || Objects.equals(stackTag, otherTag);
         }
     }
 }
