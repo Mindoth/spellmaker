@@ -3,19 +3,23 @@ package net.mindoth.spellmaker.client.gui.menu;
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
-import net.mindoth.spellmaker.network.*;
+import net.mindoth.spellmaker.network.DumpSpellPacket;
+import net.mindoth.spellmaker.network.EditSpellFormPacket;
+import net.mindoth.spellmaker.network.EditSpellStatsPacket;
+import net.mindoth.spellmaker.network.MakeSpellPacket;
 import net.mindoth.spellmaker.registries.ModBlocks;
+import net.mindoth.spellmaker.registries.ModData;
 import net.mindoth.spellmaker.registries.ModMenus;
 import net.mindoth.spellmaker.registries.ModSpellForms;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
-import net.minecraft.SharedConstants;
-import net.minecraft.Util;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -25,6 +29,8 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.apache.http.util.TextUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -160,19 +166,20 @@ public class SpellMakingMenu extends AbstractContainerMenu {
     }
 
     public boolean isCleanParchment(ItemStack stack) {
-        return !stack.isEmpty() && stack.getItem() instanceof ParchmentItem && (!stack.hasTag() || !stack.getTag().contains(ParchmentItem.NBT_KEY_SPELL_FORM));
+        CompoundTag tag = ModData.getLegacyTag(stack);
+        return !stack.isEmpty() && stack.getItem() instanceof ParchmentItem && (tag == null || !tag.contains(ParchmentItem.NBT_KEY_SPELL_FORM));
     }
 
     private void cleanScroll(Level level, ItemStack scroll) {
         ItemStack stack = scroll.copy();
-        if ( stack.hasCustomHoverName() ) stack.resetHoverName();
-        if ( stack.hasTag() ) {
-            CompoundTag tag = stack.getTag();
+        CompoundTag tag = ModData.getLegacyTag(stack);
+        if ( stack.has(DataComponents.CUSTOM_NAME) ) stack.remove(DataComponents.CUSTOM_NAME);
+        if ( tag != null ) {
             if ( tag.contains(ParchmentItem.NBT_KEY_SPELL_FORM) ) tag.remove(ParchmentItem.NBT_KEY_SPELL_FORM);
             if ( tag.contains(ParchmentItem.NBT_KEY_SPELL_SIGILS) ) tag.remove(ParchmentItem.NBT_KEY_SPELL_SIGILS);
             if ( tag.contains(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES) ) tag.remove(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES);
             if ( tag.contains(ParchmentItem.NBT_KEY_SPELL_DURATIONS) ) tag.remove(ParchmentItem.NBT_KEY_SPELL_DURATIONS);
-            if ( stack.getTag().isEmpty() ) stack.setTag(null);
+            if ( tag.isEmpty() ) stack.remove(ModData.LEGACY_TAG);
         }
         setSlotContent(level, 0, stack);
     }
@@ -183,7 +190,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
     public boolean makeSpell(String string) {
         if ( isReadyToMake() ) {
-            ModNetwork.sendToServer(new MakeSpellPacket(getItemName(string)));
+            PacketDistributor.sendToServer(new MakeSpellPacket(getItemName(string)));
             return true;
         }
         else return false;
@@ -194,8 +201,8 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             if ( !level.isClientSide ) {
                 if ( isReadyToMake() ) {
                     ItemStack stack = assemble(this.craftSlots);
-                    if ( name == null || Util.isBlank(name) ) stack.resetHoverName();
-                    else stack.setHoverName(Component.literal(name));
+                    if ( name == null || TextUtils.isBlank(name) ) stack.remove(DataComponents.CUSTOM_NAME);
+                    else stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
                     setSlotContent(level, 0, stack);
                 }
             }
@@ -204,16 +211,18 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
     public boolean isReadyToDump() {
         ItemStack stack = this.craftSlots.getItem(0);
-        return !stack.isEmpty() && stack.getItem() instanceof ParchmentItem && stack.hasTag() && stack.getTag().contains(ParchmentItem.NBT_KEY_SPELL_FORM);
+        CompoundTag tag = ModData.getLegacyTag(stack);
+        return !stack.isEmpty() && stack.getItem() instanceof ParchmentItem && tag != null && tag.contains(ParchmentItem.NBT_KEY_SPELL_FORM);
     }
 
     public boolean dumpSpell() {
         if ( isReadyToDump() ) {
             ItemStack stack = this.craftSlots.getItem(0);
-            this.spellForm = DataHelper.getFormFromNbt(stack.getTag());
-            this.magnitude = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
-            this.duration = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
-            ModNetwork.sendToServer(new DumpSpellPacket());
+            CompoundTag tag = ModData.getLegacyTag(stack);
+            this.spellForm = DataHelper.getFormFromNbt(tag);
+            this.magnitude = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
+            this.duration = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
+            PacketDistributor.sendToServer(new DumpSpellPacket());
             return true;
         }
         else return false;
@@ -224,10 +233,11 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             if ( !level.isClientSide ) {
                 if ( isReadyToDump() ) {
                     ItemStack stack = this.craftSlots.getItem(0);
-                    List<ItemStack> list = DataHelper.getSpellStackFromTag(stack.getTag());
-                    AbstractSpellForm form = DataHelper.getFormFromNbt(stack.getTag());
-                    List<Integer> magnitude = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
-                    List<Integer> duration = DataHelper.getStatsFromString(stack.getTag().getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
+                    CompoundTag tag = ModData.getLegacyTag(stack);
+                    List<ItemStack> list = DataHelper.getSpellStackFromTag(tag);
+                    AbstractSpellForm form = DataHelper.getFormFromNbt(tag);
+                    List<Integer> magnitude = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
+                    List<Integer> duration = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
                     cleanScroll(level, stack);
                     for ( int i = 1; i < this.slots.size(); i++ ) {
                         Slot slot = this.slots.get(i);
@@ -254,7 +264,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             else restList.add(stack);
         }
         if ( restList.isEmpty() ) {
-            CompoundTag tag = scroll.getOrCreateTag();
+            CompoundTag tag = ModData.getOrCreateLegacyTag(scroll);
             tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(this.spellForm));
             tag.putString(ParchmentItem.NBT_KEY_SPELL_SIGILS, DataHelper.getStringFromSpellStack(sigilStackList));
             tag.putString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES, DataHelper.getStringFromStats(this.magnitude));
@@ -265,7 +275,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
     }
 
     private String getItemName(String string) {
-        return SharedConstants.filterText(string).length() <= 50 ? SharedConstants.filterText(string) : null;
+        return StringUtil.filterText(string).length() <= 50 ? StringUtil.filterText(string) : null;
     }
 
     private void setSlotContent(Level level, int slot, ItemStack stack) {
@@ -310,7 +320,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
     public void editSpellForm(CompoundTag tag) {
         this.spellForm = DataHelper.getFormFromNbt(tag);
-        ModNetwork.sendToServer(new EditSpellFormPacket(tag));
+        PacketDistributor.sendToServer(new EditSpellFormPacket(tag));
     }
 
     public void processSpellFormEditing(CompoundTag tag) {
@@ -322,7 +332,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
     public void editSpellStats(byte flag, List<Integer> list) {
         if ( flag == 0 ) this.magnitude = list;
         else if ( flag == 1 ) this.duration = list;
-        ModNetwork.sendToServer(new EditSpellStatsPacket(flag, list));
+        PacketDistributor.sendToServer(new EditSpellStatsPacket(flag, list));
     }
 
     public void processSpellStatEditing(byte flag, List<Integer> list) {

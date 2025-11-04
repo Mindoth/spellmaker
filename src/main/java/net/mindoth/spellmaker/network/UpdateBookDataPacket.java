@@ -12,6 +12,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.List;
@@ -33,12 +34,16 @@ public class UpdateBookDataPacket implements CustomPacketPayload {
     public int size;
     public List<ItemStack> scrollList = Lists.newArrayList();
     public int index;
+    public boolean refresh;
+    public boolean isRemoval;
 
-    public UpdateBookDataPacket(ItemStack book, List<ItemStack> scrollList, int index) {
+    public UpdateBookDataPacket(ItemStack book, List<ItemStack> scrollList, int index, boolean refresh, boolean isRemoval) {
         this.book = book;
         this.size = scrollList.size();
         this.scrollList = scrollList;
         this.index = index;
+        this.refresh = refresh;
+        this.isRemoval = isRemoval;
     }
 
     public UpdateBookDataPacket(FriendlyByteBuf buf) {
@@ -46,6 +51,8 @@ public class UpdateBookDataPacket implements CustomPacketPayload {
         int size = buf.readVarInt();
         for ( int i = 0; i < size; i++ ) this.scrollList.add(ModNetwork.readItem(buf));
         this.index = buf.readInt();
+        this.refresh = buf.readBoolean();
+        this.isRemoval = buf.readBoolean();
     }
 
     public void encode(FriendlyByteBuf buf) {
@@ -53,6 +60,8 @@ public class UpdateBookDataPacket implements CustomPacketPayload {
         buf.writeVarInt(this.size);
         for ( ItemStack stack : this.scrollList ) ModNetwork.writeItemStack(buf, stack);
         buf.writeInt(this.index);
+        buf.writeBoolean(this.refresh);
+        buf.writeBoolean(this.isRemoval);
     }
 
     public static void handle(UpdateBookDataPacket packet, IPayloadContext context) {
@@ -65,6 +74,7 @@ public class UpdateBookDataPacket implements CustomPacketPayload {
                     CompoundTag newTag = ModData.getLegacyTag(SpellBookItem.constructBook(packet.book, packet.scrollList));
                     if ( packet.index != newTag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) ) newTag.putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, packet.index);
                     ModData.setLegacyTag(book, newTag);
+                    PacketDistributor.sendToPlayer(player, new UpdateBookDataClientPacket(packet.index, packet.refresh, packet.isRemoval));
                 }
             }
         });

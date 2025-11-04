@@ -6,6 +6,7 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.client.gui.menu.SpellMakingMenu;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.registries.ModData;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
@@ -16,6 +17,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -25,8 +27,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> implements ContainerListener {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spell_making_screen.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/spell_making_screen.png");
     private EditBox name;
     private Button craftButton;
     private final int CRAFT_BUTTON_OFFSET_X = 152;
@@ -135,11 +137,11 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         if ( !slot.hasItem() ) return;
         if ( this.menu.isReadyToMake() ) {
             String string = this.name.getValue();
-            if ( !slot.getItem().hasCustomHoverName() && string.equals(slot.getItem().getHoverName().getString()) ) string = "";
+            if ( !slot.getItem().has(DataComponents.CUSTOM_NAME) && string.equals(slot.getItem().getHoverName().getString()) ) string = "";
             if ( this.menu.makeSpell(string) ) this.name.setValue("");
         }
         else if ( this.menu.isReadyToDump() ) {
-            if ( this.menu.dumpSpell() && slot.getItem().hasCustomHoverName() ) this.name.setValue(slot.getItem().getHoverName().getString());
+            if ( this.menu.dumpSpell() && slot.getItem().has(DataComponents.CUSTOM_NAME) ) this.name.setValue(slot.getItem().getHoverName().getString());
         }
     }
 
@@ -237,12 +239,12 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     }
 
     private void renderArrowButton(Button button, GuiGraphics graphics, int x, int y, int v, int u) {
-        button.renderTexture(graphics, TEXTURE, x, y, v, u, 0, 7, 11, 256, 256);
+        AbstractModScreen.renderTexture(button, graphics, TEXTURE, x, y, v, u, 0, 7, 11, 256, 256);
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(graphics);
+        renderBackground(graphics, mouseX, mouseY, partialTicks);
         super.render(graphics, mouseX, mouseY, partialTicks);
         this.name.render(graphics, mouseX, mouseY, partialTicks);
         renderTooltip(graphics, mouseX, mouseY);
@@ -254,7 +256,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         if ( this.menu.isReadyToMake() || this.menu.isReadyToDump() ) {
             int xIcon = x + CRAFT_BUTTON_OFFSET_X;
             int yIcon = y + CRAFT_BUTTON_OFFSET_Y;
-            this.craftButton.renderTexture(graphics, TEXTURE, xIcon, yIcon,
+            AbstractModScreen.renderTexture(this.craftButton, graphics, TEXTURE, xIcon, yIcon,
                     this.menu.isReadyToMake() ? 176 : 176 + 16, this.craftButton.isMouseOver(mouseX, mouseY) ? 32 : 16,
                     0, 16, 16, 256, 256);
             Component name = this.menu.isReadyToMake() ? Component.translatable("tooltip.spellmaker.make") : Component.translatable("tooltip.spellmaker.dump");
@@ -297,7 +299,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
 
         //Spell Form icon rendering
         if ( this.menu.isReadyToMake() ) {
-            ResourceLocation iconBg = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/spellform/icon_background.png");
+            ResourceLocation iconBg = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/spellform/icon_background.png");
             ResourceLocation icon = getSpellIcon();
             int xIcon = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
             int yIcon = y + SPELL_FORM_BUTTON_OFFSET_Y - 2;
@@ -381,7 +383,8 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         //Casting cost
         if ( this.menu.isReadyToMake() ) {
             ItemStack scroll = this.menu.assemble(this.menu.getCraftSlots());
-            int cost = ParchmentItem.calculateSpellCost(this.menu.getSpellForm(), DataHelper.createMapFromTag(scroll.getTag()));
+            CompoundTag tag = ModData.getLegacyTag(scroll);
+            int cost = ParchmentItem.calculateSpellCost(this.menu.getSpellForm(), DataHelper.createMapFromTag(tag));
             Component component = Component.literal(String.valueOf(cost)).setStyle(Style.EMPTY.withBold(true));
             graphics.drawString(this.font, component, x + 16 - this.font.width(String.valueOf(cost)) / 2, y + 66, 5804213, false);
         }
@@ -399,7 +402,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     @Override
     public void containerTick() {
         super.containerTick();
-        this.name.tick();
+        //this.name.tick();
         if ( this.craftButton.isFocused() ) this.craftButton.setFocused(false);
         if ( this.menu.isReadyToMake() || this.menu.isReadyToDump() ) {
             if ( !this.craftButton.visible ) this.craftButton.visible = true;
@@ -471,9 +474,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             if ( isIncrease ) return stat < sigil.getMaxDuration();
             else return stat > sigil.getMinDuration();
         }
-        /*if ( !isIncrease && stat <= 0 ) return false;
-        if ( (flag == 0 && sigil.getMaxMagnitude() <= 0 ) || (flag == 1 && sigil.getMaxDuration() <= 0) ) return false;
-        if ( (flag == 0 && isIncrease && stat >= sigil.getMaxMagnitude()) || (flag == 1 && isIncrease && stat >= sigil.getMaxDuration()) ) return false;*/
         return true;
     }
 

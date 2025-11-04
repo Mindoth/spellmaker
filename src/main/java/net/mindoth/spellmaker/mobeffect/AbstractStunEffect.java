@@ -11,8 +11,8 @@ public class AbstractStunEffect extends MobEffect {
     }
 
     public static boolean isStunned(LivingEntity living) {
-        if ( living.hasEffect(ModEffects.PARALYSIS.getHolder().get())
-                || living.hasEffect(ModEffects.SLEEP.getHolder().get()) ) return true;
+        if ( living.hasEffect(ModEffects.PARALYSIS)
+                || living.hasEffect(ModEffects.SLEEP) ) return true;
         else return false;
     }
 }

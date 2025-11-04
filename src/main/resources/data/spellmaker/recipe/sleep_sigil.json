@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "spellmaker:rune_essence"
+    },
+    {
+      "item": "spellmaker:destruction_dust"
+    },
+    {
+      "item": "minecraft:cocoa_beans"
+    }
+  ],
+  "result": {
+    "id": "spellmaker:sleep_sigil",
+    "count": 1
+  }
+}

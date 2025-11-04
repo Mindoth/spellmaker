@@ -6,8 +6,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.UUID;
 
-public class SheepTransformationSigilItem extends PolymorphSigilItem {
-    public SheepTransformationSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier, UUID uuid, EntityType entityType) {
+public class SheepFormSigilItem extends PolymorphSigilItem {
+    public SheepFormSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier, UUID uuid, EntityType entityType) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier, uuid, entityType);
     }
 

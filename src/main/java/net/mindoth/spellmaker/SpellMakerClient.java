@@ -27,6 +27,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 public class SpellMakerClient {
@@ -37,6 +38,7 @@ public class SpellMakerClient {
         modContainer.registerConfig(ModConfig.Type.CLIENT, ModClientConfig.SPEC);
     }
 
+    //TODO: implement item coloring, maybe with new DataComponents?
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         /*for ( Item item : ForgeRegistries.ITEMS.getValues() ) {
             if ( item instanceof ModDyeableItem modItem ) event.getItemColors().register((color, armor) -> armor > 0 ? -1 : modItem.getColor(color), item);
@@ -67,8 +69,8 @@ public class SpellMakerClient {
         private static void onInput(Minecraft mc, int key, int keyAction) {
             Player player = mc.player;
             if ( mc.screen == null && keyAction == 0 && key == OPEN_SPELL_BOOK.getKey().getValue() ) {
-                if ( !SpellBookItem.getTaggedSpellBookSlot(player).isEmpty() ) ModNetwork.sendToServer(new AskToOpenSpellBookPacket(true));
-                else if ( !SpellBookItem.getSpellBookSlot(player).isEmpty() ) ModNetwork.sendToServer(new AskToOpenSpellBookPacket(false));
+                if ( !SpellBookItem.getTaggedSpellBookSlot(player).isEmpty() ) PacketDistributor.sendToServer(new AskToOpenSpellBookPacket(true));
+                else if ( !SpellBookItem.getSpellBookSlot(player).isEmpty() ) PacketDistributor.sendToServer(new AskToOpenSpellBookPacket(false));
             }
         }
     }

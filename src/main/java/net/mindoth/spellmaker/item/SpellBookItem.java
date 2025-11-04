@@ -2,13 +2,11 @@ package net.mindoth.spellmaker.item;
 
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
-import net.mindoth.spellmaker.network.ModNetwork;
 import net.mindoth.spellmaker.network.OpenSpellBookPacket;
 import net.mindoth.spellmaker.registries.ModData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +21,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -32,7 +29,7 @@ import java.util.Objects;
 public class SpellBookItem extends Item implements ModDyeableItem {
 
     public SpellBookItem(Properties pProperties) {
-        super(pProperties);
+        super(pProperties.stacksTo(1));
     }
 
     public static final int maxRows = 4;
@@ -44,16 +41,16 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     public static final String NBT_KEY_BOOK_MAGNITUDES = "sm_book_magnitudes";
     public static final String NBT_KEY_BOOK_DURATIONS = "sm_book_durations";
 
-    public static final String NBT_KEY_OWNER_NAME = "am_book_owner_name";
-    public static final String NBT_KEY_OWNER_UUID = "am_book_owner_uuid";
+    public static final String NBT_KEY_OWNER_NAME = "sm_book_owner_name";
+    public static final String NBT_KEY_OWNER_UUID = "sm_book_owner_uuid";
     public static final String NBT_KEY_BOOK_SLOT = "sm_book_slot";
     public static final String NBT_KEY_NULL_NAME = "sm_spell_has_null_name";
 
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        if ( ModData.getLegacyTag(stack) != null ) {
-            CompoundTag tag = ModData.getLegacyTag(stack);
+        CompoundTag tag = ModData.getLegacyTag(stack);
+        if ( tag != null ) {
             if ( tag.contains(NBT_KEY_OWNER_NAME) ) {
                 String name = tag.getString(NBT_KEY_OWNER_NAME);
                 tooltip.add(Component.translatable("tooltip.spellmaker.book_owner").withStyle(ChatFormatting.GRAY)
@@ -78,15 +75,31 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     public static void openSpellBook(ServerPlayer player, ItemStack book) {
         handleSignature(player, book);
         CompoundTag tag = ModData.getLegacyTag(book);
-        int slot = tag.getInt(NBT_KEY_BOOK_SLOT);
-        int page = 0;
-        if ( slot >= pageSize ) {
-            for ( int i = pageSize; i < getScrollListFromBook(tag).size(); i++ ) {
-                if ( i % pageSize == 0 ) page++;
-                if ( i == slot ) break;
+        if ( tag != null ) {
+            int slot = tag.getInt(NBT_KEY_BOOK_SLOT);
+            int page = 0;
+            if ( slot >= pageSize ) {
+                for ( int i = pageSize; i < getScrollListFromBook(tag).size(); i++ ) {
+                    if ( i % pageSize == 0 ) page++;
+                    if ( i == slot ) break;
+                }
+            }
+            PacketDistributor.sendToPlayer(player, new OpenSpellBookPacket(book, page));
+        }
+    }
+
+    public static void handleSignature(ServerPlayer serverPlayer, ItemStack stack) {
+        CompoundTag tag = ModData.getOrCreateLegacyTag(stack);
+        if ( !tag.contains(NBT_KEY_BOOK_SLOT) ) tag.putInt(NBT_KEY_BOOK_SLOT, -1);
+        if ( !tag.contains(NBT_KEY_OWNER_UUID) ){
+            tag.putUUID(NBT_KEY_OWNER_UUID, serverPlayer.getUUID());
+            tag.putString(NBT_KEY_OWNER_NAME, serverPlayer.getDisplayName().getString());
+        }
+        if ( tag.contains(NBT_KEY_OWNER_UUID) && tag.contains(NBT_KEY_OWNER_NAME) ) {
+            if ( tag.getUUID(NBT_KEY_OWNER_UUID) == serverPlayer.getUUID() && !tag.getString(NBT_KEY_OWNER_NAME).equals(serverPlayer.getDisplayName().getString())) {
+                tag.putString(NBT_KEY_OWNER_NAME, serverPlayer.getDisplayName().getString());
             }
         }
-        PacketDistributor.sendToPlayer(player, new OpenSpellBookPacket(book, page));
     }
 
     public static int getNewSlotFromScrollRemoval(int oldSlot, int bookSlot) {
@@ -102,20 +115,6 @@ public class SpellBookItem extends Item implements ModDyeableItem {
         List<ItemStack> scrollList = SpellBookItem.getScrollListFromBook(tag);
         if ( slot >= scrollList.size() ) return null;
         return scrollList.get(slot);
-    }
-
-    public static void handleSignature(ServerPlayer serverPlayer, ItemStack stack) {
-        CompoundTag tag = ModData.getOrCreateLegacyTag(stack);
-        if ( !tag.contains(NBT_KEY_BOOK_SLOT) ) tag.putInt(NBT_KEY_BOOK_SLOT, -1);
-        if ( !tag.contains(NBT_KEY_OWNER_UUID) ){
-            tag.putUUID(NBT_KEY_OWNER_UUID, serverPlayer.getUUID());
-            tag.putString(NBT_KEY_OWNER_NAME, serverPlayer.getDisplayName().getString());
-        }
-        if ( tag.contains(NBT_KEY_OWNER_UUID) && tag.contains(NBT_KEY_OWNER_NAME) ) {
-            if ( tag.getUUID(NBT_KEY_OWNER_UUID) == serverPlayer.getUUID() && !tag.getString(NBT_KEY_OWNER_NAME).equals(serverPlayer.getDisplayName().getString())) {
-                tag.putString(NBT_KEY_OWNER_NAME, serverPlayer.getDisplayName().getString());
-            }
-        }
     }
 
     public static List<ItemStack> getScrollListFromBook(CompoundTag tag) {
@@ -149,19 +148,20 @@ public class SpellBookItem extends Item implements ModDyeableItem {
 
     public static ItemStack constructSpellScroll(String form, String sigils, String magnitudes, String durations, String name, Item item) {
         ItemStack stack = new ItemStack(item);
+        CompoundTag tag = new CompoundTag();
         if ( !Objects.equals(name, NBT_KEY_NULL_NAME) ) stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
-        CompoundTag tag = ModData.getOrCreateLegacyTag(stack);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, form);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_SIGILS, sigils);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES, magnitudes);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_DURATIONS, durations);
+        ModData.setLegacyTag(stack, tag);
         return stack;
     }
 
     public static ItemStack constructBook(ItemStack ogBook, List<ItemStack> scrolls) {
         ItemStack book = ogBook.copy();
-        if ( ModData.getLegacyTag(book) != null ) {
-            CompoundTag tag = ModData.getLegacyTag(book);
+        CompoundTag tag = ModData.getLegacyTag(book);
+        if ( tag != null ) {
             if ( tag.contains(NBT_KEY_BOOK_FORMS) ) tag.remove(NBT_KEY_BOOK_FORMS);
             if ( tag.contains(NBT_KEY_BOOK_SIGILS) ) tag.remove(NBT_KEY_BOOK_SIGILS);
             if ( tag.contains(NBT_KEY_BOOK_MAGNITUDES) ) tag.remove(NBT_KEY_BOOK_MAGNITUDES);

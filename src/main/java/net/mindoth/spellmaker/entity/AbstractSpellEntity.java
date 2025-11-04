@@ -18,11 +18,13 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.NetherPortalBlock;
+import net.minecraft.world.level.block.Portal;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.event.EventHooks;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -60,14 +62,14 @@ public abstract class AbstractSpellEntity extends Projectile {
         }
     }
 
+    //TODO: handle portal travel for projectiles
     public void handleHitDetection() {
         HitResult result = getHitResult(position(), this, this::hitFilter, getDeltaMovement(), level());
         boolean flag = false;
         if ( result.getType() == HitResult.Type.BLOCK ) {
             BlockPos blockpos = ((BlockHitResult)result).getBlockPos();
             BlockState blockstate = this.level().getBlockState(blockpos);
-            if ( blockstate.is(Blocks.NETHER_PORTAL) ) {
-                handleInsidePortal(blockpos);
+            /*if ( blockstate.is(Blocks.NETHER_PORTAL) ) {
                 flag = true;
             }
             else if ( blockstate.is(Blocks.END_GATEWAY) ) {
@@ -76,9 +78,9 @@ public abstract class AbstractSpellEntity extends Projectile {
                     TheEndGatewayBlockEntity.teleportEntity(level(), blockpos, blockstate, this, (TheEndGatewayBlockEntity)blockentity);
                 }
                 flag = true;
-            }
+            }*/
         }
-        if ( result.getType() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, result) ) onHit(result);
+        if ( result.getType() != HitResult.Type.MISS && !flag && !EventHooks.onProjectileImpact(this, result) ) onHit(result);
     }
 
     protected boolean hitFilter(Entity target) {
@@ -175,9 +177,9 @@ public abstract class AbstractSpellEntity extends Projectile {
         return 160;
     }
 
-    public float getGravity() {
-        //return 0.03F;
-        return 0.015F;
+    public double getDefaultGravity() {
+        //return 0.03D;
+        return 0.015D;
     }
 
     public static final EntityDataAccessor<Integer> RED = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.INT);
@@ -216,19 +218,19 @@ public abstract class AbstractSpellEntity extends Projectile {
     }
 
     @Override
-    protected void defineSynchedData() {
-        this.entityData.define(RED, -1);
-        this.entityData.define(GREEN, -1);
-        this.entityData.define(BLUE, -1);
-        this.entityData.define(TYPE, 1);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(RED, -1);
+        builder.define(GREEN, -1);
+        builder.define(BLUE, -1);
+        builder.define(TYPE, 1);
 
-        this.entityData.define(SIGIL_LIST, "");
-        this.entityData.define(MAGNITUDES, "");
-        this.entityData.define(DURATIONS, "");
+        builder.define(SIGIL_LIST, "");
+        builder.define(MAGNITUDES, "");
+        builder.define(DURATIONS, "");
     }
 
-    @Override
+    /*@Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
-    }
+    }*/
 }

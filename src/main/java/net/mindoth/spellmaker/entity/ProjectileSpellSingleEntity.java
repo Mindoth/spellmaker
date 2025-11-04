@@ -9,6 +9,7 @@ import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.registries.ModEntities;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;

@@ -2,6 +2,7 @@ package net.mindoth.spellmaker.block.entity;
 
 import net.mindoth.spellmaker.client.gui.menu.CalcinatorMenu;
 import net.mindoth.spellmaker.recipe.CalcinatingRecipe;
+import net.mindoth.spellmaker.registries.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -12,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class CalcinatorBlockEntity extends AbstractFurnaceBlockEntity {
 
     public CalcinatorBlockEntity(BlockPos pPos, BlockState pBlockState) {
-        super(ModBlockEntities.CALCINATOR_BLOCK_ENTITY.get(), pPos, pBlockState, CalcinatingRecipe.Type.CALCINATING);
+        super(ModBlocks.CALCINATOR_BLOCK_ENTITY.get(), pPos, pBlockState, CalcinatingRecipe.Type.CALCINATING);
     }
 
     @Override

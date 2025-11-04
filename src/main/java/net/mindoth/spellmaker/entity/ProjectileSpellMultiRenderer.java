@@ -15,7 +15,7 @@ public class ProjectileSpellMultiRenderer extends EntityRenderer<ProjectileSpell
 
     @Override
     public ResourceLocation getTextureLocation(ProjectileSpellMultiEntity entity) {
-        return new ResourceLocation(ShadowizardLib.MOD_ID, "textures/particle/clear.png");
+        return ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "textures/particle/clear.png");
     }
 
     @Override

@@ -1,6 +1,5 @@
 package net.mindoth.spellmaker.network;
 
-import net.mindoth.shadowizardlib.ShadowizardLib;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.registries.ModData;
 import net.minecraft.core.IdMap;
@@ -16,7 +15,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.Objects;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = ShadowizardLib.MOD_ID)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = SpellMaker.MOD_ID)
 public class ModNetwork {
 
     @SubscribeEvent
@@ -33,6 +32,7 @@ public class ModNetwork {
         payloadRegistrar.playToServer(MakeSpellPacket.TYPE, MakeSpellPacket.STREAM_CODEC, MakeSpellPacket::handle);
         payloadRegistrar.playToServer(DumpSpellPacket.TYPE, DumpSpellPacket.STREAM_CODEC, DumpSpellPacket::handle);
         payloadRegistrar.playToClient(SyncSizePacket.TYPE, SyncSizePacket.STREAM_CODEC, SyncSizePacket::handle);
+        payloadRegistrar.playToClient(UpdateBookDataClientPacket.TYPE, UpdateBookDataClientPacket.STREAM_CODEC, UpdateBookDataClientPacket::handle);
     }
 
     private static <T> T legacyReadById(FriendlyByteBuf buf, IdMap<T> pIdMap) {
@@ -57,27 +57,25 @@ public class ModNetwork {
         }
     }
 
-    public static FriendlyByteBuf writeItemStack(FriendlyByteBuf buf, ItemStack pStack) {
-        if ( pStack.isEmpty() ) buf.writeBoolean(false);
+    public static void writeItemStack(FriendlyByteBuf buf, ItemStack stack) {
+        if ( stack.isEmpty() ) buf.writeBoolean(false);
         else {
             buf.writeBoolean(true);
-            Item item = pStack.getItem();
+            Item item = stack.getItem();
             legacyWriteId(buf, BuiltInRegistries.ITEM, item);
-            buf.writeByte(pStack.getCount());
-            CompoundTag compoundtag = null;
-            if ( pStack.getMaxDamage() > 0 ) compoundtag = ModData.getLegacyTag(pStack);
+            buf.writeByte(stack.getCount());
+            CompoundTag compoundtag = ModData.getLegacyTag(stack);
             buf.writeNbt(compoundtag);
         }
-        return buf;
     }
 
-    //TODO: Check for capabilities
+    //TODO: Check for DataComponents
     public static boolean isSameItemSameTags(ItemStack pStack, ItemStack pOther) {
         if ( !pStack.is(pOther.getItem()) ) return false;
         else {
             CompoundTag stackTag = ModData.getLegacyTag(pStack);
             CompoundTag otherTag = ModData.getLegacyTag(pOther);
-            return pStack.isEmpty() && pOther.isEmpty() ? true : Objects.equals(stackTag, otherTag) /*&& pStack.areCapsCompatible(pOther)*/;
+            return pStack.isEmpty() && pOther.isEmpty() || Objects.equals(stackTag, otherTag);
         }
     }
 }

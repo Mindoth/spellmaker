@@ -5,12 +5,15 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 
 public class AbstractCalcinatorScreen<T extends AbstractFurnaceMenu> extends AbstractContainerScreen<T> {
 
-    private static final ResourceLocation texture = new ResourceLocation(SpellMaker.MOD_ID, "textures/gui/calcinator_screen.png");
+    private final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/calcinator_screen.png");
+    private final ResourceLocation litProgressSprite = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/calcinator_lit_progress.png");
+    private final ResourceLocation burnProgressSprite = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/calcinator_burn_progress.png");
 
     public AbstractCalcinatorScreen(T pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -28,20 +31,25 @@ public class AbstractCalcinatorScreen<T extends AbstractFurnaceMenu> extends Abs
     }
 
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        this.renderBackground(pGuiGraphics);
+        this.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         this.renderTooltip(pGuiGraphics, pMouseX, pMouseY);
     }
 
-    protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         int i = this.leftPos;
         int j = this.topPos;
-        pGuiGraphics.blit(this.texture, i, j, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(this.texture, i, j, 0, 0, this.imageWidth, this.imageHeight);
+        boolean i1;
+        int j1;
         if ( this.menu.isLit() ) {
-            int k = this.menu.getLitProgress();
-            pGuiGraphics.blit(this.texture, i + 56, j + 36 + 12 - k, 176, 12 - k, 14, k + 1);
+            i1 = true;
+            j1 = Mth.ceil(this.menu.getLitProgress() * 13.0F) + 1;
+            guiGraphics.blit(this.litProgressSprite, i + 56, j + 36 + 14 - j1, 0, 14 - j1, 14, j1, 14, 14);
         }
-        int l = this.menu.getBurnProgress();
-        pGuiGraphics.blit(this.texture, i + 79, j + 34, 176, 14, l + 1, 16);
+        i1 = true;
+        j1 = Mth.ceil(this.menu.getBurnProgress() * 24.0F);
+        guiGraphics.blit(this.burnProgressSprite, i + 79, j + 34, j1, 0, 0, j1, 16, 24, 16);
     }
 }

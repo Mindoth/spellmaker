@@ -1,0 +1,13 @@
+{
+  "type": "spellmaker:calcinating",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.0,
+  "group": "calcinating",
+  "ingredient": {
+    "item": "minecraft:gunpowder"
+  },
+  "result": {
+    "id": "spellmaker:destruction_dust"
+  }
+}

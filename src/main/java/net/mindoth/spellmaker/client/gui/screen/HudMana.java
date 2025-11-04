@@ -4,7 +4,7 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.playermagic.ClientMagickData;
 import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.item.armor.ModArmorItem;
-import net.mindoth.spellmaker.item.sigil.FishTransformationSigilItem;
+import net.mindoth.spellmaker.item.sigil.FishFormSigilItem;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
 import net.minecraft.client.DeltaTracker;
@@ -33,7 +33,7 @@ public class HudMana implements LayeredDraw.Layer {
         String mana = (int)currentMana + "/" + (int)maxMana;
         int posX = (MINECRAFT.getWindow().getGuiScaledWidth() / 2) + 10;
         int posY = MINECRAFT.getWindow().getGuiScaledHeight() - 49;
-        if ( player.getAirSupply() != player.getMaxAirSupply() || FishTransformationSigilItem.isFish(player) ) posY -= 10;
+        if ( player.getAirSupply() != player.getMaxAirSupply() || FishFormSigilItem.isFish(player) ) posY -= 10;
         double manaPercentage = currentMana / maxMana;
         int barPercentage = (int)(manaPercentage * 79.0D);
         int barWidth = Math.max(0, Math.min(barPercentage, 79));

@@ -4,6 +4,7 @@ import net.mindoth.spellmaker.mobeffect.AbstractStunEffect;
 import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.registries.ModItems;
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -46,13 +47,13 @@ public class LivingEntityMixin {
     }
 
     @Inject(method = "hasEffect", at=@At("HEAD"), cancellable = true)
-    private void fishHasEffect(MobEffect mobEffect, CallbackInfoReturnable<Boolean> cir) {
+    private void fishHasEffect(Holder<MobEffect> mobEffect, CallbackInfoReturnable<Boolean> cir) {
         LivingEntity living = (LivingEntity)(Object)this;
         if ( mobEffect == MobEffects.NIGHT_VISION && isFishInWater(living) ) cir.setReturnValue(true);
     }
 
     @Inject(method = "getEffect", at=@At("HEAD"), cancellable = true)
-    private void fishGetEffect(MobEffect mobEffect, CallbackInfoReturnable<MobEffectInstance> cir) {
+    private void fishGetEffect(Holder<MobEffect> mobEffect, CallbackInfoReturnable<MobEffectInstance> cir) {
         LivingEntity living = (LivingEntity)(Object)this;
         if ( mobEffect == MobEffects.NIGHT_VISION && isFishInWater(living) ) cir.setReturnValue(NIGHT_VISION);
     }

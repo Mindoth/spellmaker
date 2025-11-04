@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "spellmaker:rune_essence"
+    },
+    {
+      "item": "spellmaker:alteration_dust"
+    },
+    {
+      "tag": "minecraft:wool"
+    }
+  ],
+  "result": {
+    "id": "spellmaker:sheep_form_sigil",
+    "count": 1
+  }
+}

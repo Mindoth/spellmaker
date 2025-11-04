@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -16,18 +17,18 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
 public class StunScreen extends Screen {
     protected StunScreen(Component pTitle) {
         super(pTitle);
@@ -49,13 +50,13 @@ public class StunScreen extends Screen {
         Collection<MobEffectInstance> collection = this.minecraft.player.getActiveEffects();
         if ( !collection.isEmpty() && j >= 32 ) {
             boolean flag = j >= 120;
-            var event = net.minecraftforge.client.ForgeHooksClient.onScreenPotionSize(this, j, !flag, i);
+            var event = net.neoforged.neoforge.client.ClientHooks.onScreenPotionSize(this, j, !flag, i);
             if (event.isCanceled()) return;
             flag = !event.isCompact();
             i = event.getHorizontalOffset();
             int k = 33;
             if ( collection.size() > 5 ) k = 132 / (collection.size() - 1);
-            Iterable<MobEffectInstance> iterable = collection.stream().filter(net.minecraftforge.client.ForgeHooksClient::shouldRenderEffect).sorted().collect(java.util.stream.Collectors.toList());
+            Iterable<MobEffectInstance> iterable = collection.stream().filter(net.neoforged.neoforge.client.ClientHooks::shouldRenderEffect).sorted().collect(java.util.stream.Collectors.toList());
             this.renderBackgrounds(pGuiGraphics, i, k, iterable, flag);
             this.renderIcons(pGuiGraphics, i, k, iterable, flag);
             if ( flag ) this.renderLabels(pGuiGraphics, i, k, iterable);
@@ -67,11 +68,14 @@ public class StunScreen extends Screen {
                     l += k;
                 }
                 if ( mobeffectinstance != null ) {
-                    List<Component> list = List.of(this.getEffectName(mobeffectinstance), MobEffectUtil.formatDuration(mobeffectinstance, 1.0F));
+                    List<Component> list = List.of(
+                            this.getEffectName(mobeffectinstance),
+                            MobEffectUtil.formatDuration(mobeffectinstance, 1.0F, this.minecraft.level.tickRateManager().tickrate())
+                    );
+                    //list = net.neoforged.neoforge.client.ClientHooks.getEffectTooltip(this, mobeffectinstance, list);
                     pGuiGraphics.renderTooltip(this.font, list, Optional.empty(), pMouseX, pMouseY);
                 }
             }
-
         }
     }
 
@@ -92,7 +96,7 @@ public class StunScreen extends Screen {
         int i = this.stunScreenTopPos;
         for ( MobEffectInstance mobeffectinstance : pEffects ) {
             if ( mobeffectinstance.getEffect() instanceof AbstractStunEffect ) {
-                MobEffect mobeffect = mobeffectinstance.getEffect();
+                Holder<MobEffect> mobeffect = mobeffectinstance.getEffect();
                 TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(mobeffect);
                 pGuiGraphics.blit(pRenderX + (pIsSmall ? 6 : 7), i + 7, 0, 18, 18, textureatlassprite);
                 i += pYOffset;
@@ -107,7 +111,7 @@ public class StunScreen extends Screen {
             if ( mobeffectinstance.getEffect() instanceof AbstractStunEffect ) {
                 Component component = this.getEffectName(mobeffectinstance);
                 pGuiGraphics.drawString(this.font, component, pRenderX + 10 + 18, i + 6, 16777215);
-                Component component1 = MobEffectUtil.formatDuration(mobeffectinstance, 1.0F);
+                Component component1 = MobEffectUtil.formatDuration(mobeffectinstance, 1.0F, this.minecraft.level.tickRateManager().tickrate());
                 pGuiGraphics.drawString(this.font, component1, pRenderX + 10 + 18, i + 6 + 10, 8355711);
                 i += pYOffset;
             }
@@ -115,7 +119,7 @@ public class StunScreen extends Screen {
     }
 
     private Component getEffectName(MobEffectInstance pEffect) {
-        MutableComponent mutablecomponent = pEffect.getEffect().getDisplayName().copy();
+        MutableComponent mutablecomponent = pEffect.getEffect().value().getDisplayName().copy();
         if ( pEffect.getAmplifier() >= 1 && pEffect.getAmplifier() <= 9 ) {
             mutablecomponent.append(CommonComponents.SPACE).append(Component.translatable("enchantment.level." + (pEffect.getAmplifier() + 1)));
         }
@@ -148,9 +152,13 @@ public class StunScreen extends Screen {
         else instance.setScreen(new PauseScreen(true));
     }
 
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    }
+
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public static void clientStunTick(TickEvent.ClientTickEvent event) {
+    public static void clientStunTick(ClientTickEvent.Pre event) {
         Minecraft instance = Minecraft.getInstance();
         if ( instance.player != null ) {
             Player player = instance.player;

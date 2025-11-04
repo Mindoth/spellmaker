@@ -1,10 +1,13 @@
 package net.mindoth.spellmaker.client.gui.screen;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +23,14 @@ public abstract class AbstractModScreen extends Screen {
 
     protected AbstractModScreen(Component pTitle) {
         super(pTitle);
+    }
+
+    public static void renderTexture(Button button, GuiGraphics pGuiGraphics, ResourceLocation pTexture, int pX, int pY, int pUOffset, int pVOffset, int pTextureDifference, int pWidth, int pHeight, int pTextureWidth, int pTextureHeight) {
+        int i = pVOffset;
+        if ( !button.isActive() ) i = pVOffset + pTextureDifference * 2;
+        else if (button.isHoveredOrFocused()) i = pVOffset + pTextureDifference;
+        RenderSystem.enableDepthTest();
+        pGuiGraphics.blit(pTexture, pX, pY, (float)pUOffset, (float)i, pWidth, pHeight, pTextureWidth, pTextureHeight);
     }
 
     protected void renderItemWithDecorations(GuiGraphics graphics, ItemStack stack, int xPos, int yPos) {

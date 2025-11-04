@@ -1,6 +1,8 @@
 package net.mindoth.spellmaker.block;
 
+import com.mojang.serialization.MapCodec;
 import net.mindoth.spellmaker.block.entity.CalcinatorBlockEntity;
+import net.mindoth.spellmaker.registries.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,6 +13,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.FurnaceBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -24,6 +27,14 @@ public class CalcinatorBlock extends AbstractFurnaceBlock {
         super(pProperties);
     }
 
+
+    public static final MapCodec<CalcinatorBlock> CODEC = simpleCodec(CalcinatorBlock::new);
+
+    @Override
+    protected MapCodec<? extends AbstractFurnaceBlock> codec() {
+        return CODEC;
+    }
+
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
         return new CalcinatorBlockEntity(pPos, pState);
@@ -32,7 +43,7 @@ public class CalcinatorBlock extends AbstractFurnaceBlock {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return createFurnaceTicker(pLevel, pBlockEntityType, ModBlockEntities.CALCINATOR_BLOCK_ENTITY.get());
+        return createFurnaceTicker(pLevel, pBlockEntityType, ModBlocks.CALCINATOR_BLOCK_ENTITY.get());
     }
 
     @Override

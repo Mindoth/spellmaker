@@ -4,11 +4,12 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
-@Mod.EventBusSubscriber(modid = SpellMaker.MOD_ID)
+@EventBusSubscriber(modid = SpellMaker.MOD_ID)
 public class SleepEffect extends AbstractStunEffect {
     public SleepEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
@@ -26,8 +27,8 @@ public class SleepEffect extends AbstractStunEffect {
     }*/
 
     @SubscribeEvent
-    public static void wakeUpWhenAttacked(LivingHurtEvent event) {
+    public static void wakeUpWhenAttacked(LivingDamageEvent.Post event) {
         LivingEntity living = event.getEntity();
-        if ( living.hasEffect(ModEffects.SLEEP.getHolder().get()) ) living.removeEffect(ModEffects.SLEEP.getHolder().get());
+        if ( living.hasEffect(ModEffects.SLEEP) ) living.removeEffect(ModEffects.SLEEP);
     }
 }
