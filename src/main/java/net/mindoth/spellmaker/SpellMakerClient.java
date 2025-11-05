@@ -9,8 +9,6 @@ import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.entity.ProjectileSpellMultiRenderer;
 import net.mindoth.spellmaker.entity.ProjectileSpellSingleRenderer;
 import net.mindoth.spellmaker.item.ModDyeableItem;
-import net.mindoth.spellmaker.item.armor.ColorableArmorItem;
-import net.mindoth.spellmaker.item.armor.ModArmorItem;
 import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.network.AskToOpenSpellBookPacket;
 import net.mindoth.spellmaker.registries.ModEntities;
@@ -18,17 +16,11 @@ import net.mindoth.spellmaker.registries.ModItems;
 import net.mindoth.spellmaker.registries.ModMenus;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -37,8 +29,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -47,13 +37,11 @@ import org.lwjgl.glfw.GLFW;
 public class SpellMakerClient {
     public static void registerHandlers(IEventBus modBus, ModContainer modContainer) {
         modBus.addListener(SpellMakerClient::registerEntityRenderers);
-        modBus.addListener(SpellMakerClient::registerItemColors);
-        //modBus.addListener(SpellMakerClient::registerClientExtensions);
         modBus.addListener(SpellMakerClient::registerLayerDefinitions);
+        modBus.addListener(SpellMakerClient::registerItemColors);
         modContainer.registerConfig(ModConfig.Type.CLIENT, ModClientConfig.SPEC);
     }
 
-    //TODO: Armor renderer to reflect dyed color
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         for ( ResourceLocation id : ModItems.ITEMS.getRegistry().get().keySet() ) {
             Item item = BuiltInRegistries.ITEM.get(id);
@@ -67,25 +55,6 @@ public class SpellMakerClient {
         event.registerEntityRenderer(ModEntities.SPELL_PROJECTILE_SINGLE.get(), ProjectileSpellSingleRenderer::new);
         event.registerEntityRenderer(ModEntities.SPELL_PROJECTILE_MULTI.get(), ProjectileSpellMultiRenderer::new);
     }
-
-    /*public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
-        event.registerItem(new IClientItemExtensions() {
-            @Override
-            public HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
-                return ModArmorItem.get(itemStack);
-            }
-
-            @Override
-            public int getArmorLayerTintColor(ItemStack stack, LivingEntity entity, ArmorMaterial.Layer layer, int layerIdx, int fallbackColor) {
-                if ( layer.dyeable() ) {
-                    if ( stack.getItem() instanceof ColorableArmorItem armorItem ) {
-                        return stack.has(DataComponents.DYED_COLOR) ? stack.get(DataComponents.DYED_COLOR).rgb() : armorItem.getDefaultColor();
-                    }
-                }
-                return IClientItemExtensions.super.getArmorLayerTintColor(stack, entity, layer, layerIdx, fallbackColor);
-            }
-        }, ModItems.SIMPLE_ROBE_HOOD, ModItems.SIMPLE_ROBE_TOP, ModItems.SIMPLE_ROBE_BOTTOM, ModItems.SIMPLE_ROBE_BOOTS);
-    }*/
 
     public static final ModelLayerLocation SIMPLE_ROBE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "main"), "simple_robe");
 

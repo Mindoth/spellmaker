@@ -12,7 +12,6 @@ public class ProjectileSpellSingleRenderer extends EntityRenderer<ProjectileSpel
 
     public ProjectileSpellSingleRenderer(EntityRendererProvider.Context context) {
         super(context);
-        ModArmorItem.init(context);
     }
 
     @Override

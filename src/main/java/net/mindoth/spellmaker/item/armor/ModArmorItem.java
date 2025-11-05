@@ -5,10 +5,7 @@ import net.mindoth.spellmaker.SpellMakerClient;
 import net.mindoth.spellmaker.client.model.SimpleRobeModel;
 import net.mindoth.spellmaker.registries.ModAttributes;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidArmorModel;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.LazyLoadedValue;
@@ -19,18 +16,14 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -81,8 +74,8 @@ public class ModArmorItem extends ArmorItem {
         return new SimpleRobeModel(Minecraft.getInstance().getEntityModels().bakeLayer(SpellMakerClient.SIMPLE_ROBE));
     }
 
-    @OnlyIn(Dist.CLIENT)
     @SuppressWarnings("removal")
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
@@ -90,25 +83,11 @@ public class ModArmorItem extends ArmorItem {
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default) {
                 return model != null ? model.get() : _default;
             }
+            @Override
+            public int getArmorLayerTintColor(ItemStack stack, LivingEntity entity, ArmorMaterial.Layer layer, int layerIdx, int fallbackColor) {
+                if ( stack.getItem() instanceof ColorableArmorItem armorItem ) return DyedItemColor.getOrDefault(stack, armorItem.getDefaultColor());
+                return IClientItemExtensions.super.getArmorLayerTintColor(stack, entity, layer, layerIdx, fallbackColor);
+            }
         });
-    }
-
-    private static Map<EquipmentSlot, HumanoidArmorModel> simpleRobe = Collections.emptyMap();
-
-    public static void init(EntityRendererProvider.Context context) {
-        simpleRobe = make(context, SpellMakerClient.SIMPLE_ROBE);
-    }
-
-    private static Map<EquipmentSlot, HumanoidArmorModel> make(EntityRendererProvider.Context context, ModelLayerLocation layer) {
-        Map<EquipmentSlot, HumanoidArmorModel> ret = new EnumMap<>(EquipmentSlot.class);
-        for ( EquipmentSlot slot : EquipmentSlot.values() ) ret.put(slot, new HumanoidArmorModel(context.bakeLayer(layer)));
-        return ret;
-    }
-
-    @Nullable
-    public static HumanoidArmorModel get(ItemStack stack) {
-        Item item = stack.getItem();
-        if ( item instanceof ColorableArmorItem armor ) return simpleRobe.get(armor.getType().getSlot());
-        return null;
     }
 }

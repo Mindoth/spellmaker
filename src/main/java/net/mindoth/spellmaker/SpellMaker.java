@@ -15,8 +15,8 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 public class SpellMaker {
     public static final String MOD_ID = "spellmaker";
 
-    public SpellMaker(IEventBus modBus, ModContainer modContainer) {
-        if ( FMLEnvironment.dist == Dist.CLIENT ) SpellMakerClient.registerHandlers(modBus, modContainer);
+    public SpellMaker(IEventBus modBus, ModContainer modContainer, Dist dist) {
+        if ( dist.isClient() ) SpellMakerClient.registerHandlers(modBus, modContainer);
         addRegistries(modBus);
         modBus.addListener(this::registerRegistries);
     }
