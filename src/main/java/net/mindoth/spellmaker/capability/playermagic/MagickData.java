@@ -7,6 +7,12 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class MagickData {
 
+    public static final String SM_CURRENT_MANA = "sm_current_mana";
+
+    public static MagickData getPlayerMagickData(LivingEntity livingEntity) {
+        return livingEntity.getData(ModCapabilities.MAGICK_DATA);
+    }
+
     private boolean isMob = false;
 
     public MagickData(boolean isMob) {
@@ -23,13 +29,6 @@ public class MagickData {
         this(false);
         this.serverPlayer = serverPlayer;
     }
-
-
-    public static MagickData getPlayerMagickData(LivingEntity livingEntity) {
-        return livingEntity.getData(ModCapabilities.MAGICK_DATA);
-    }
-
-    public static final String SM_CURRENT_MANA = "sm_current_mana";
 
     public void saveNBTData(CompoundTag tag) {
         tag.putDouble(SM_CURRENT_MANA, this.currentMana);

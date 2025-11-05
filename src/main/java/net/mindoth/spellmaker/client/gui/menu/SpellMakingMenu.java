@@ -201,7 +201,9 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             if ( !level.isClientSide ) {
                 if ( isReadyToMake() ) {
                     ItemStack stack = assemble(this.craftSlots);
-                    if ( name == null || TextUtils.isBlank(name) ) stack.remove(DataComponents.CUSTOM_NAME);
+                    if ( name == null || TextUtils.isBlank(name) ) {
+                        if ( stack.has(DataComponents.CUSTOM_NAME) ) stack.remove(DataComponents.CUSTOM_NAME);
+                    }
                     else stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
                     setSlotContent(level, 0, stack);
                 }

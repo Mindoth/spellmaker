@@ -9,7 +9,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 @EventBusSubscriber(modid = SpellMaker.MOD_ID)
-public class SleepEffect extends AbstractStunEffect implements MobEffectEndCallback {
+public class SleepEffect extends AbstractStunEffect implements SyncedMobEffect {
     public SleepEffect(MobEffectCategory pCategory, int pColor) {
         super(pCategory, pColor);
     }

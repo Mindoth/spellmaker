@@ -36,7 +36,7 @@ public class FrostSigilItem extends SigilItem {
     @Override
     public void effectOnAllBlocksInList(Entity source, Entity directSource, BlockPos target, List<Integer> stats, DimVec3 location, Direction direction, boolean isInside) {
         int duration = stats.get(1);
-        int freezeTicks = duration * 20;
+        int freezeTicks = duration;
         Level level = location.getLevel();
         BlockState blockState = level.getBlockState(target);
         BlockState frozenBlock = Blocks.FROSTED_ICE.defaultBlockState();

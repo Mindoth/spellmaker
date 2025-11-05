@@ -1,14 +1,18 @@
 package net.mindoth.spellmaker.mixin;
 
 import net.mindoth.spellmaker.mobeffect.AbstractStunEffect;
-import net.mindoth.spellmaker.mobeffect.MobEffectEndCallback;
+import net.mindoth.spellmaker.mobeffect.SyncedMobEffect;
 import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.registries.ModItems;
 import net.minecraft.core.Holder;
+import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -22,12 +26,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
 
-    @Inject(method = "onEffectRemoved", at = @At(value = "HEAD"))
-    public void onEffectRemovedCallback(MobEffectInstance effectInstance, CallbackInfo callbackInfo) {
+    /*@Inject(method = "onEffectAdded", at = @At(value = "HEAD"))
+    public void onEffectAddedCallback(MobEffectInstance instance, Entity entity, CallbackInfo callback) {
         LivingEntity living = (LivingEntity)(Object)this;
         if ( !living.level().isClientSide ) {
-            if ( effectInstance.getEffect().value() instanceof MobEffectEndCallback mobEffect ) {
-                mobEffect.onEffectRemoved(living, effectInstance.getAmplifier());
+            if ( instance.getEffect().value() instanceof SyncedMobEffect && living.level().getChunkSource() instanceof ServerChunkCache serverChunk ) {
+                serverChunk.broadcast(living, new ClientboundUpdateMobEffectPacket(living.getId(), instance, false));
+            }
+        }
+    }
+
+    @Inject(method = "onEffectUpdated", at = @At(value = "HEAD"))
+    public void onEffectUpdatedCallback(MobEffectInstance instance, boolean forced, Entity entity, CallbackInfo callback) {
+        LivingEntity living = (LivingEntity)(Object)this;
+        if ( !living.level().isClientSide ) {
+            if ( instance.getEffect().value() instanceof SyncedMobEffect && living.level().getChunkSource() instanceof ServerChunkCache serverChunk ) {
+                serverChunk.broadcast(living, new ClientboundUpdateMobEffectPacket(living.getId(), instance, false));
+            }
+        }
+    }*/
+
+    @Inject(method = "onEffectRemoved", at = @At(value = "HEAD"))
+    public void onEffectRemovedCallback(MobEffectInstance instance, CallbackInfo callback) {
+        LivingEntity living = (LivingEntity)(Object)this;
+        if ( !living.level().isClientSide ) {
+            if ( instance.getEffect().value() instanceof SyncedMobEffect mobEffect ) {
+                mobEffect.onEffectRemoved(living, instance.getAmplifier());
+                if ( living.level().getChunkSource() instanceof ServerChunkCache serverChunk ) {
+                    serverChunk.broadcast(living, new ClientboundRemoveMobEffectPacket(living.getId(), instance.getEffect()));
+                }
             }
         }
     }
@@ -58,14 +85,14 @@ public class LivingEntityMixin {
     }
 
     @Inject(method = "hasEffect", at=@At("HEAD"), cancellable = true)
-    private void fishHasEffect(Holder<MobEffect> mobEffect, CallbackInfoReturnable<Boolean> cir) {
+    private void fishHasEffect(Holder<MobEffect> mobEffect, CallbackInfoReturnable<Boolean> callback) {
         LivingEntity living = (LivingEntity)(Object)this;
-        if ( mobEffect == MobEffects.NIGHT_VISION && isFishInWater(living) ) cir.setReturnValue(true);
+        if ( mobEffect == MobEffects.NIGHT_VISION && isFishInWater(living) ) callback.setReturnValue(true);
     }
 
     @Inject(method = "getEffect", at=@At("HEAD"), cancellable = true)
-    private void fishGetEffect(Holder<MobEffect> mobEffect, CallbackInfoReturnable<MobEffectInstance> cir) {
+    private void fishGetEffect(Holder<MobEffect> mobEffect, CallbackInfoReturnable<MobEffectInstance> callback) {
         LivingEntity living = (LivingEntity)(Object)this;
-        if ( mobEffect == MobEffects.NIGHT_VISION && isFishInWater(living) ) cir.setReturnValue(NIGHT_VISION);
+        if ( mobEffect == MobEffects.NIGHT_VISION && isFishInWater(living) ) callback.setReturnValue(NIGHT_VISION);
     }
 }
