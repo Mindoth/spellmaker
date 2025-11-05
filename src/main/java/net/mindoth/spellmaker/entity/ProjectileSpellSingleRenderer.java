@@ -2,6 +2,7 @@ package net.mindoth.spellmaker.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mindoth.shadowizardlib.ShadowizardLib;
+import net.mindoth.spellmaker.item.armor.ModArmorItem;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -11,6 +12,7 @@ public class ProjectileSpellSingleRenderer extends EntityRenderer<ProjectileSpel
 
     public ProjectileSpellSingleRenderer(EntityRendererProvider.Context context) {
         super(context);
+        ModArmorItem.init(context);
     }
 
     @Override
