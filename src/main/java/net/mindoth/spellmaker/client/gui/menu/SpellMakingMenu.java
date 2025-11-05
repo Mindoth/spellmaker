@@ -30,7 +30,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.apache.http.util.TextUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -201,7 +200,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             if ( !level.isClientSide ) {
                 if ( isReadyToMake() ) {
                     ItemStack stack = assemble(this.craftSlots);
-                    if ( name == null || TextUtils.isBlank(name) ) {
+                    if ( isEmpty(name) || isBlank(name) ) {
                         if ( stack.has(DataComponents.CUSTOM_NAME) ) stack.remove(DataComponents.CUSTOM_NAME);
                     }
                     else stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
@@ -209,6 +208,18 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                 }
             }
         });
+    }
+
+    //Server can't find TextUtils class, so I brought some methods over
+    public static boolean isEmpty(final CharSequence s) {
+        if ( s == null ) return true;
+        return s.length() == 0;
+    }
+
+    public static boolean isBlank(final CharSequence s) {
+        if ( s == null ) return true;
+        for ( int i = 0; i < s.length(); i++ ) if ( !Character.isWhitespace(s.charAt(i)) ) return false;
+        return true;
     }
 
     public boolean isReadyToDump() {

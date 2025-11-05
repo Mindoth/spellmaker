@@ -44,16 +44,7 @@ public class PolymorphEffect extends MobEffect implements SyncedMobEffect {
         mob.getPersistentData().putBoolean(NBT_KEY_RE_POLYMORPH, true);
     }
 
-    @Override
-    public void onEffectStarted(LivingEntity living, int pAmplifier) {
-        super.onEffectAdded(living, pAmplifier);
-        if ( living.hasEffect(ModEffects.POLYMORPH) && living.getEffect(ModEffects.POLYMORPH) instanceof UniqueMobEffectInstance uniqueInstance ) {
-            doPolymorph(living, uniqueInstance.getId());
-        }
-    }
-
-    public static void doPolymorph(LivingEntity living, ResourceLocation id) {
-        removeModifiers(living);
+    public static void doPolymorph(LivingEntity living, AttributeModifier nameTagModifier) {
         AttributeInstance nameTagDistance = living.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
         if ( nameTagDistance != null && !nameTagDistance.hasModifier(nameTagModifier.id()) ) nameTagDistance.addPermanentModifier(nameTagModifier);
         if ( living instanceof Mob target ) polymorphMob(target, nameTagModifier);
@@ -117,7 +108,6 @@ public class PolymorphEffect extends MobEffect implements SyncedMobEffect {
             entity.setDeltaMovement(oldMob.getDeltaMovement());
             if ( entity instanceof LivingEntity newLiving ) {
                 if ( newLiving.hasEffect(ModEffects.POLYMORPH) ) newLiving.removeEffect(ModEffects.POLYMORPH);
-                removeModifiers(newLiving);
             }
             level.addFreshEntity(entity);
             oldMob.discard();
@@ -125,18 +115,18 @@ public class PolymorphEffect extends MobEffect implements SyncedMobEffect {
         }));
     }
 
-    public static EntityType getTypeFromUUID(ResourceLocation uuid) {
-        for ( ResourceLocation id : BuiltInRegistries.ITEM.keySet() ) {
-            Item item = BuiltInRegistries.ITEM.get(id);
-            if ( item instanceof PolymorphSigilItem rune && Objects.equals(rune.getUUID().toString(), uuid.toString()) ) return rune.getEntityType();
+    public static EntityType getTypeFromUUID(ResourceLocation id) {
+        for ( ResourceLocation key : BuiltInRegistries.ITEM.keySet() ) {
+            Item item = BuiltInRegistries.ITEM.get(key);
+            if ( item instanceof PolymorphSigilItem rune && Objects.equals(rune.getUUID().toString(), id.toString()) ) return rune.getEntityType();
         }
         return null;
     }
 
-    public static PolymorphSigilItem getSigilFromUUID(ResourceLocation uuid) {
-        for ( ResourceLocation id : BuiltInRegistries.ITEM.keySet() ) {
-            Item item = BuiltInRegistries.ITEM.get(id);
-            if ( item instanceof PolymorphSigilItem rune && Objects.equals(rune.getUUID().toString(), uuid.toString()) ) return rune;
+    public static PolymorphSigilItem getSigilFromUUID(ResourceLocation id) {
+        for ( ResourceLocation key : BuiltInRegistries.ITEM.keySet() ) {
+            Item item = BuiltInRegistries.ITEM.get(key);
+            if ( item instanceof PolymorphSigilItem rune && Objects.equals(rune.getUUID().toString(), id.toString()) ) return rune;
         }
         return null;
     }

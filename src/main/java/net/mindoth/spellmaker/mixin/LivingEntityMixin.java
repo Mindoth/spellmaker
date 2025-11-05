@@ -1,18 +1,16 @@
 package net.mindoth.spellmaker.mixin;
 
 import net.mindoth.spellmaker.mobeffect.AbstractStunEffect;
-import net.mindoth.spellmaker.mobeffect.SyncedMobEffect;
 import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
+import net.mindoth.spellmaker.mobeffect.SyncedMobEffect;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.registries.ModItems;
 import net.minecraft.core.Holder;
 import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket;
-import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -25,26 +23,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
-
-    /*@Inject(method = "onEffectAdded", at = @At(value = "HEAD"))
-    public void onEffectAddedCallback(MobEffectInstance instance, Entity entity, CallbackInfo callback) {
-        LivingEntity living = (LivingEntity)(Object)this;
-        if ( !living.level().isClientSide ) {
-            if ( instance.getEffect().value() instanceof SyncedMobEffect && living.level().getChunkSource() instanceof ServerChunkCache serverChunk ) {
-                serverChunk.broadcast(living, new ClientboundUpdateMobEffectPacket(living.getId(), instance, false));
-            }
-        }
-    }
-
-    @Inject(method = "onEffectUpdated", at = @At(value = "HEAD"))
-    public void onEffectUpdatedCallback(MobEffectInstance instance, boolean forced, Entity entity, CallbackInfo callback) {
-        LivingEntity living = (LivingEntity)(Object)this;
-        if ( !living.level().isClientSide ) {
-            if ( instance.getEffect().value() instanceof SyncedMobEffect && living.level().getChunkSource() instanceof ServerChunkCache serverChunk ) {
-                serverChunk.broadcast(living, new ClientboundUpdateMobEffectPacket(living.getId(), instance, false));
-            }
-        }
-    }*/
 
     @Inject(method = "onEffectRemoved", at = @At(value = "HEAD"))
     public void onEffectRemovedCallback(MobEffectInstance instance, CallbackInfo callback) {

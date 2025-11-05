@@ -4,8 +4,7 @@ import com.google.common.collect.Lists;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
-import net.mindoth.spellmaker.mobeffect.UniqueMobEffectInstance;
-import net.mindoth.spellmaker.network.SyncSizePacket;
+import net.mindoth.spellmaker.network.SyncSizeForTrackersPacket;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.registries.ModItems;
 import net.mindoth.spellmaker.util.SpellColor;
@@ -30,7 +29,6 @@ import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.EntityEvent;
 import net.neoforged.neoforge.event.entity.living.LivingBreatheEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;
@@ -40,18 +38,18 @@ import java.util.Objects;
 @EventBusSubscriber(modid = SpellMaker.MOD_ID)
 public abstract class PolymorphSigilItem extends SigilItem {
 
-    private final ResourceLocation uuid;
+    private final ResourceLocation id;
     public ResourceLocation getUUID() {
-        return this.uuid;
+        return this.id;
     }
     private final EntityType entityType;
     public EntityType getEntityType() {
         return this.entityType;
     }
 
-    public PolymorphSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier, ResourceLocation uuid, EntityType entityType) {
+    public PolymorphSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier, ResourceLocation id, EntityType entityType) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier);
-        this.uuid = uuid;
+        this.id = id;
         this.entityType = entityType;
     }
 
@@ -60,19 +58,12 @@ public abstract class PolymorphSigilItem extends SigilItem {
         if ( !(target instanceof LivingEntity living) || !target.isAttackable() || !target.isAlive() ) return;
         int duration = stats.get(1);
         int polymorphTicks = duration * 20;
-        UniqueMobEffectInstance instance = new UniqueMobEffectInstance(ModEffects.POLYMORPH, polymorphTicks, 0, false, false, getUUID());
+        MobEffectInstance instance = new MobEffectInstance(ModEffects.POLYMORPH, polymorphTicks, 0, false, false);
         living.addEffect(instance);
-        /*if ( CommonHooks.canMobEffectBeApplied(living, instance) ) {
-            living.forceAddEffect(instance, null);
-            //PolymorphEffect.doPolymorph(living, new AttributeModifier(getUUID(), 0.0D, AttributeModifier.Operation.ADD_VALUE));
-        }
-        if ( living.addEffect(instance) ) {
-            PolymorphEffect.doPolymorph(living, new AttributeModifier(getUUID(), 0.0D, AttributeModifier.Operation.ADD_VALUE));
-        }
-        else if ( living.hasEffect(ModEffects.POLYMORPH) ) {
+        if ( CommonHooks.canMobEffectBeApplied(living, instance, source) ) {
             living.forceAddEffect(instance, null);
             PolymorphEffect.doPolymorph(living, new AttributeModifier(getUUID(), 0.0D, AttributeModifier.Operation.ADD_VALUE));
-        }*/
+        }
     }
 
     public void addStatModifiers(LivingEntity living) {
@@ -122,34 +113,15 @@ public abstract class PolymorphSigilItem extends SigilItem {
         }
     }
 
+    public static final AttributeModifier SYNC_POLYMORPH_SIZE_CLIENT = new AttributeModifier(ResourceLocation.parse("9eb86aa6-343f-430c-8296-1a5fe6b400fa"),
+            0.0D, AttributeModifier.Operation.ADD_VALUE);
+
     public static void syncDimensions(LivingEntity living) {
         if ( !(living instanceof ServerPlayer player) ) return;
         player.refreshDimensions();
-        PacketDistributor.sendToPlayersTrackingEntity(player, new SyncSizePacket(player.getId(), false));
-        PacketDistributor.sendToPlayer(player, new SyncSizePacket(player.getId(), true));
-        //AttributeInstance nameTagDistance = player.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
-        //if ( nameTagDistance == null ) return;
-        //if ( !nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_CLIENT.id()) ) nameTagDistance.addPermanentModifier(SYNC_POLYMORPH_SIZE_CLIENT);
-        //if ( !nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_SERVER.id()) ) nameTagDistance.addPermanentModifier(SYNC_POLYMORPH_SIZE_SERVER);
-    }
-
-    /*public static final AttributeModifier SYNC_POLYMORPH_SIZE_CLIENT = new AttributeModifier(ResourceLocation.parse("9eb86aa6-343f-430c-8296-1a5fe6b400fa"),
-            0.0D, AttributeModifier.Operation.ADD_VALUE);
-
-    public static final AttributeModifier SYNC_POLYMORPH_SIZE_SERVER = new AttributeModifier(ResourceLocation.parse("380f5e37-276f-43c3-9646-19ffd6b41fb3"),
-            0.0D, AttributeModifier.Operation.ADD_VALUE);
-
-    @SubscribeEvent
-    public static void SyncPolymorphSizeServer(PlayerTickEvent.Pre event) {
-        if ( !(event.getEntity() instanceof ServerPlayer player) || player.level().isClientSide ) return;
         AttributeInstance nameTagDistance = player.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
         if ( nameTagDistance == null ) return;
-        if ( nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_SERVER.id()) ) {
-            nameTagDistance.removeModifier(SYNC_POLYMORPH_SIZE_SERVER);
-            player.refreshDimensions();
-            PacketDistributor.sendToPlayersTrackingEntity(player, new SyncSizePacket(player.getId()));
-            System.out.println("SENT PACKET. Is " + player.getScoreboardName() + " polymorphed: " + PolymorphEffect.isPolymorphed(player));
-        }
+        if ( !nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_CLIENT.id()) ) nameTagDistance.addPermanentModifier(SYNC_POLYMORPH_SIZE_CLIENT);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -161,9 +133,10 @@ public abstract class PolymorphSigilItem extends SigilItem {
         if ( nameTagDistance == null ) return;
         if ( nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_CLIENT.id()) ) {
             nameTagDistance.removeModifier(SYNC_POLYMORPH_SIZE_CLIENT);
-            player.refreshDimensions();
+            //player.refreshDimensions();
+            PacketDistributor.sendToServer(new SyncSizeForTrackersPacket(player.getId()));
         }
-    }*/
+    }
 
     @SubscribeEvent
     public static void refreshPolymorphSize(EntityEvent.Size event) {
@@ -183,12 +156,10 @@ public abstract class PolymorphSigilItem extends SigilItem {
         return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getTransformationSigil(player) == ModItems.FISH_FORM_SIGIL.get();
     }
 
-    //TODO: Check fish breathing
     @SubscribeEvent
     public static void fishPolymorphBreathe(LivingBreatheEvent event) {
         if ( !(event.getEntity() instanceof Player player) || player.isCreative() ) return;
         if ( !isFish(player) ) return;
         event.setCanBreathe(player.isInWater());
-        //event.setCanRefillAir(player.isInWater());
     }
 }

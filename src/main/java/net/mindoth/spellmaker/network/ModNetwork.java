@@ -10,6 +10,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -23,16 +24,20 @@ public class ModNetwork {
         final PayloadRegistrar payloadRegistrar = event.registrar(SpellMaker.MOD_ID).versioned("1.0.0").optional();
 
         payloadRegistrar.playToClient(SyncClientManaPacket.TYPE, SyncClientManaPacket.STREAM_CODEC, SyncClientManaPacket::handle);
-        payloadRegistrar.playToServer(AskToOpenSpellBookPacket.TYPE, AskToOpenSpellBookPacket.STREAM_CODEC, AskToOpenSpellBookPacket::handle);
-        payloadRegistrar.playToClient(OpenSpellBookPacket.TYPE, OpenSpellBookPacket.STREAM_CODEC, OpenSpellBookPacket::handle);
-        payloadRegistrar.playToServer(RemoveScrollFromBookPacket.TYPE, RemoveScrollFromBookPacket.STREAM_CODEC, RemoveScrollFromBookPacket::handle);
-        payloadRegistrar.playToServer(UpdateBookDataPacket.TYPE, UpdateBookDataPacket.STREAM_CODEC, UpdateBookDataPacket::handle);
+
         payloadRegistrar.playToServer(EditSpellFormPacket.TYPE, EditSpellFormPacket.STREAM_CODEC, EditSpellFormPacket::handle);
         payloadRegistrar.playToServer(EditSpellStatsPacket.TYPE, EditSpellStatsPacket.STREAM_CODEC, EditSpellStatsPacket::handle);
         payloadRegistrar.playToServer(MakeSpellPacket.TYPE, MakeSpellPacket.STREAM_CODEC, MakeSpellPacket::handle);
         payloadRegistrar.playToServer(DumpSpellPacket.TYPE, DumpSpellPacket.STREAM_CODEC, DumpSpellPacket::handle);
-        payloadRegistrar.playToClient(SyncSizePacket.TYPE, SyncSizePacket.STREAM_CODEC, SyncSizePacket::handle);
+
+        payloadRegistrar.playToServer(AskToOpenSpellBookPacket.TYPE, AskToOpenSpellBookPacket.STREAM_CODEC, AskToOpenSpellBookPacket::handle);
+        payloadRegistrar.playToClient(OpenSpellBookPacket.TYPE, OpenSpellBookPacket.STREAM_CODEC, OpenSpellBookPacket::handle);
+        payloadRegistrar.playToServer(RemoveScrollFromBookPacket.TYPE, RemoveScrollFromBookPacket.STREAM_CODEC, RemoveScrollFromBookPacket::handle);
+        payloadRegistrar.playToServer(UpdateBookDataPacket.TYPE, UpdateBookDataPacket.STREAM_CODEC, UpdateBookDataPacket::handle);
         payloadRegistrar.playToClient(UpdateBookDataClientPacket.TYPE, UpdateBookDataClientPacket.STREAM_CODEC, UpdateBookDataClientPacket::handle);
+
+        payloadRegistrar.playToServer(SyncSizeForTrackersPacket.TYPE, SyncSizeForTrackersPacket.STREAM_CODEC, SyncSizeForTrackersPacket::handle);
+        payloadRegistrar.playToClient(SyncSizePacket.TYPE, SyncSizePacket.STREAM_CODEC, SyncSizePacket::handle);
     }
 
     private static <T> T legacyReadById(FriendlyByteBuf buf, IdMap<T> pIdMap) {
@@ -54,6 +59,10 @@ public class ModNetwork {
             ItemStack stack = new ItemStack(item, i);
             ModData.setLegacyTag(stack, buf.readNbt());
             if ( buf.readBoolean() ) stack.set(DataComponents.CUSTOM_NAME, Component.literal(buf.readUtf()));
+            if ( buf.readBoolean() ) {
+                DyedItemColor color = new DyedItemColor(buf.readInt(), buf.readBoolean());
+                stack.set(DataComponents.DYED_COLOR, color);
+            }
             return stack;
         }
     }
@@ -70,6 +79,12 @@ public class ModNetwork {
             if ( stack.has(DataComponents.CUSTOM_NAME) ) {
                 buf.writeBoolean(true);
                 buf.writeUtf(stack.getHoverName().getString());
+            }
+            else buf.writeBoolean(false);
+            if ( stack.has(DataComponents.DYED_COLOR) ) {
+                buf.writeBoolean(true);
+                buf.writeInt(stack.get(DataComponents.DYED_COLOR).rgb());
+                buf.writeBoolean(stack.get(DataComponents.DYED_COLOR).showInTooltip());
             }
             else buf.writeBoolean(false);
         }

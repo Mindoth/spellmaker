@@ -114,17 +114,4 @@ public abstract class HelperMethods {
             if ( effect.getEffect().value() instanceof SyncedMobEffect callback ) callback.onEffectRemoved(entity, effect.getAmplifier());
         });
     }
-
-    /*@SubscribeEvent
-    public static void onPlayerStartTrackingEntity(PlayerEvent.StartTracking event) {
-        if ( event.getEntity() instanceof ServerPlayer serverPlayer ) {
-            if ( event.getTarget() instanceof LivingEntity living ) {
-                for ( MobEffectInstance instance : living.getActiveEffects() ) {
-                    if ( instance.getEffect().value() instanceof SyncedMobEffect ) {
-                        serverPlayer.connection.send(new ClientboundUpdateMobEffectPacket(living.getId(), instance, false));
-                    }
-                }
-            }
-        }
-    }*/
 }
