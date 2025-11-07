@@ -1,18 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": "spellmaker:wood_ash",
+    "C": "minecraft:clay_ball"
+  },
   "pattern": [
     "AC ",
     "CA ",
     "   "
   ],
-  "key": {
-    "A": {
-      "item": "spellmaker:wood_ash"
-    },
-    "C": {
-      "item": "minecraft:clay_ball"
-    }
-  },
   "result": {
     "id": "spellmaker:rune_essence",
     "count": 1

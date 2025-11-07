@@ -13,7 +13,10 @@ import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -21,10 +24,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +39,7 @@ public class SpellBookScreen extends AbstractModScreen {
 
     public final ItemStack book;
     public int getSelectedSlot() {
-        return ModData.getLegacyTag(this.book).getInt(SpellBookItem.NBT_KEY_BOOK_SLOT);
+        return ModData.getLegacyTag(this.book).getInt(SpellBookItem.NBT_KEY_BOOK_SLOT).get();
     }
     private List<ItemStack> itemList = Lists.newArrayList();
     public final List<ItemStack> scrollList;
@@ -203,7 +207,7 @@ public class SpellBookScreen extends AbstractModScreen {
     private void handleSelectButton(Button button) {
         if ( !this.selectButtonList.contains(button) ) return;
         int index = this.selectButtonList.indexOf(button) + (SpellBookItem.pageSize * (this.spreadNumber));
-        PacketDistributor.sendToServer(new UpdateBookDataPacket(this.book, this.scrollList, index, false, false));
+        ClientPacketDistributor.sendToServer(new UpdateBookDataPacket(this.book, this.scrollList, index, false, false));
     }
 
     private void handleSlotButton(Button button) {
@@ -213,7 +217,7 @@ public class SpellBookScreen extends AbstractModScreen {
         Item item = stack.getItem();
         if ( item instanceof ParchmentItem ) {
             int index = this.scrollList.indexOf(stack);
-            PacketDistributor.sendToServer(new RemoveScrollFromBookPacket(this.book, this.scrollList, index, true, true));
+            ClientPacketDistributor.sendToServer(new RemoveScrollFromBookPacket(this.book, this.scrollList, index, true, true));
         }
     }
 
@@ -243,7 +247,7 @@ public class SpellBookScreen extends AbstractModScreen {
                 else if ( index == getSelectedSlot() - 1 ) newSlot = getSelectedSlot() - 1;
             }
             this.scrollList.set(index, second);
-            PacketDistributor.sendToServer(new UpdateBookDataPacket(this.book, this.scrollList, newSlot, true, false));
+            ClientPacketDistributor.sendToServer(new UpdateBookDataPacket(this.book, this.scrollList, newSlot, true, false));
         }
     }
 
@@ -295,7 +299,7 @@ public class SpellBookScreen extends AbstractModScreen {
         int y = minecraft.getWindow().getGuiScaledHeight() / 2;
 
         //Background
-        graphics.blit(TEXTURE, x - 140, y - 90, 0, 0, 280, 180, 280, 280);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x - 140, y - 90, 0, 0, 280, 180, 280, 280);
 
         //Arrows
         if ( this.rightArrow.visible ) renderTexture(this.rightArrow, graphics, TEXTURE, x + this.rightArrowOffsetX, y + this.arrowOffsetY,
@@ -327,7 +331,7 @@ public class SpellBookScreen extends AbstractModScreen {
                     int yPos = y - 74 + (row * this.squareSpacingY) + this.yOffset;
 
                     if ( stack.getItem() instanceof ParchmentItem ) {
-                        graphics.blit(TEXTURE, xPos - 3, yPos - 9, 58, 180, 105, 34, 280, 280);
+                        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, xPos - 3, yPos - 9, 58, 180, 105, 34, 280, 280);
                         Component spellTitle = stack.has(DataComponents.CUSTOM_NAME) ? Component.literal(stack.getHoverName().getString())
                                 : Component.translatable("tooltip.spellmaker.untitled").setStyle(Style.EMPTY.withItalic(true));
                         int titleX = xPos + 61;
@@ -337,24 +341,30 @@ public class SpellBookScreen extends AbstractModScreen {
                         //Selected Spell
                         if ( !spellSelected && !this.book.isEmpty() && bookTag != null && bookTag.contains(SpellBookItem.NBT_KEY_BOOK_SLOT) ) {
                             if ( getSelectedSlot() > -1 && getSelectedSlot() < this.itemList.size() && stack == this.scrollList.get(getSelectedSlot()) ) {
-                                graphics.blit(TEXTURE, xPos + 19, yPos - 9, 163, 180, 83, 34, 280, 280);
+                                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, xPos + 19, yPos - 9, 163, 180, 83, 34, 280, 280);
                                 spellSelected = true;
                             }
                         }
                         if ( this.selectButtonList.get(i).isHovered() ) {
-                            graphics.fill(RenderType.guiOverlay(), xPos + 22, yPos - 6, xPos + 99, yPos + 22, Integer.MIN_VALUE);
+                            graphics.fill(RenderPipelines.GUI, xPos + 22, yPos - 6, xPos + 99, yPos + 22, Integer.MIN_VALUE);
                         }
                     }
 
                     if ( stack.getItem() instanceof ParchmentItem ) {
                         if ( this.slotButtonList.get(i).isHovered() ) {
                             renderItemWithDecorations(graphics, stack, xPos, yPos);
-                            graphics.fill(RenderType.guiOverlay(), xPos, yPos, xPos + 16, yPos + 16, Integer.MIN_VALUE);
-                            graphics.renderTooltip(this.font, stack, mouseX, mouseY);
+                            graphics.fill(RenderPipelines.GUI, xPos, yPos, xPos + 16, yPos + 16, Integer.MIN_VALUE);
+
+                            //TODO: no idea if this tooltip works or not
+                            //Update, it doesn't
+                            Component component = stack.getStyledHoverName();
+                            ClientTooltipComponent clienttooltipcomponent = ClientTooltipComponent.create(component.getVisualOrderText());
+                            graphics.renderTooltip(this.font, List.of(clienttooltipcomponent), mouseX, mouseY,
+                                    DefaultTooltipPositioner.INSTANCE, stack.get(DataComponents.TOOLTIP_STYLE));
                         }
                         else {
                             ResourceLocation icon = getSpellIcon(stack);
-                            graphics.blit(icon, xPos, yPos, 0, 0, 16, 16, 16, 16);
+                            graphics.blit(RenderPipelines.GUI_TEXTURED, icon, xPos, yPos, 0, 0, 16, 16, 16, 16);
                         }
                     }
 
@@ -382,7 +392,7 @@ public class SpellBookScreen extends AbstractModScreen {
             int textX = x - (this.font.width(pageNumTxt) / 2);
             int pageNumXOff = 67;
             int pageNumX = pageNum % 2 == 0 ? textX + pageNumXOff : textX - pageNumXOff;
-            graphics.drawString(this.font, pageNumTxt, pageNumX, y + this.arrowOffsetY, 0, false);
+            graphics.drawString(this.font, pageNumTxt, pageNumX, y + this.arrowOffsetY, ARGB.opaque(0), false);
         }
     }
 
@@ -390,8 +400,8 @@ public class SpellBookScreen extends AbstractModScreen {
         CompoundTag tag = ModData.getLegacyTag(scroll);
         AbstractSpellForm form = DataHelper.getFormFromNbt(tag);
         List<ItemStack> sigilList = DataHelper.getSpellStackFromTag(tag);
-        List<Integer> magnitudeList = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
-        List<Integer> durationList = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
+        List<Integer> magnitudeList = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES).get());
+        List<Integer> durationList = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS).get());
         return SpellColor.getSpellIcon(form, sigilList, magnitudeList, durationList);
     }
 
@@ -408,8 +418,7 @@ public class SpellBookScreen extends AbstractModScreen {
         for ( int i = 0; i < nameLineList.size(); i++ ) {
             Component component = nameLineList.get(i);
             int height = titleY - (nameLineList.size() - 1) * 4;
-            //graphics.drawString(this.font, spellTitle, titleX - this.font.width(spellTitle) / 2, titleY, 0, false);
-            graphics.drawString(this.font, component, titleX - this.font.width(component) / 2, height + this.font.lineHeight * (i + 1), 0, false);
+            graphics.drawString(this.font, component, titleX - this.font.width(component) / 2, height + this.font.lineHeight * (i + 1), ARGB.opaque(0), false);
         }
     }
 
@@ -449,15 +458,15 @@ public class SpellBookScreen extends AbstractModScreen {
     }
 
     @Override
-    public boolean keyPressed(int key, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
         Minecraft instance = Minecraft.getInstance();
         if ( instance.player != null ) {
             Player player = instance.player;
-            if ( key == instance.options.keyInventory.getKey().getValue() ) {
+            if ( event.key() == instance.options.keyInventory.getKey().getValue() ) {
                 player.closeContainer();
                 return true;
             }
         }
-        return super.keyPressed(key, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 }

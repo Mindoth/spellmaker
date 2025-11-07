@@ -13,8 +13,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class EditSpellFormPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<EditSpellFormPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "edit_spell_form"));
+    public static final Type<EditSpellFormPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "edit_spell_form"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, EditSpellFormPacket> STREAM_CODEC =
             CustomPacketPayload.codec(EditSpellFormPacket::encode, EditSpellFormPacket::new);

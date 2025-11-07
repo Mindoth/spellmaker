@@ -22,8 +22,8 @@ public abstract class DataHelper {
     }
 
     public static AbstractSpellForm getFormFromNbt(CompoundTag tag) {
-        ResourceLocation key = ResourceLocation.parse(tag.getString(ParchmentItem.NBT_KEY_SPELL_FORM));
-        return ModSpellForms.SPELL_FORM_REGISTRY.get(key);
+        ResourceLocation key = ResourceLocation.parse(tag.getString(ParchmentItem.NBT_KEY_SPELL_FORM).get());
+        return ModSpellForms.SPELL_FORM_REGISTRY.getValue(key);
     }
 
     public static String getStringFromSpellStack(List<ItemStack> list) {
@@ -37,10 +37,10 @@ public abstract class DataHelper {
     }
 
     public static List<ItemStack> getSpellStackFromTag(CompoundTag tag) {
-        String stringList = tag.getString(ParchmentItem.NBT_KEY_SPELL_SIGILS);
+        String stringList = tag.getString(ParchmentItem.NBT_KEY_SPELL_SIGILS).get();
         List<ItemStack> list = Lists.newArrayList();
         for ( String string : List.of(stringList.split(",")) ) {
-            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(string));
+            Item item = BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(string));
             ItemStack stack = new ItemStack(item);
             if ( stack.getItem() instanceof SigilItem || stack.isEmpty() ) list.add(stack);
         }
@@ -48,9 +48,9 @@ public abstract class DataHelper {
     }
 
     public static LinkedHashMap<SigilItem, List<Integer>> createMapFromTag(CompoundTag tag) {
-        List<SigilItem> sigilList = DataHelper.getSigilListFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_SIGILS));
-        List<Integer> magnitudes = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
-        List<Integer> durations = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
+        List<SigilItem> sigilList = DataHelper.getSigilListFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_SIGILS).get());
+        List<Integer> magnitudes = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES).get());
+        List<Integer> durations = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS).get());
         return createMapFromLists(sigilList, magnitudes, durations);
     }
 
@@ -79,7 +79,7 @@ public abstract class DataHelper {
     public static List<SigilItem> getSigilListFromString(String stringList) {
         List<SigilItem> list = Lists.newArrayList();
         for ( String string : List.of(stringList.split(",")) ) {
-            if ( BuiltInRegistries.ITEM.get(ResourceLocation.parse(string)) instanceof SigilItem sigil ) list.add(sigil);
+            if ( BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(string)) instanceof SigilItem sigil ) list.add(sigil);
         }
         return list;
     }

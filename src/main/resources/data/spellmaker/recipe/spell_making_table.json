@@ -1,21 +1,15 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "#minecraft:wool",
+    "S": "minecraft:stone",
+    "B": "minecraft:bookshelf"
+  },
   "pattern": [
     "###",
     "SBS",
     "   "
   ],
-  "key": {
-    "#": {
-      "tag": "minecraft:wool"
-    },
-    "S": {
-      "item": "minecraft:stone"
-    },
-    "B": {
-      "item": "minecraft:bookshelf"
-    }
-  },
   "result": {
     "id": "spellmaker:spell_making_table",
     "count": 1

@@ -18,7 +18,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -49,23 +49,20 @@ public class StaffItem extends Item {
 
     @Override
     @Nonnull
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, @Nonnull InteractionHand hand) {
-        InteractionResultHolder<ItemStack> result = InteractionResultHolder.fail(player.getItemInHand(hand));
-        if ( !level.isClientSide ) {
-            ItemStack staff = player.getItemInHand(hand);
-            if ( !player.getCooldowns().isOnCooldown(staff.getItem()) ) {
-                startCasting(player, staff);
-                result = InteractionResultHolder.success(player.getItemInHand(hand));
-            }
+    public InteractionResult use(Level level, Player player, @Nonnull InteractionHand hand) {
+        ItemStack staff = player.getItemInHand(hand);
+        if ( !player.getCooldowns().isOnCooldown(staff) ) {
+            if ( player instanceof ServerPlayer serverPlayer ) startCasting(serverPlayer, staff);
+            return InteractionResult.SUCCESS;
         }
-        return result;
+        return InteractionResult.FAIL;
     }
 
     private static void startCasting(Player player, ItemStack staff) {
         ItemStack book = SpellBookItem.getTaggedSpellBookSlot(player);
         CompoundTag bookTag = ModData.getLegacyTag(book);
         if ( !book.isEmpty() && bookTag != null && bookTag.contains(SpellBookItem.NBT_KEY_BOOK_SLOT)
-                && bookTag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) >= 0 && SpellBookItem.getActiveScrollFromBook(book) != null ) {
+                && bookTag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT).get() >= 0 && SpellBookItem.getActiveScrollFromBook(book) != null ) {
             ItemStack scroll = SpellBookItem.getActiveScrollFromBook(book);
             if ( scroll != null && ModData.getLegacyTag(scroll) != null ) {
                 CompoundTag scrollTag = ModData.getLegacyTag(scroll);
@@ -98,7 +95,7 @@ public class StaffItem extends Item {
 
     private static void handleCooldowns(LivingEntity caster, ItemStack staff, int cooldown) {
         caster.stopUsingItem();
-        addCastingCooldown(caster, staff.getItem(), cooldown);
+        addCastingCooldown(caster, staff, cooldown);
     }
 
     private static void addItemDamage(ItemStack castingItem, int amount, LivingEntity living) {
@@ -115,7 +112,7 @@ public class StaffItem extends Item {
     }
 
     private static void addWhiffParticles(Entity caster) {
-        if ( !caster.level().isClientSide && caster.level() instanceof ServerLevel level ) {
+        if ( !caster.level().isClientSide() && caster.level() instanceof ServerLevel level ) {
             Vec3 start = caster.getEyePosition().add(caster.getLookAngle().multiply(1.0D, 1.0D, 1.0D));
             Vec3 dir = caster.getLookAngle();
             for ( int i = 0; i < 6; i++ ) {
@@ -126,14 +123,14 @@ public class StaffItem extends Item {
     }
 
     private static void playWhiffSound(Entity caster) {
-        if ( caster instanceof Player player && !player.level().isClientSide && player.level() instanceof ServerLevel level ) {
+        if ( caster instanceof Player player && !player.level().isClientSide() && player.level() instanceof ServerLevel level ) {
             player.playNotifySound(SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
             level.playSound(player, player.getOnPos(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
         }
     }
 
     private static void playCastingSound(Entity caster) {
-        if ( caster instanceof Player player && !player.level().isClientSide && player.level() instanceof ServerLevel level ) {
+        if ( caster instanceof Player player && !player.level().isClientSide() && player.level() instanceof ServerLevel level ) {
             player.playNotifySound(SoundEvents.ENDER_PEARL_THROW, SoundSource.PLAYERS, 0.5F, 1.0F);
             level.playSound(player, player.getOnPos(), SoundEvents.ENDER_PEARL_THROW, SoundSource.PLAYERS, 0.5F, 1.0F);
             player.playNotifySound(SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.5F, 2.0F);
@@ -141,8 +138,8 @@ public class StaffItem extends Item {
         }
     }
 
-    private static void addCastingCooldown(Entity entity, Item item, int cooldown) {
-        if ( entity instanceof Player player ) player.getCooldowns().addCooldown(item, cooldown);
+    private static void addCastingCooldown(Entity entity, ItemStack staff, int cooldown) {
+        if ( entity instanceof Player player ) player.getCooldowns().addCooldown(staff, cooldown);
     }
 
     public static boolean isValidCastingItem(ItemStack staff) {
@@ -152,11 +149,6 @@ public class StaffItem extends Item {
     public static @Nonnull ItemStack getHeldCastingItem(LivingEntity playerEntity) {
         ItemStack staff = isValidCastingItem(playerEntity.getMainHandItem()) ? playerEntity.getMainHandItem() : null;
         return staff == null ? (isValidCastingItem(playerEntity.getOffhandItem()) ? playerEntity.getOffhandItem() : ItemStack.EMPTY) : staff;
-    }
-
-    @Override
-    public boolean isEnchantable(@Nonnull ItemStack stack) {
-        return false;
     }
 
     @Override

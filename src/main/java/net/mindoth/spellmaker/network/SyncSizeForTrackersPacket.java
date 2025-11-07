@@ -13,14 +13,14 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SyncSizeForTrackersPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<SyncSizeForTrackersPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "sync_size_for_trackers"));
+    public static final Type<SyncSizeForTrackersPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "sync_size_for_trackers"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncSizeForTrackersPacket> STREAM_CODEC =
             CustomPacketPayload.codec(SyncSizeForTrackersPacket::encode, SyncSizeForTrackersPacket::new);
 
     @Override
-    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+    public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 

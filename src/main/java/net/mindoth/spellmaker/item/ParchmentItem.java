@@ -13,11 +13,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ParchmentItem extends Item {
 
@@ -38,28 +40,28 @@ public class ParchmentItem extends Item {
     public static final String NBT_KEY_SPELL_NAME = "sm_spell_name";
     public static final String NBT_KEY_PAPER_TIER = "sm_paper_tier";
 
-    @OnlyIn(Dist.CLIENT)
+    //@OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> components, TooltipFlag tooltipFlag) {
         if ( ModData.getLegacyTag(stack) != null ) {
             CompoundTag tag = ModData.getLegacyTag(stack);
             if ( tag.contains(NBT_KEY_SPELL_FORM) ) {
-                AbstractSpellForm form = ModSpellForms.SPELL_FORM_REGISTRY.get(ResourceLocation.parse(tag.getString(NBT_KEY_SPELL_FORM)));
+                AbstractSpellForm form = ModSpellForms.SPELL_FORM_REGISTRY.getValue(ResourceLocation.parse(tag.getString(NBT_KEY_SPELL_FORM).get()));
                 int cost = calculateSpellCost(form, DataHelper.createMapFromTag(tag));
-                tooltip.add(Component.literal(""));
-                tooltip.add(Component.translatable("tooltip.spellmaker.cost")
+                components.accept(Component.literal(""));
+                components.accept(Component.translatable("tooltip.spellmaker.cost")
                         .append(Component.literal("" + cost)).withStyle(ChatFormatting.GRAY));
-                tooltip.add(Component.translatable("spellform.spellmaker." + form.getName()).withStyle(ChatFormatting.GRAY));
+                components.accept(Component.translatable("spellform.spellmaker." + form.getName()).withStyle(ChatFormatting.GRAY));
                 if ( tag.contains(NBT_KEY_SPELL_SIGILS) ) {
-                    List<SigilItem> list = DataHelper.getSigilListFromString(tag.getString(NBT_KEY_SPELL_SIGILS));
+                    List<SigilItem> list = DataHelper.getSigilListFromString(tag.getString(NBT_KEY_SPELL_SIGILS).get());
                     for ( SigilItem sigil : list ) {
                         String name = new ItemStack(sigil).getHoverName().getString();
-                        tooltip.add(Component.literal(" ").append(Component.literal(name).withStyle(ChatFormatting.GRAY)));
+                        components.accept(Component.literal(" ").append(Component.literal(name).withStyle(ChatFormatting.GRAY)));
                     }
                 }
             }
         }
-        super.appendHoverText(stack, context, tooltip, flagIn);
+        super.appendHoverText(stack, context, tooltipDisplay, components, tooltipFlag);
     }
 
     public static int calculateSpellCost(AbstractSpellForm form, LinkedHashMap<SigilItem, List<Integer>> map) {

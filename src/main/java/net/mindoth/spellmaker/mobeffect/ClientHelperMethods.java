@@ -5,11 +5,18 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.sigil.PolymorphSigilItem;
 import net.mindoth.spellmaker.mixin.EntityMixin;
 import net.mindoth.spellmaker.mixin.WalkAnimationStateMixin;
+import net.mindoth.spellmaker.network.SyncSizeForTrackersPacket;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -20,38 +27,56 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 import net.neoforged.neoforge.client.event.RenderPlayerEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.NeoForgeMod;
 
 import java.util.Objects;
 import java.util.UUID;
 
-@OnlyIn(Dist.CLIENT)
+//@OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
 public abstract class ClientHelperMethods {
 
+    //@OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public static void renderPolymorphedPlayer(RenderPlayerEvent.Pre event) {
-        Player player = event.getEntity();
+    public static void syncPolymorphSizeClient(ClientTickEvent.Pre event) {
+        Player player = Minecraft.getInstance().player;
+        if ( player == null ) return;
+        AttributeInstance nameTagDistance = player.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
+        if ( nameTagDistance == null ) return;
+        if ( nameTagDistance.hasModifier(PolymorphSigilItem.SYNC_POLYMORPH_SIZE_CLIENT.id()) ) {
+            nameTagDistance.removeModifier(PolymorphSigilItem.SYNC_POLYMORPH_SIZE_CLIENT);
+            //player.refreshDimensions();
+            ClientPacketDistributor.sendToServer(new SyncSizeForTrackersPacket(player.getId()));
+        }
+    }
+
+    @SubscribeEvent
+    public static void renderPolymorphedPlayer(RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
+        Minecraft mc = Minecraft.getInstance();
+        if ( mc.level == null || !(mc.level.getEntity(event.getRenderState().id) instanceof Player player) ) return;
         AttributeInstance nameTagDistance = player.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
         if ( nameTagDistance == null ) return;
         for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) {
             if ( PolymorphEffect.getTypeFromUUID(modifier.id()) != null
-                    && PolymorphEffect.getTypeFromUUID(modifier.id()).create(player.level()) instanceof LivingEntity living ) {
-                renderPolymorphModel(living, player, event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
+                    && PolymorphEffect.getTypeFromUUID(modifier.id()).create(player.level(), EntitySpawnReason.EVENT) instanceof LivingEntity living ) {
+                renderPolymorphModel(living, player, event);
                 event.setCanceled(true);
                 break;
             }
         }
     }
 
-    private static void renderPolymorphModel(LivingEntity living, Player player, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light) {
+    private static void renderPolymorphModel(LivingEntity living, Player player, RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
         UUID livingUUID = living.getUUID();
         living.setUUID(player.getUUID());
         syncEntityWithPlayer(living, player);
         living.setUUID(livingUUID);
-        render(living, partialTicks, poseStack, buffer, light);
+        render(living, event);
+        //poseStack.pushPose();
     }
 
     private static void syncEntityWithPlayer(LivingEntity living, Player player) {
@@ -96,10 +121,15 @@ public abstract class ClientHelperMethods {
         if ( pose != living.getPose() || (living.getDimensions(living.getPose()) != player.getDimensions(player.getPose())) ) living.refreshDimensions();
     }
 
-    private static void render(LivingEntity living, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light) {
-        Minecraft instance = Minecraft.getInstance();
-        float yaw = Mth.lerp(partialTicks, living.yRotO, living.getYRot());
-        instance.getEntityRenderDispatcher().getRenderer(living).render(living, yaw, partialTicks, poseStack, buffer, light);
+    //TODO: render polymorphed player
+    private static void render(LivingEntity living, RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
+        /*Minecraft instance = Minecraft.getInstance();
+        float yaw = Mth.lerp(event.getPartialTick(), living.yRotO, living.getYRot());
+        //instance.getEntityRenderDispatcher().getRenderer(living).render(living, yaw, partialTicks, poseStack, buffer, light);
+        EntityRenderer renderer = instance.getEntityRenderDispatcher().getRenderer(living);
+        EntityRenderState state = renderer.createRenderState(living, event.getPartialTick());
+        Entity camera = instance.getCameraEntity();
+        renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), null);*/
     }
 
     @SubscribeEvent

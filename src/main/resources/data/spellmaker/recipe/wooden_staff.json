@@ -1,18 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "#c:rods/wooden",
+    "S": "minecraft:string"
+  },
   "pattern": [
     "## ",
     " S ",
     " # "
   ],
-  "key": {
-    "#": {
-      "item": "minecraft:stick"
-    },
-    "S": {
-      "item": "minecraft:string"
-    }
-  },
   "result": {
     "id": "spellmaker:wooden_staff",
     "count": 1

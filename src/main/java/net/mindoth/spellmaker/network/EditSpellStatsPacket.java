@@ -15,8 +15,8 @@ import java.util.List;
 
 public class EditSpellStatsPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<EditSpellStatsPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "edit_spell_stats"));
+    public static final Type<EditSpellStatsPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "edit_spell_stats"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, EditSpellStatsPacket> STREAM_CODEC =
             CustomPacketPayload.codec(EditSpellStatsPacket::encode, EditSpellStatsPacket::new);

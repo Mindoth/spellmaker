@@ -1,30 +1,28 @@
 package net.mindoth.spellmaker.capability.playermagic;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
-import org.jetbrains.annotations.Nullable;
 
-public class PlayerMagickProvider implements IAttachmentSerializer<CompoundTag, MagickData> {
-
-    @Override
-    public MagickData read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-        var data = createPlayerMagic();
-        data.loadNBTData(tag);
-        return data;
-    }
-
-    @Override
-    public @Nullable CompoundTag write(MagickData magickData, HolderLookup.Provider provider) {
-        CompoundTag tag = new CompoundTag();
-        createPlayerMagic().saveNBTData(tag);
-        return tag;
-    }
+public class PlayerMagickProvider implements IAttachmentSerializer<MagickData> {
 
     private MagickData magick = null;
     private MagickData createPlayerMagic() {
         if ( this.magick == null ) this.magick = new MagickData();
         return this.magick;
+    }
+
+    @Override
+    public MagickData read(IAttachmentHolder iAttachmentHolder, ValueInput valueInput) {
+        var data = createPlayerMagic();
+        data.loadNBTData(valueInput);
+        return data;
+    }
+
+    @Override
+    public boolean write(MagickData magickData, ValueOutput valueOutput) {
+        createPlayerMagic().saveNBTData(valueOutput);
+        return true;
     }
 }

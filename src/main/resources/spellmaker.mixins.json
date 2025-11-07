@@ -6,7 +6,8 @@
     "LivingEntityMixin",
     "WalkAnimationStateMixin",
     "LocalPlayerMixin",
-    "EntityMixin"
+    "EntityMixin",
+    "RecipeManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

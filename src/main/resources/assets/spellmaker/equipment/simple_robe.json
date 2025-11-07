@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "spellmaker:simple_robe"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "spellmaker:simple_robe"
+      }
+    ]
+  }
+}

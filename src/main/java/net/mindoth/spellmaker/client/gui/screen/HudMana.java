@@ -10,14 +10,14 @@ import net.mindoth.spellmaker.registries.ModAttributes;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.client.gui.GuiLayer;
 
-public class HudMana implements LayeredDraw.Layer {
+public class HudMana implements GuiLayer {
 
-    public static final HudMana OVERLAY = new HudMana();
     private static final Minecraft MINECRAFT = Minecraft.getInstance();
 
     private static final ResourceLocation MANA_EMPTY_BAR = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/mana_empty_bar.png");
@@ -37,8 +37,8 @@ public class HudMana implements LayeredDraw.Layer {
         double manaPercentage = currentMana / maxMana;
         int barPercentage = (int)(manaPercentage * 79.0D);
         int barWidth = Math.max(0, Math.min(barPercentage, 79));
-        graphics.blit(MANA_EMPTY_BAR, posX, posY, 0, 0, 81, 9, 81, 9);
-        graphics.blit(MANA_FULL_BAR, posX + 1, posY + 1, 0, 0, barWidth, 7, 79, 7);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, MANA_EMPTY_BAR, posX, posY, 0, 0, 81, 9, 81, 9);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, MANA_FULL_BAR, posX + 1, posY + 1, 0, 0, barWidth, 7, 79, 7);
         if ( ModClientConfig.SHOW_MAGICK_NUMBER_VALUE.get() ) graphics.drawString(MINECRAFT.font, mana, posX + 20, posY - 9, 8370139);
     }
 
@@ -49,8 +49,10 @@ public class HudMana implements LayeredDraw.Layer {
                 || !StaffItem.getHeldCastingItem(player).isEmpty() || isWearingMagicArmor(player));
     }
 
+    //TODO: fix armor
     public static boolean isWearingMagicArmor(Player player) {
-        for ( ItemStack slot : player.getArmorSlots() ) if ( slot.getItem() instanceof ModArmorItem ) return true;
-        return false;
+        /*for ( ItemStack slot : player.getArmorSlots() ) if ( slot.getItem() instanceof ModArmorItem ) return true;
+        return false;*/
+        return true;
     }
 }

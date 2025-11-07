@@ -11,8 +11,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SyncClientManaPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<SyncClientManaPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "sync_client_mana"));
+    public static final Type<SyncClientManaPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "sync_client_mana"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncClientManaPacket> STREAM_CODEC =
             CustomPacketPayload.codec(SyncClientManaPacket::encode, SyncClientManaPacket::new);

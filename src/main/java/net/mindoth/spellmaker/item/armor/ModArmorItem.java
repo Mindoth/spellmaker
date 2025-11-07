@@ -14,11 +14,12 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLLoader;
@@ -27,9 +28,12 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class ModArmorItem extends ArmorItem {
+public class ModArmorItem extends Item {
+    public ModArmorItem(Properties properties) {
+        super(properties);
+    }
 
-    private final Supplier<ItemAttributeModifiers> defaultModifiers;
+    /*private final Supplier<ItemAttributeModifiers> defaultModifiers;
 
     @Override
     public ItemAttributeModifiers getDefaultAttributeModifiers() {
@@ -41,11 +45,11 @@ public class ModArmorItem extends ArmorItem {
                 new AttributeContainer(ModAttributes.MANA_COST_MULTIPLIER, discount, AttributeModifier.Operation.ADD_MULTIPLIED_BASE) };
     }
 
-    public ModArmorItem(Holder<ArmorMaterial> pMaterial, Type pType, Properties pProperties, AttributeContainer... attributes) {
-        super(pMaterial, pType, pProperties);
+    public ModArmorItem(Holder<ArmorMaterial> pMaterial, ArmorType pType, Properties pProperties, AttributeContainer... attributes) {
+        super(pProperties);
         this.defaultModifiers = Suppliers.memoize(
                 () -> {
-                    int i = pMaterial.value().getDefense(pType);
+                    int i = pMaterial.value().defense().get(pType);
                     float f = pMaterial.value().toughness();
                     ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
                     EquipmentSlotGroup equipmentslotgroup = EquipmentSlotGroup.bySlot(pType.getSlot());
@@ -64,9 +68,10 @@ public class ModArmorItem extends ArmorItem {
                     return builder.build();
                 }
         );
-        this.model = FMLLoader.getDist() == Dist.CLIENT ? new LazyLoadedValue<>(this::provideArmorModelForSlot) : null;
+        //this.model = FMLLoader.getCurrent().getDist() == Dist.CLIENT ? new LazyLoadedValue<>(this::provideArmorModelForSlot) : null;
     }
 
+    //TODO: custom armor model
     private final LazyLoadedValue<HumanoidModel<?>> model;
 
     @OnlyIn(Dist.CLIENT)
@@ -89,5 +94,5 @@ public class ModArmorItem extends ArmorItem {
                 return IClientItemExtensions.super.getArmorLayerTintColor(stack, entity, layer, layerIdx, fallbackColor);
             }
         });
-    }
+    }*/
 }

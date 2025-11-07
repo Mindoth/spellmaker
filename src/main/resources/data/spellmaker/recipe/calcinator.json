@@ -1,18 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "minecraft:iron_ingot",
+    "B": "minecraft:bucket"
+  },
   "pattern": [
     "# #",
     "#B#",
     "###"
   ],
-  "key": {
-    "#": {
-      "item": "minecraft:iron_ingot"
-    },
-    "B": {
-      "item": "minecraft:bucket"
-    }
-  },
   "result": {
     "id": "spellmaker:calcinator",
     "count": 1

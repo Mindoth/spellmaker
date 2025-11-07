@@ -3,7 +3,6 @@ package net.mindoth.spellmaker.block;
 import net.mindoth.spellmaker.client.gui.menu.SpellMakingMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
@@ -24,7 +23,7 @@ public class SpellMakingTableBlock extends Block {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if ( level.isClientSide ) return InteractionResult.SUCCESS;
+        if ( level.isClientSide() ) return InteractionResult.SUCCESS;
         else {
             player.openMenu(state.getMenuProvider(level, pos), (buf) -> buf.writeBlockPos(pos));
             return InteractionResult.CONSUME;

@@ -4,9 +4,7 @@
   "cookingtime": 200,
   "experience": 0.0,
   "group": "calcinating",
-  "ingredient": {
-    "item": "minecraft:golden_apple"
-  },
+  "ingredient": "minecraft:golden_apple",
   "result": {
     "id": "spellmaker:restoration_dust"
   }

@@ -1,16 +1,9 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "spellmaker:rune_essence"
-    },
-    {
-      "item": "spellmaker:destruction_dust"
-    },
-    {
-      "item": "minecraft:copper_ingot"
-    }
+    "spellmaker:rune_essence",
+    "spellmaker:destruction_dust",
+    "minecraft:copper_ingot"
   ],
   "result": {
     "id": "spellmaker:shock_sigil",

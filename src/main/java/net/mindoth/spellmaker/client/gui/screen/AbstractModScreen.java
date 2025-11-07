@@ -6,6 +6,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -28,9 +29,9 @@ public abstract class AbstractModScreen extends Screen {
     public static void renderTexture(Button button, GuiGraphics pGuiGraphics, ResourceLocation pTexture, int pX, int pY, int pUOffset, int pVOffset, int pTextureDifference, int pWidth, int pHeight, int pTextureWidth, int pTextureHeight) {
         int i = pVOffset;
         if ( !button.isActive() ) i = pVOffset + pTextureDifference * 2;
-        else if (button.isHoveredOrFocused()) i = pVOffset + pTextureDifference;
-        RenderSystem.enableDepthTest();
-        pGuiGraphics.blit(pTexture, pX, pY, (float)pUOffset, (float)i, pWidth, pHeight, pTextureWidth, pTextureHeight);
+        else if ( button.isHoveredOrFocused() ) i = pVOffset + pTextureDifference;
+        //RenderSystem.enableDepthTest();
+        pGuiGraphics.blit(RenderPipelines.GUI_TEXTURED, pTexture, pX, pY, (float)pUOffset, (float)i, pWidth, pHeight, pTextureWidth, pTextureHeight);
     }
 
     protected void renderItemWithDecorations(GuiGraphics graphics, ItemStack stack, int xPos, int yPos) {

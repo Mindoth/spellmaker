@@ -22,9 +22,10 @@ public class ModData {
         return DATA_COMPONENT_TYPES.register(name, () -> builderOperator.apply(DataComponentType.builder()).build());
     }
 
+    //TODO: remake tag system updating. Might have to use the fucking DataComponents...
     public static CompoundTag getLegacyTag(ItemStack stack) {
         if ( !stack.has(LEGACY_TAG) || stack.get(LEGACY_TAG) == null ) return null;
-        else return stack.get(LEGACY_TAG).getUnsafe();
+        else return stack.get(LEGACY_TAG).tag;
     }
 
     public static void setLegacyTag(ItemStack stack, CompoundTag tag) {

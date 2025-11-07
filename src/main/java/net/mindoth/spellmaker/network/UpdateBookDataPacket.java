@@ -19,8 +19,8 @@ import java.util.List;
 
 public class UpdateBookDataPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<UpdateBookDataPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "update_book_data"));
+    public static final Type<UpdateBookDataPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "update_book_data"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, UpdateBookDataPacket> STREAM_CODEC =
             CustomPacketPayload.codec(UpdateBookDataPacket::encode, UpdateBookDataPacket::new);
@@ -72,7 +72,7 @@ public class UpdateBookDataPacket implements CustomPacketPayload {
                     if ( ItemStack.isSameItemSameComponents(player.getOffhandItem(), packet.book) && !(player.getMainHandItem().getItem() instanceof SpellBookItem) ) book = player.getOffhandItem();
                     else book = player.getInventory().getItem(player.getInventory().findSlotMatchingItem(packet.book));
                     CompoundTag newTag = ModData.getLegacyTag(SpellBookItem.constructBook(packet.book, packet.scrollList));
-                    if ( packet.index != newTag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT) ) newTag.putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, packet.index);
+                    if ( packet.index != newTag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT).get() ) newTag.putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, packet.index);
                     ModData.setLegacyTag(book, newTag);
                     PacketDistributor.sendToPlayer(player, new UpdateBookDataClientPacket(packet.index, packet.refresh, packet.isRemoval));
                 }

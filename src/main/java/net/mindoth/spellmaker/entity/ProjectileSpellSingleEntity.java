@@ -9,7 +9,6 @@ import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.registries.ModEntities;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -44,7 +43,7 @@ public class ProjectileSpellSingleEntity extends AbstractSpellEntity {
     @Override
     protected void doClientTickEffects() {
         if ( isRemoved() ) return;
-        if ( !level().isClientSide ) return;
+        if ( !level().isClientSide() ) return;
         ClientLevel world = (ClientLevel)level();
         Vec3 center = ShadowEvents.getEntityCenter(this);
         Vec3 pos = new Vec3(center.x, getY(), center.z);
@@ -62,7 +61,7 @@ public class ProjectileSpellSingleEntity extends AbstractSpellEntity {
                 double vecZ = new Random().nextDouble(variable - -variable) + -variable;
                 int life = 8;
                 world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(getParticleStats()), 0.1F, life, false, LightEvents.getParticleType(getParticleStats())),
-                        pos.x + d5 * (double) j / 4.0D, pos.y + d6 * (double) j / 4.0D, pos.z + d1 * (double) j / 4.0D,
+                        true, true, pos.x + d5 * (double) j / 4.0D, pos.y + d6 * (double) j / 4.0D, pos.z + d1 * (double) j / 4.0D,
                         vecX * speed, vecY * speed, vecZ * speed);
             }
         }

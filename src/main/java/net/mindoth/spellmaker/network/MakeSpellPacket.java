@@ -12,8 +12,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MakeSpellPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<MakeSpellPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "make_spell"));
+    public static final Type<MakeSpellPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "make_spell"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, MakeSpellPacket> STREAM_CODEC =
             CustomPacketPayload.codec(MakeSpellPacket::encode, MakeSpellPacket::new);

@@ -4,9 +4,7 @@
   "cookingtime": 200,
   "experience": 0.0,
   "group": "calcinating",
-  "ingredient": {
-    "tag": "minecraft:logs_that_burn"
-  },
+  "ingredient": "#minecraft:logs_that_burn",
   "result": {
     "id": "spellmaker:wood_ash"
   }

@@ -95,7 +95,7 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
     @Override
     protected void doClientTickEffects() {
         if ( isRemoved() ) return;
-        if ( !level().isClientSide ) return;
+        if ( !level().isClientSide() ) return;
         ClientLevel world = (ClientLevel)level();
         Vec3 center = ShadowEvents.getEntityCenter(this);
         Vec3 pos = new Vec3(center.x, getY(), center.z);
@@ -118,15 +118,13 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
                     float randY = (float)((Math.random() * (sphereSize - (-sphereSize))) + (-sphereSize));
                     float randZ = (float)((Math.random() * (sphereSize - (-sphereSize))) + (-sphereSize));
                     int life = 4;
-                    world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(getParticleStats()), particleSize, life, true, LightEvents.getParticleType(getParticleStats())), true,
-                            pos.x + randX + d5 * (double)j / 4.0D, pos.y + randY + d6 * (double)j / 4.0D, pos.z + randZ + d1 * (double)j / 4.0D,
-                            0, 0, 0);
+                    world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(getParticleStats()), particleSize, life, true, LightEvents.getParticleType(getParticleStats())),
+                            true, true, pos.x + randX + d5 * (double)j / 4.0D, pos.y + randY + d6 * (double)j / 4.0D, pos.z + randZ + d1 * (double)j / 4.0D, 0, 0, 0);
                 }
                 float particleSize = 0.25F;
                 int life = 1 + new Random().nextInt(11);
-                world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(getParticleStats()), particleSize, life, true, LightEvents.getParticleType(getParticleStats())), true,
-                        pos.x, pos.y, pos.z,
-                        vecX * speed, vecY * speed, vecZ * speed);
+                world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(getParticleStats()), particleSize, life, true, LightEvents.getParticleType(getParticleStats())),
+                        true, true, pos.x, pos.y, pos.z, vecX * speed, vecY * speed, vecZ * speed);
             }
         }
     }

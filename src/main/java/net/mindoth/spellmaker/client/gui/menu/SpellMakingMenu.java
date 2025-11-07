@@ -29,6 +29,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Arrays;
@@ -189,7 +190,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
     public boolean makeSpell(String string) {
         if ( isReadyToMake() ) {
-            PacketDistributor.sendToServer(new MakeSpellPacket(getItemName(string)));
+            ClientPacketDistributor.sendToServer(new MakeSpellPacket(getItemName(string)));
             return true;
         }
         else return false;
@@ -197,7 +198,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
     public void processMaking(String name) {
         this.access.execute((level, pos) -> {
-            if ( !level.isClientSide ) {
+            if ( !level.isClientSide() ) {
                 if ( isReadyToMake() ) {
                     ItemStack stack = assemble(this.craftSlots);
                     if ( isEmpty(name) || isBlank(name) ) {
@@ -233,9 +234,9 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             ItemStack stack = this.craftSlots.getItem(0);
             CompoundTag tag = ModData.getLegacyTag(stack);
             this.spellForm = DataHelper.getFormFromNbt(tag);
-            this.magnitude = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
-            this.duration = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
-            PacketDistributor.sendToServer(new DumpSpellPacket());
+            this.magnitude = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES).get());
+            this.duration = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS).get());
+            ClientPacketDistributor.sendToServer(new DumpSpellPacket());
             return true;
         }
         else return false;
@@ -243,14 +244,14 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
     public void processDumping() {
         this.access.execute((level, pos) -> {
-            if ( !level.isClientSide ) {
+            if ( !level.isClientSide() ) {
                 if ( isReadyToDump() ) {
                     ItemStack stack = this.craftSlots.getItem(0);
                     CompoundTag tag = ModData.getLegacyTag(stack);
                     List<ItemStack> list = DataHelper.getSpellStackFromTag(tag);
                     AbstractSpellForm form = DataHelper.getFormFromNbt(tag);
-                    List<Integer> magnitude = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES));
-                    List<Integer> duration = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS));
+                    List<Integer> magnitude = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES).get());
+                    List<Integer> duration = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS).get());
                     cleanScroll(level, stack);
                     for ( int i = 1; i < this.slots.size(); i++ ) {
                         Slot slot = this.slots.get(i);
@@ -292,7 +293,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
     }
 
     private void setSlotContent(Level level, int slot, ItemStack stack) {
-        if ( !level.isClientSide ) {
+        if ( !level.isClientSide() ) {
             ServerPlayer serverplayer = (ServerPlayer)this.player;
             this.craftSlots.setItem(slot, stack);
             this.setRemoteSlot(slot, stack);
@@ -320,7 +321,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             else {
                 for ( Slot slot : this.slots ) {
                     if ( slot instanceof SigilSlot sigilSlot) {
-                        if ( !level.isClientSide && !sigilSlot.getItem().isEmpty() ) {
+                        if ( !level.isClientSide() && !sigilSlot.getItem().isEmpty() ) {
                             if ( stack.isEmpty() ) quickMoveStack(this.player, sigilSlot.index);
                             else setSlotContent(level, sigilSlot.getSlotIndex(), ItemStack.EMPTY);
                         }
@@ -333,24 +334,24 @@ public class SpellMakingMenu extends AbstractContainerMenu {
 
     public void editSpellForm(CompoundTag tag) {
         this.spellForm = DataHelper.getFormFromNbt(tag);
-        PacketDistributor.sendToServer(new EditSpellFormPacket(tag));
+        ClientPacketDistributor.sendToServer(new EditSpellFormPacket(tag));
     }
 
     public void processSpellFormEditing(CompoundTag tag) {
         this.access.execute((level, pos) -> {
-            if ( !level.isClientSide ) this.spellForm = DataHelper.getFormFromNbt(tag);
+            if ( !level.isClientSide() ) this.spellForm = DataHelper.getFormFromNbt(tag);
         });
     }
 
     public void editSpellStats(byte flag, List<Integer> list) {
         if ( flag == 0 ) this.magnitude = list;
         else if ( flag == 1 ) this.duration = list;
-        PacketDistributor.sendToServer(new EditSpellStatsPacket(flag, list));
+        ClientPacketDistributor.sendToServer(new EditSpellStatsPacket(flag, list));
     }
 
     public void processSpellStatEditing(byte flag, List<Integer> list) {
         this.access.execute((level, pos) -> {
-            if ( !level.isClientSide ) {
+            if ( !level.isClientSide() ) {
                 if ( flag == 0 ) this.magnitude = list;
                 else if ( flag == 1 ) this.duration = list;
             }

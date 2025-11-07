@@ -17,6 +17,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
@@ -24,8 +25,10 @@ public class ModBlocks {
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(SpellMaker.MOD_ID);
 
+
+
     public static final DeferredBlock<Block> CALCINATOR = registerBlock("calcinator",
-            () -> new CalcinatorBlock(BlockBehaviour.Properties.of()
+            (properties) -> new CalcinatorBlock(properties
                     .instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(3.5F).lightLevel(litBlockEmission(13))
             ));
 
@@ -34,24 +37,24 @@ public class ModBlocks {
     }
 
     public static final DeferredBlock<Block> SPELL_MAKING_TABLE = registerBlock("spell_making_table",
-            () -> new SpellMakingTableBlock(BlockBehaviour.Properties.of()
+            (properties) -> new SpellMakingTableBlock(properties
                     .instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(1.5F, 6.0F)
             ));
 
 
-    private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
-        DeferredBlock<T> toReturn = BLOCKS.register(name, block);
+    private static <T extends Block> DeferredBlock<T> registerBlock(String name, Function<BlockBehaviour.Properties, T> function) {
+        DeferredBlock<T> toReturn = BLOCKS.registerBlock(name, function);
         registerBlockItem(name, toReturn);
         return toReturn;
     }
 
     private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block) {
-        ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        ModItems.ITEMS.registerItem(name, (properties) -> new BlockItem(block.get(), properties.useBlockDescriptionPrefix()));
     }
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, SpellMaker.MOD_ID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CalcinatorBlockEntity>> CALCINATOR_BLOCK_ENTITY =
             BLOCK_ENTITIES.register("calcinator_block_entity",
-                    () -> BlockEntityType.Builder.of(CalcinatorBlockEntity::new, ModBlocks.CALCINATOR.get()).build(null));
+                    () -> new BlockEntityType<>(CalcinatorBlockEntity::new, ModBlocks.CALCINATOR.get()));
 }

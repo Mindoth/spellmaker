@@ -12,8 +12,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class OpenSpellBookPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<OpenSpellBookPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "open_spell_book"));
+    public static final Type<OpenSpellBookPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "open_spell_book"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, OpenSpellBookPacket> STREAM_CODEC =
             CustomPacketPayload.codec(OpenSpellBookPacket::encode, OpenSpellBookPacket::new);

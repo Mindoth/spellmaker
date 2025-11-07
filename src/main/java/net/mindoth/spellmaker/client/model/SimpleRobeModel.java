@@ -1,16 +1,14 @@
 package net.mindoth.spellmaker.client.model;
 
-import net.minecraft.client.model.HumanoidArmorModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 
-public class SimpleRobeModel extends HumanoidArmorModel<LivingEntity> {
+public class SimpleRobeModel /*extends HumanoidArmorModel<LivingEntity>*/ {
 
-    public SimpleRobeModel(ModelPart part) {
+    /*public SimpleRobeModel(ModelPart part) {
         super(part);
     }
 
@@ -34,5 +32,5 @@ public class SimpleRobeModel extends HumanoidArmorModel<LivingEntity> {
                         new CubeDeformation(deform)), PartPose.offset(1.9F, 12.0F, 0.0F));
 
         return LayerDefinition.create(mesh, 64, 64);
-    }
+    }*/
 }

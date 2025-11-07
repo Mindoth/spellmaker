@@ -8,7 +8,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
 @Mod(SpellMaker.MOD_ID)
@@ -25,10 +24,10 @@ public class SpellMaker {
         ModCreativeTab.CREATIVE_MODE_TABS.register(modBus);
         ModData.DATA_COMPONENT_TYPES.register(modBus);
         ModItems.ITEMS.register(modBus);
-        ModArmorMaterials.ARMOR_MATERIALS.register(modBus);
+        //ModArmorMaterials.ARMOR_MATERIALS.register(modBus);
         ModBlocks.BLOCKS.register(modBus);
         ModBlocks.BLOCK_ENTITIES.register(modBus);
-        ModEntities.ENTITIES.register(modBus);
+        ModEntities.ENTITY_TYPES.register(modBus);
         ModEffects.EFFECTS.register(modBus);
         ModAttributes.ATTRIBUTES.register(modBus);
         ModMenus.MENUS.register(modBus);

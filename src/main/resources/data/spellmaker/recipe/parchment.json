@@ -1,13 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:leather"
-    },
-    {
-      "item": "minecraft:water_bucket"
-    }
+    "minecraft:leather",
+    "minecraft:water_bucket"
   ],
   "result": {
     "id": "spellmaker:parchment",

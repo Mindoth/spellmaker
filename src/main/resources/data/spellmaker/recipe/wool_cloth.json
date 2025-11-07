@@ -1,18 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "minecraft:string",
+    "W": "#minecraft:wool"
+  },
   "pattern": [
     " # ",
     "#W#",
     " # "
   ],
-  "key": {
-    "#": {
-      "item": "minecraft:string"
-    },
-    "W": {
-      "tag": "minecraft:wool"
-    }
-  },
   "result": {
     "id": "spellmaker:wool_cloth",
     "count": 4

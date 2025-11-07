@@ -1,7 +1,6 @@
 package net.mindoth.spellmaker.client.gui.screen;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.client.gui.menu.SpellMakingMenu;
 import net.mindoth.spellmaker.item.ParchmentItem;
@@ -15,25 +14,26 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
+//@OnlyIn(Dist.CLIENT)
 public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> implements ContainerListener {
 
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/spell_making_screen.png");
@@ -216,9 +216,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     }
 
     @Override
-    public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
-        if ( pKeyCode == 256 ) this.minecraft.player.closeContainer();
-        return !this.name.keyPressed(pKeyCode, pScanCode, pModifiers) && !this.name.canConsumeInput() ? super.keyPressed(pKeyCode, pScanCode, pModifiers) : true;
+    public boolean keyPressed(KeyEvent event) {
+        if ( event.key() == 256 ) this.minecraft.player.closeContainer();
+        return !this.name.keyPressed(event) && !this.name.canConsumeInput() ? super.keyPressed(event) : true;
     }
 
     @Override
@@ -250,17 +250,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
 
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
-
-        //Action button
-        if ( this.menu.isReadyToMake() || this.menu.isReadyToDump() ) {
-            int xIcon = x + CRAFT_BUTTON_OFFSET_X;
-            int yIcon = y + CRAFT_BUTTON_OFFSET_Y;
-            AbstractModScreen.renderTexture(this.craftButton, graphics, TEXTURE, xIcon, yIcon,
-                    this.menu.isReadyToMake() ? 176 : 176 + 16, this.craftButton.isMouseOver(mouseX, mouseY) ? 32 : 16,
-                    0, 16, 16, 256, 256);
-            Component name = this.menu.isReadyToMake() ? Component.translatable("tooltip.spellmaker.make") : Component.translatable("tooltip.spellmaker.dump");
-            if ( mouseX >= xIcon && mouseX <= xIcon + 16 && mouseY >= yIcon && mouseY <= yIcon + 16 ) graphics.renderTooltip(this.font, name, mouseX, mouseY);
-        }
 
         //Spell Form buttons
         if ( this.menu.isReadyToMake() ) {
@@ -296,21 +285,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             }
         }
 
-        //Spell Form icon rendering
-        if ( this.menu.isReadyToMake() ) {
-            ResourceLocation iconBg = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/spellform/icon_background.png");
-            ResourceLocation icon = getSpellIcon();
-            int xIcon = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
-            int yIcon = y + SPELL_FORM_BUTTON_OFFSET_Y - 2;
-            graphics.blit(iconBg, xIcon, yIcon, 0, 0, 16, 16, 16, 16);
-            graphics.blit(icon, xIcon, yIcon, 0, 0, 16, 16, 16, 16);
-            Component name = Component.translatable("spellform.spellmaker." + this.menu.getSpellForm().getName());
-            if ( mouseX >= xIcon && mouseX <= xIcon + 16 && mouseY >= yIcon && mouseY <= yIcon + 16 ) {
-                graphics.fill(RenderType.guiOverlay(), xIcon, yIcon, xIcon + 16, yIcon + 16, Integer.MAX_VALUE);
-                graphics.renderTooltip(this.font, name, mouseX, mouseY);
-            }
-        }
-
         //Stat number strings
         boolean showMag = false;
         boolean showDur = false;
@@ -325,7 +299,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         int boxY = y + SPELL_FORM_BUTTON_OFFSET_Y - 3;
         for ( int i = 0; i < 2; i++ ) {
             if ( (i == 0 && showMag) || (i == 1 && showDur) ) {
-                graphics.blit(TEXTURE, boxX + 54 * i, boxY, 194, 70, 54, 18, 256, 256);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, boxX + 54 * i, boxY, 194, 70, 54, 18, 256, 256);
             }
         }
         for ( int i = 0; i < this.maxSlots; i++ ) {
@@ -333,13 +307,13 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil && sigil.canModifyMagnitude() ) {
                 int magX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 53;
                 int magY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
-                graphics.blit(TEXTURE, magX, magY + 18 * i, 176, 70, 18, 18, 256, 256);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, magX, magY + 18 * i, 176, 70, 18, 18, 256, 256);
             }
             //Duration plates
             if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil && sigil.canModifyDuration() ) {
                 int durX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 107;
                 int durY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
-                graphics.blit(TEXTURE, durX, durY + 18 * i, 176, 70, 18, 18, 256, 256);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, durX, durY + 18 * i, 176, 70, 18, 18, 256, 256);
             }
         }
         if ( this.menu.isReadyToMake() ) {
@@ -347,11 +321,11 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             int stringY = y + SPELL_FORM_BUTTON_OFFSET_Y;
             if ( showMag ) {
                 graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.magnitude"),
-                        stringX, stringY - 7 + this.font.lineHeight, 16777215);
+                        stringX, stringY - 7 + this.font.lineHeight, ARGB.opaque(16777215));
             }
             if ( showDur ) {
                 graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.duration"),
-                        stringX + 54, stringY - 7 + this.font.lineHeight, 16777215);
+                        stringX + 54, stringY - 7 + this.font.lineHeight, ARGB.opaque(16777215));
             }
 
             for ( int i = 0; i < this.menu.howManySigilSlotsOpen(); i++ ) {
@@ -359,11 +333,11 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                     int numOffY = 18 * i;
                     if ( sigil.canModifyMagnitude() ) {
                         graphics.drawCenteredString(this.font, String.valueOf(this.menu.getMagnitude().get(i)),
-                                x + LEFT_MAGNITUDE_BUTTON_OFFSET_X + 17, y + MAGNITUDE_BUTTON_OFFSET_Y - 7 + this.font.lineHeight + numOffY, 16777215);
+                                x + LEFT_MAGNITUDE_BUTTON_OFFSET_X + 17, y + MAGNITUDE_BUTTON_OFFSET_Y - 7 + this.font.lineHeight + numOffY, ARGB.opaque(16777215));
                     }
                     if ( sigil.canModifyDuration() ) {
                         graphics.drawCenteredString(this.font, String.valueOf(this.menu.getDuration().get(i)),
-                                x + LEFT_DURATION_BUTTON_OFFSET_X + 17, y + DURATION_BUTTON_OFFSET_Y - 7 + this.font.lineHeight + numOffY, 16777215);
+                                x + LEFT_DURATION_BUTTON_OFFSET_X + 17, y + DURATION_BUTTON_OFFSET_Y - 7 + this.font.lineHeight + numOffY, ARGB.opaque(16777215));
                     }
                 }
             }
@@ -375,7 +349,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                 int xPos = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
                 int yPos = y + SPELL_FORM_BUTTON_OFFSET_Y - 2 + 18 * off;
                 int u = this.menu.isReadyToMake() ? 176 : 192;
-                if ( !slot.isOpen ) graphics.blit(TEXTURE, xPos, yPos, u, 0, 16, 16, 256, 256);
+                if ( !slot.isOpen ) graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, xPos, yPos, u, 0, 16, 16, 256, 256);
                 off++;
             }
         }
@@ -385,7 +359,41 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             CompoundTag tag = ModData.getLegacyTag(scroll);
             int cost = ParchmentItem.calculateSpellCost(this.menu.getSpellForm(), DataHelper.createMapFromTag(tag));
             Component component = Component.literal(String.valueOf(cost)).setStyle(Style.EMPTY.withBold(true));
-            graphics.drawString(this.font, component, x + 16 - this.font.width(String.valueOf(cost)) / 2, y + 66, 5804213, false);
+            graphics.drawString(this.font, component, x + 16 - this.font.width(String.valueOf(cost)) / 2, y + 66, ARGB.opaque(5804213), false);
+        }
+
+        //Action button
+        if ( this.menu.isReadyToMake() || this.menu.isReadyToDump() ) {
+            int xIcon = x + CRAFT_BUTTON_OFFSET_X;
+            int yIcon = y + CRAFT_BUTTON_OFFSET_Y;
+            AbstractModScreen.renderTexture(this.craftButton, graphics, TEXTURE, xIcon, yIcon,
+                    this.menu.isReadyToMake() ? 176 : 176 + 16, this.craftButton.isMouseOver(mouseX, mouseY) ? 32 : 16,
+                    0, 16, 16, 256, 256);
+            Component name = this.menu.isReadyToMake() ? Component.translatable("tooltip.spellmaker.make") : Component.translatable("tooltip.spellmaker.dump");
+            if ( mouseX >= xIcon && mouseX <= xIcon + 16 && mouseY >= yIcon && mouseY <= yIcon + 16 ) {
+
+                ClientTooltipComponent clienttooltipcomponent = ClientTooltipComponent.create(name.getVisualOrderText());
+                graphics.renderTooltip(this.font, List.of(clienttooltipcomponent), mouseX, mouseY,
+                        DefaultTooltipPositioner.INSTANCE, null);
+            }
+        }
+
+        //Spell Form icon rendering
+        if ( this.menu.isReadyToMake() ) {
+            ResourceLocation iconBg = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/spellform/icon_background.png");
+            ResourceLocation icon = getSpellIcon();
+            int xIcon = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 9;
+            int yIcon = y + SPELL_FORM_BUTTON_OFFSET_Y - 2;
+            graphics.blit(RenderPipelines.GUI_TEXTURED, iconBg, xIcon, yIcon, 0, 0, 16, 16, 16, 16);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, icon, xIcon, yIcon, 0, 0, 16, 16, 16, 16);
+            Component name = Component.translatable("spellform.spellmaker." + this.menu.getSpellForm().getName());
+            if ( mouseX >= xIcon && mouseX <= xIcon + 16 && mouseY >= yIcon && mouseY <= yIcon + 16 ) {
+                graphics.fill(RenderPipelines.GUI, xIcon, yIcon, xIcon + 16, yIcon + 16, Integer.MAX_VALUE);
+
+                ClientTooltipComponent clienttooltipcomponent = ClientTooltipComponent.create(name.getVisualOrderText());
+                graphics.renderTooltip(this.font, List.of(clienttooltipcomponent), mouseX, mouseY,
+                        DefaultTooltipPositioner.INSTANCE, null);
+            }
         }
     }
 
@@ -478,11 +486,8 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
-        guiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0, imageWidth, imageHeight, 256, 256);
     }
 }

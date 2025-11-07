@@ -13,19 +13,19 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class SpellBookItem extends Item implements ModDyeableItem {
 
@@ -47,24 +47,24 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     public static final String NBT_KEY_BOOK_SLOT = "sm_book_slot";
     public static final String NBT_KEY_NULL_NAME = "sm_spell_has_null_name";
 
-    @OnlyIn(Dist.CLIENT)
+    //@OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> components, TooltipFlag tooltipFlag) {
         CompoundTag tag = ModData.getLegacyTag(stack);
         if ( tag != null ) {
             if ( tag.contains(NBT_KEY_OWNER_NAME) ) {
-                String name = tag.getString(NBT_KEY_OWNER_NAME);
-                tooltip.add(Component.translatable("tooltip.spellmaker.book_owner").withStyle(ChatFormatting.GRAY)
+                String name = tag.getString(NBT_KEY_OWNER_NAME).get();
+                components.accept(Component.translatable("tooltip.spellmaker.book_owner").withStyle(ChatFormatting.GRAY)
                         .append(Component.literal(name).withStyle(ChatFormatting.GRAY)));
             }
         }
-        super.appendHoverText(stack, context, tooltip, flagIn);
+        super.appendHoverText(stack, context, tooltipDisplay, components, tooltipFlag);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, @Nonnull InteractionHand handIn) {
-        InteractionResultHolder<ItemStack> result = InteractionResultHolder.fail(player.getItemInHand(handIn));
-        if ( !level.isClientSide && player instanceof ServerPlayer serverPlayer ) {
+    public InteractionResult use(Level level, Player player, @Nonnull InteractionHand handIn) {
+        InteractionResult result = InteractionResult.FAIL;
+        if ( !level.isClientSide() && player instanceof ServerPlayer serverPlayer ) {
             if ( StaffItem.getHeldCastingItem(serverPlayer).isEmpty() ) {
                 ItemStack book = serverPlayer.getItemInHand(handIn);
                 openSpellBook(serverPlayer, book);
@@ -77,7 +77,7 @@ public class SpellBookItem extends Item implements ModDyeableItem {
         handleSignature(player, book);
         CompoundTag tag = ModData.getLegacyTag(book);
         if ( tag != null ) {
-            int slot = tag.getInt(NBT_KEY_BOOK_SLOT);
+            int slot = tag.getInt(NBT_KEY_BOOK_SLOT).get();
             int page = 0;
             if ( slot >= pageSize ) {
                 for ( int i = pageSize; i < getScrollListFromBook(tag).size(); i++ ) {
@@ -89,10 +89,11 @@ public class SpellBookItem extends Item implements ModDyeableItem {
         }
     }
 
+    //TODO: figure out how to put UUIDs
     public static void handleSignature(ServerPlayer serverPlayer, ItemStack stack) {
         CompoundTag tag = ModData.getOrCreateLegacyTag(stack);
         if ( !tag.contains(NBT_KEY_BOOK_SLOT) ) tag.putInt(NBT_KEY_BOOK_SLOT, -1);
-        if ( !tag.contains(NBT_KEY_OWNER_UUID) ){
+        /*if ( !tag.contains(NBT_KEY_OWNER_UUID) ) {
             tag.putUUID(NBT_KEY_OWNER_UUID, serverPlayer.getUUID());
             tag.putString(NBT_KEY_OWNER_NAME, serverPlayer.getDisplayName().getString());
         }
@@ -100,7 +101,7 @@ public class SpellBookItem extends Item implements ModDyeableItem {
             if ( tag.getUUID(NBT_KEY_OWNER_UUID) == serverPlayer.getUUID() && !tag.getString(NBT_KEY_OWNER_NAME).equals(serverPlayer.getDisplayName().getString())) {
                 tag.putString(NBT_KEY_OWNER_NAME, serverPlayer.getDisplayName().getString());
             }
-        }
+        }*/
     }
 
     public static int getNewSlotFromScrollRemoval(int oldSlot, int bookSlot) {
@@ -112,7 +113,7 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     public static ItemStack getActiveScrollFromBook(ItemStack book) {
         CompoundTag tag = ModData.getLegacyTag(book);
         if ( !tag.contains(NBT_KEY_BOOK_SLOT) ) return null;
-        int slot = tag.getInt(NBT_KEY_BOOK_SLOT);
+        int slot = tag.getInt(NBT_KEY_BOOK_SLOT).get();
         List<ItemStack> scrollList = SpellBookItem.getScrollListFromBook(tag);
         if ( slot >= scrollList.size() ) return null;
         return scrollList.get(slot);
@@ -121,27 +122,27 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     public static List<ItemStack> getScrollListFromBook(CompoundTag tag) {
         List<ItemStack> scrollList = Lists.newArrayList();
 
-        String form = tag.getString(NBT_KEY_BOOK_FORMS);
+        String form = tag.getString(NBT_KEY_BOOK_FORMS).orElse("");
         List<String> formList = List.of(form.split(";"));
 
-        String sigil = tag.getString(NBT_KEY_BOOK_SIGILS);
+        String sigil = tag.getString(NBT_KEY_BOOK_SIGILS).orElse("");
         List<String> sigilList = List.of(sigil.split(";"));
 
-        String magnitude = tag.getString(NBT_KEY_BOOK_MAGNITUDES);
+        String magnitude = tag.getString(NBT_KEY_BOOK_MAGNITUDES).orElse("");
         List<String> magList = List.of(magnitude.split(";"));
 
-        String duration = tag.getString(NBT_KEY_BOOK_DURATIONS);
+        String duration = tag.getString(NBT_KEY_BOOK_DURATIONS).orElse("");
         List<String> durList = List.of(duration.split(";"));
 
-        String name = tag.getString(ParchmentItem.NBT_KEY_SPELL_NAME);
+        String name = tag.getString(ParchmentItem.NBT_KEY_SPELL_NAME).orElse("");
         List<String> nameList = List.of(name.split(";"));
 
-        String item = tag.getString(ParchmentItem.NBT_KEY_PAPER_TIER);
+        String item = tag.getString(ParchmentItem.NBT_KEY_PAPER_TIER).orElse("");
         List<String> itemList = List.of(item.split(";"));
 
         for ( int i = 0; i < sigilList.size(); i++ ) {
             ItemStack stack = constructSpellScroll(formList.get(i), sigilList.get(i), magList.get(i), durList.get(i), nameList.get(i),
-                    BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemList.get(i))));
+                    BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(itemList.get(i))));
             scrollList.add(stack);
         }
         return scrollList;
@@ -178,16 +179,16 @@ public class SpellBookItem extends Item implements ModDyeableItem {
         CompoundTag bookTag = ModData.getOrCreateLegacyTag(book);
         CompoundTag scrollTag = ModData.getLegacyTag(scroll);
 
-        String formString = scrollTag.getString(ParchmentItem.NBT_KEY_SPELL_FORM);
+        String formString = scrollTag.getString(ParchmentItem.NBT_KEY_SPELL_FORM).get();
         addSpellTagsToBook(bookTag, formString, NBT_KEY_BOOK_FORMS);
 
-        String runeString = scrollTag.getString(ParchmentItem.NBT_KEY_SPELL_SIGILS);
+        String runeString = scrollTag.getString(ParchmentItem.NBT_KEY_SPELL_SIGILS).get();
         addSpellTagsToBook(bookTag, runeString, NBT_KEY_BOOK_SIGILS);
 
-        String magString = scrollTag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES);
+        String magString = scrollTag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES).get();
         addSpellTagsToBook(bookTag, magString, NBT_KEY_BOOK_MAGNITUDES);
 
-        String durString = scrollTag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS);
+        String durString = scrollTag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS).get();
         addSpellTagsToBook(bookTag, durString, NBT_KEY_BOOK_DURATIONS);
 
         String name;

@@ -13,8 +13,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class AskToOpenSpellBookPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<AskToOpenSpellBookPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "ask_to_open_spell_book"));
+    public static final Type<AskToOpenSpellBookPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "ask_to_open_spell_book"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AskToOpenSpellBookPacket> STREAM_CODEC =
             CustomPacketPayload.codec(AskToOpenSpellBookPacket::encode, AskToOpenSpellBookPacket::new);

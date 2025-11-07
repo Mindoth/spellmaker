@@ -86,10 +86,11 @@ public abstract class SigilItem extends Item {
     }
 
     protected DamageSource getSource(ResourceKey<DamageType> key, Entity source, Entity directSource) {
-        return new DamageSource(getDataDrivenRegistry(directSource.level(), Registries.DAMAGE_TYPE).getHolderOrThrow(key), directSource, source);
+        return new DamageSource(getDataDrivenRegistry(directSource.level(), Registries.DAMAGE_TYPE)
+                .wrapAsHolder(getDataDrivenRegistry(directSource.level(), Registries.DAMAGE_TYPE).getValue(key)), directSource, source);
     }
 
     public static <T> Registry<T> getDataDrivenRegistry(Level level, ResourceKey<? extends Registry<T>> key) {
-        return level.registryAccess().registry(key).get();
+        return level.registryAccess().lookup(key).get();
     }
 }

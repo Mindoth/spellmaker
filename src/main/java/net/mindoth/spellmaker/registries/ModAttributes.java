@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@EventBusSubscriber(modid = SpellMaker.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = SpellMaker.MOD_ID)
 public class ModAttributes {
 
     public static class MagickAttribute extends RangedAttribute {

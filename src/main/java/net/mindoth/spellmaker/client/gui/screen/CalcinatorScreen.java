@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
+//@OnlyIn(Dist.CLIENT)
 public class CalcinatorScreen extends AbstractCalcinatorScreen<CalcinatorMenu> {
 
     public CalcinatorScreen(CalcinatorMenu pMenu, Inventory pPlayerInventory, Component pTitle) {

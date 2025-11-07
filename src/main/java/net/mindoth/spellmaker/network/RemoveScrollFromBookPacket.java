@@ -22,8 +22,8 @@ import java.util.List;
 
 public class RemoveScrollFromBookPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<RemoveScrollFromBookPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "remove_scroll_from_book"));
+    public static final Type<RemoveScrollFromBookPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "remove_scroll_from_book"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, RemoveScrollFromBookPacket> STREAM_CODEC =
             CustomPacketPayload.codec(RemoveScrollFromBookPacket::encode, RemoveScrollFromBookPacket::new);
@@ -84,7 +84,7 @@ public class RemoveScrollFromBookPacket implements CustomPacketPayload {
                     }
                     packet.scrollList.remove(packet.index);
                     CompoundTag tag = ModData.getLegacyTag(SpellBookItem.constructBook(packet.book, packet.scrollList));
-                    int newSlot = SpellBookItem.getNewSlotFromScrollRemoval(packet.index, tag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT));
+                    int newSlot = SpellBookItem.getNewSlotFromScrollRemoval(packet.index, tag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT).get());
                     tag.putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, newSlot);
                     ModData.setLegacyTag(book, tag);
                     PacketDistributor.sendToPlayer(player, new UpdateBookDataClientPacket(packet.index, packet.refresh, packet.isRemoval));

@@ -12,10 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -25,6 +22,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.EntityEvent;
@@ -124,20 +122,6 @@ public abstract class PolymorphSigilItem extends SigilItem {
         if ( !nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_CLIENT.id()) ) nameTagDistance.addPermanentModifier(SYNC_POLYMORPH_SIZE_CLIENT);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void syncPolymorphSizeClient(ClientTickEvent.Pre event) {
-        Player player = Minecraft.getInstance().player;
-        if ( player == null ) return;
-        AttributeInstance nameTagDistance = player.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
-        if ( nameTagDistance == null ) return;
-        if ( nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_CLIENT.id()) ) {
-            nameTagDistance.removeModifier(SYNC_POLYMORPH_SIZE_CLIENT);
-            //player.refreshDimensions();
-            PacketDistributor.sendToServer(new SyncSizeForTrackersPacket(player.getId()));
-        }
-    }
-
     @SubscribeEvent
     public static void refreshPolymorphSize(EntityEvent.Size event) {
         Entity entity = event.getEntity();
@@ -145,7 +129,7 @@ public abstract class PolymorphSigilItem extends SigilItem {
         if ( !PolymorphEffect.isPolymorphed(player) || PolymorphEffect.getPolymorphType(player) == null ) return;
         EntityType type = PolymorphEffect.getPolymorphType(player);
         if ( type == null ) return;
-        Entity creation = type.create(player.level());
+        Entity creation = type.create(player.level(), EntitySpawnReason.EVENT);
         if ( creation == null ) return;
         EntityDimensions dimensions = type.getDimensions().withEyeHeight(creation.getEyeHeight());
         event.setNewSize(dimensions);

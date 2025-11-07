@@ -21,17 +21,21 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Collection;
+
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
 
-    @Inject(method = "onEffectRemoved", at = @At(value = "HEAD"))
-    public void onEffectRemovedCallback(MobEffectInstance instance, CallbackInfo callback) {
+    @Inject(method = "onEffectsRemoved", at = @At(value = "HEAD"))
+    public void onEffectsRemovedCallback(Collection<MobEffectInstance> instances, CallbackInfo callback) {
         LivingEntity living = (LivingEntity)(Object)this;
-        if ( !living.level().isClientSide ) {
-            if ( instance.getEffect().value() instanceof SyncedMobEffect mobEffect ) {
-                mobEffect.onEffectRemoved(living, instance.getAmplifier());
-                if ( living.level().getChunkSource() instanceof ServerChunkCache serverChunk ) {
-                    serverChunk.broadcast(living, new ClientboundRemoveMobEffectPacket(living.getId(), instance.getEffect()));
+        if ( !living.level().isClientSide() ) {
+            for ( MobEffectInstance instance : instances ) {
+                if ( instance.getEffect().value() instanceof SyncedMobEffect mobEffect ) {
+                    mobEffect.onEffectRemoved(living, instance.getAmplifier());
+                    if ( living.level().getChunkSource() instanceof ServerChunkCache serverChunk ) {
+                        serverChunk.sendToTrackingPlayersAndSelf(living, new ClientboundRemoveMobEffectPacket(living.getId(), instance.getEffect()));
+                    }
                 }
             }
         }
@@ -43,6 +47,7 @@ public class LivingEntityMixin {
         if ( AbstractStunEffect.isStunned(living) && living instanceof Mob ) callback.setReturnValue(true);
     }
 
+    //Might be doable with a new method now
     @Inject(method = "checkBedExists", at = @At(value = "HEAD"), cancellable = true)
     public void allowSleepWithMobEffect(CallbackInfoReturnable<Boolean> callback) {
         LivingEntity living = (LivingEntity)(Object)this;

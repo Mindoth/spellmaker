@@ -1,16 +1,9 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "spellmaker:rune_essence"
-    },
-    {
-      "item": "spellmaker:destruction_dust"
-    },
-    {
-      "item": "minecraft:snowball"
-    }
+    "spellmaker:rune_essence",
+    "spellmaker:destruction_dust",
+    "minecraft:snowball"
   ],
   "result": {
     "id": "spellmaker:frost_sigil",

@@ -1,16 +1,9 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "spellmaker:rune_essence"
-    },
-    {
-      "item": "spellmaker:alteration_dust"
-    },
-    {
-      "item": "minecraft:wooden_pickaxe"
-    }
+    "spellmaker:rune_essence",
+    "spellmaker:alteration_dust",
+    "minecraft:wooden_pickaxe"
   ],
   "result": {
     "id": "spellmaker:excavation_sigil",

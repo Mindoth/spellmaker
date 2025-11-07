@@ -14,14 +14,14 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class UpdateBookDataClientPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<UpdateBookDataClientPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "update_book_data_client"));
+    public static final Type<UpdateBookDataClientPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "update_book_data_client"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, UpdateBookDataClientPacket> STREAM_CODEC =
             CustomPacketPayload.codec(UpdateBookDataClientPacket::encode, UpdateBookDataClientPacket::new);
 
     @Override
-    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+    public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 

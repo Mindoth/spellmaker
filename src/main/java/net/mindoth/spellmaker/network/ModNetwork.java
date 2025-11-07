@@ -16,7 +16,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = SpellMaker.MOD_ID)
+@EventBusSubscriber(modid = SpellMaker.MOD_ID)
 public class ModNetwork {
 
     @SubscribeEvent
@@ -60,7 +60,7 @@ public class ModNetwork {
             ModData.setLegacyTag(stack, buf.readNbt());
             if ( buf.readBoolean() ) stack.set(DataComponents.CUSTOM_NAME, Component.literal(buf.readUtf()));
             if ( buf.readBoolean() ) {
-                DyedItemColor color = new DyedItemColor(buf.readInt(), buf.readBoolean());
+                DyedItemColor color = new DyedItemColor(buf.readInt());
                 stack.set(DataComponents.DYED_COLOR, color);
             }
             return stack;
@@ -84,7 +84,6 @@ public class ModNetwork {
             if ( stack.has(DataComponents.DYED_COLOR) ) {
                 buf.writeBoolean(true);
                 buf.writeInt(stack.get(DataComponents.DYED_COLOR).rgb());
-                buf.writeBoolean(stack.get(DataComponents.DYED_COLOR).showInTooltip());
             }
             else buf.writeBoolean(false);
         }

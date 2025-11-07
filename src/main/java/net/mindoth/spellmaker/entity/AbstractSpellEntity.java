@@ -3,9 +3,6 @@ package net.mindoth.spellmaker.entity;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -17,12 +14,9 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.NetherPortalBlock;
-import net.minecraft.world.level.block.Portal;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.event.EventHooks;
 
@@ -41,8 +35,8 @@ public abstract class AbstractSpellEntity extends Projectile {
     @Override
     public void tick() {
         super.tick();
-        if ( level().isClientSide ) doClientTickEffects();
-        if ( !level().isClientSide ) {
+        if ( level().isClientSide() ) doClientTickEffects();
+        if ( !level().isClientSide() ) {
             doTickEffects();
             if ( this.tickCount > getLife() ) doExpirationEffects();
         }
@@ -104,7 +98,7 @@ public abstract class AbstractSpellEntity extends Projectile {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
-        if ( level().isClientSide ) doClientHitEffects();
+        if ( level().isClientSide() ) doClientHitEffects();
         else {
             if ( result.getEntity() instanceof LivingEntity ) {
                 doMobEffects(result);
@@ -117,7 +111,7 @@ public abstract class AbstractSpellEntity extends Projectile {
     @Override
     protected void onHitBlock(BlockHitResult result) {
         super.onHitBlock(result);
-        if ( level().isClientSide ) doClientHitEffects();
+        if ( level().isClientSide() ) doClientHitEffects();
         else {
             BlockState blockState = level().getBlockState(result.getBlockPos());
             doBlockEffects(result);
@@ -192,29 +186,29 @@ public abstract class AbstractSpellEntity extends Projectile {
     public static final EntityDataAccessor<String> DURATIONS = SynchedEntityData.defineId(AbstractSpellEntity.class, EntityDataSerializers.STRING);
 
     @Override
-    public void load(CompoundTag compound) {
-        super.load(compound);
-        this.entityData.set(RED, compound.getInt("red"));
-        this.entityData.set(GREEN, compound.getInt("green"));
-        this.entityData.set(BLUE, compound.getInt("blue"));
-        this.entityData.set(TYPE, compound.getInt("type"));
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.entityData.set(RED, input.getInt("red").get());
+        this.entityData.set(GREEN, input.getInt("green").get());
+        this.entityData.set(BLUE, input.getInt("blue").get());
+        this.entityData.set(TYPE, input.getInt("type").get());
 
-        this.entityData.set(SIGIL_LIST, compound.getString("sigil_list"));
-        this.entityData.set(MAGNITUDES, compound.getString("magnitudes"));
-        this.entityData.set(DURATIONS, compound.getString("durations"));
+        this.entityData.set(SIGIL_LIST, input.getString("sigil_list").get());
+        this.entityData.set(MAGNITUDES, input.getString("magnitudes").get());
+        this.entityData.set(DURATIONS, input.getString("durations").get());
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("red", this.entityData.get(RED));
-        compound.putInt("green", this.entityData.get(GREEN));
-        compound.putInt("blue", this.entityData.get(BLUE));
-        compound.putInt("type", this.entityData.get(TYPE));
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putInt("red", this.entityData.get(RED));
+        output.putInt("green", this.entityData.get(GREEN));
+        output.putInt("blue", this.entityData.get(BLUE));
+        output.putInt("type", this.entityData.get(TYPE));
 
-        compound.putString("sigil_list", this.entityData.get(SIGIL_LIST));
-        compound.putString("magnitudes", this.entityData.get(MAGNITUDES));
-        compound.putString("durations", this.entityData.get(DURATIONS));
+        output.putString("sigil_list", this.entityData.get(SIGIL_LIST));
+        output.putString("magnitudes", this.entityData.get(MAGNITUDES));
+        output.putString("durations", this.entityData.get(DURATIONS));
     }
 
     @Override

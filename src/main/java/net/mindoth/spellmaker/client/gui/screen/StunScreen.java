@@ -3,16 +3,17 @@ package net.mindoth.spellmaker.client.gui.screen;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.mobeffect.AbstractStunEffect;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.MobEffectTextureManager;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
@@ -23,107 +24,128 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-@OnlyIn(Dist.CLIENT)
+//@OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
 public class StunScreen extends Screen {
+
+    private static final ResourceLocation EFFECT_BACKGROUND_LARGE_SPRITE = ResourceLocation.withDefaultNamespace("container/inventory/effect_background_large");
+    private static final ResourceLocation EFFECT_BACKGROUND_SMALL_SPRITE = ResourceLocation.withDefaultNamespace("container/inventory/effect_background_small");
+
+    public int leftPos = 0;
+    public int imageWidth = 0;
+    public int topPos = 0;
+    private final StunScreen screen;
+    @Nullable
+    private MobEffectInstance hoveredEffect;
+
     protected StunScreen(Component pTitle) {
         super(pTitle);
+        this.minecraft = Minecraft.getInstance();
+        this.screen = this;
     }
 
     public int stunScreenLeftPos = 2;
     public int stunScreenImageWidth = 0;
     public int stunScreenTopPos = 2;
 
-    @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-        this.renderEffects(pGuiGraphics, pMouseX, pMouseY);
+    public boolean canSeeEffects() {
+        int i = this.leftPos + this.screen.imageWidth + 2;
+        int j = this.screen.width - i;
+        return j >= 32;
     }
 
-    private void renderEffects(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
-        int i = this.stunScreenLeftPos + this.stunScreenImageWidth;
-        int j = this.width - i;
+    public void renderEffects(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        this.hoveredEffect = null;
+        int i = this.screen.leftPos + this.screen.imageWidth + 2;
+        int j = this.screen.width - i;
         Collection<MobEffectInstance> collection = this.minecraft.player.getActiveEffects();
         if ( !collection.isEmpty() && j >= 32 ) {
             boolean flag = j >= 120;
-            var event = net.neoforged.neoforge.client.ClientHooks.onScreenPotionSize(this, j, !flag, i);
+            var event = net.neoforged.neoforge.client.ClientHooks.onScreenPotionSize(screen, j, !flag, i);
             if (event.isCanceled()) return;
             flag = !event.isCompact();
             i = event.getHorizontalOffset();
             int k = 33;
             if ( collection.size() > 5 ) k = 132 / (collection.size() - 1);
             Iterable<MobEffectInstance> iterable = collection.stream().filter(net.neoforged.neoforge.client.ClientHooks::shouldRenderEffect).sorted().collect(java.util.stream.Collectors.toList());
-            this.renderBackgrounds(pGuiGraphics, i, k, iterable, flag);
-            this.renderIcons(pGuiGraphics, i, k, iterable, flag);
-            if ( flag ) this.renderLabels(pGuiGraphics, i, k, iterable);
-            else if ( pMouseX >= i && pMouseX <= i + 33 ) {
-                int l = this.stunScreenTopPos;
-                MobEffectInstance mobeffectinstance = null;
-                for( MobEffectInstance mobeffectinstance1 : iterable ) {
-                    if ( pMouseY >= l && pMouseY <= l + k ) mobeffectinstance = mobeffectinstance1;
+            this.renderBackgrounds(guiGraphics, i, k, iterable, flag);
+            this.renderIcons(guiGraphics, i, k, iterable, flag);
+            if ( flag ) this.renderLabels(guiGraphics, i, k, iterable);
+            else if (mouseX >= i && mouseX <= i + 33) {
+                int l = this.screen.topPos;
+                for ( MobEffectInstance mobeffectinstance : iterable ) {
+                    if ( mouseY >= l && mouseY <= l + k ) this.hoveredEffect = mobeffectinstance;
                     l += k;
                 }
-                if ( mobeffectinstance != null ) {
-                    List<Component> list = List.of(
-                            this.getEffectName(mobeffectinstance),
-                            MobEffectUtil.formatDuration(mobeffectinstance, 1.0F, this.minecraft.level.tickRateManager().tickrate())
-                    );
-                    //list = net.neoforged.neoforge.client.ClientHooks.getEffectTooltip(this, mobeffectinstance, list);
-                    pGuiGraphics.renderTooltip(this.font, list, Optional.empty(), pMouseX, pMouseY);
-                }
             }
         }
     }
 
-    private void renderBackgrounds(GuiGraphics pGuiGraphics, int pRenderX, int pYOffset, Iterable<MobEffectInstance> pEffects, boolean pIsSmall) {
-        int i = this.stunScreenTopPos;
-        for ( MobEffectInstance mobeffectinstance : pEffects ) {
-            if ( mobeffectinstance.getEffect() instanceof AbstractStunEffect ) {
-                if ( pIsSmall ) pGuiGraphics.blit(AbstractContainerScreen.INVENTORY_LOCATION, pRenderX, i, 0, 166, 120, 32);
-                else pGuiGraphics.blit(AbstractContainerScreen.INVENTORY_LOCATION, pRenderX, i, 0, 198, 32, 32);
-                i += pYOffset;
-            }
-        }
-
-    }
-
-    private void renderIcons(GuiGraphics pGuiGraphics, int pRenderX, int pYOffset, Iterable<MobEffectInstance> pEffects, boolean pIsSmall) {
-        MobEffectTextureManager mobeffecttexturemanager = this.minecraft.getMobEffectTextures();
-        int i = this.stunScreenTopPos;
-        for ( MobEffectInstance mobeffectinstance : pEffects ) {
-            if ( mobeffectinstance.getEffect() instanceof AbstractStunEffect ) {
-                Holder<MobEffect> mobeffect = mobeffectinstance.getEffect();
-                TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(mobeffect);
-                pGuiGraphics.blit(pRenderX + (pIsSmall ? 6 : 7), i + 7, 0, 18, 18, textureatlassprite);
-                i += pYOffset;
-            }
-        }
-
-    }
-
-    private void renderLabels(GuiGraphics pGuiGraphics, int pRenderX, int pYOffset, Iterable<MobEffectInstance> pEffects) {
-        int i = this.stunScreenTopPos;
-        for ( MobEffectInstance mobeffectinstance : pEffects ) {
-            if ( mobeffectinstance.getEffect() instanceof AbstractStunEffect ) {
-                Component component = this.getEffectName(mobeffectinstance);
-                pGuiGraphics.drawString(this.font, component, pRenderX + 10 + 18, i + 6, 16777215);
-                Component component1 = MobEffectUtil.formatDuration(mobeffectinstance, 1.0F, this.minecraft.level.tickRateManager().tickrate());
-                pGuiGraphics.drawString(this.font, component1, pRenderX + 10 + 18, i + 6 + 10, 8355711);
-                i += pYOffset;
-            }
+    public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        if ( this.hoveredEffect != null ) {
+            List<Component> list = List.of(
+                    this.getEffectName(this.hoveredEffect),
+                    MobEffectUtil.formatDuration(this.hoveredEffect, 1.0F, this.minecraft.level.tickRateManager().tickrate())
+            );
+            // Neo: Allow mods to adjust the tooltip shown when hovering a mob effect.
+            //And so we dont care about it
+            //list = net.neoforged.neoforge.client.ClientHooks.getEffectTooltip(screen, this.hoveredEffect, list);
+            guiGraphics.setTooltipForNextFrame(this.screen.getFont(), list, Optional.empty(), mouseX, mouseY);
         }
     }
 
-    private Component getEffectName(MobEffectInstance pEffect) {
-        MutableComponent mutablecomponent = pEffect.getEffect().value().getDisplayName().copy();
-        if ( pEffect.getAmplifier() >= 1 && pEffect.getAmplifier() <= 9 ) {
-            mutablecomponent.append(CommonComponents.SPACE).append(Component.translatable("enchantment.level." + (pEffect.getAmplifier() + 1)));
+    private void renderBackgrounds(GuiGraphics guiGraphics, int x, int y, Iterable<MobEffectInstance> activeEffects, boolean large) {
+        int i = this.screen.topPos;
+        for ( MobEffectInstance mobeffectinstance : activeEffects ) {
+            if ( large ) guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, EFFECT_BACKGROUND_LARGE_SPRITE, x, i, 120, 32);
+            else guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, EFFECT_BACKGROUND_SMALL_SPRITE, x, i, 32, 32);
+            i += y;
         }
+    }
 
+    private void renderIcons(GuiGraphics guiGraphics, int x, int y, Iterable<MobEffectInstance> activeEffects, boolean large) {
+        int i = this.screen.topPos;
+        for ( MobEffectInstance mobeffectinstance : activeEffects ) {
+            //I wonder what this is...
+            /*var renderer = net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
+            if (renderer.renderInventoryIcon(mobeffectinstance, screen, guiGraphics, x + (large ? 6 : 7), i, 0)) {
+                i += y;
+                continue;
+            }*/
+            Holder<MobEffect> holder = mobeffectinstance.getEffect();
+            ResourceLocation resourcelocation = Gui.getMobEffectSprite(holder);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, resourcelocation, x + (large ? 6 : 7), i + 7, 18, 18);
+            i += y;
+        }
+    }
+
+    private void renderLabels(GuiGraphics guiGraphics, int x, int y, Iterable<MobEffectInstance> activeEffects) {
+        int i = this.screen.topPos;
+        for ( MobEffectInstance mobeffectinstance : activeEffects ) {
+            //I wonder what this is...
+            /*var renderer = net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
+            if (renderer.renderInventoryText(mobeffectinstance, screen, guiGraphics, x, i, 0)) {
+                i += y;
+                continue;
+            }*/
+            Component component = this.getEffectName(mobeffectinstance);
+            guiGraphics.drawString(this.screen.getFont(), component, x + 10 + 18, i + 6, -1);
+            Component component1 = MobEffectUtil.formatDuration(mobeffectinstance, 1.0F, this.minecraft.level.tickRateManager().tickrate());
+            guiGraphics.drawString(this.screen.getFont(), component1, x + 10 + 18, i + 6 + 10, -8421505);
+            i += y;
+        }
+    }
+
+    private Component getEffectName(MobEffectInstance effect) {
+        MutableComponent mutablecomponent = effect.getEffect().value().getDisplayName().copy();
+        if ( effect.getAmplifier() >= 1 && effect.getAmplifier() <= 9 ) {
+            mutablecomponent.append(CommonComponents.SPACE).append(Component.translatable("enchantment.level." + (effect.getAmplifier() + 1)));
+        }
         return mutablecomponent;
     }
 
@@ -133,11 +155,11 @@ public class StunScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int key, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
         Minecraft instance = Minecraft.getInstance();
         if ( instance.player != null ) {
-            if ( key == 256 ) pauseGame(false);
-            else if ( key == 257 ) instance.setScreen(new StunChatScreen(""));
+            if ( event.key() == 256 ) pauseGame(false);
+            else if ( event.key() == 257 ) instance.setScreen(new StunChatScreen(""));
         }
         return true;
     }
@@ -147,7 +169,8 @@ public class StunScreen extends Screen {
         boolean flag = instance.hasSingleplayerServer() && !instance.getSingleplayerServer().isPublished();
         if ( flag ) {
             instance.setScreen(new PauseScreen(!pPauseOnly));
-            instance.getSoundManager().pause();
+            //Apparently this is no longer needed
+            //instance.getSoundManager().pause();
         }
         else instance.setScreen(new PauseScreen(true));
     }
@@ -156,7 +179,7 @@ public class StunScreen extends Screen {
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
     }
 
-    @OnlyIn(Dist.CLIENT)
+    //@OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void clientStunTick(ClientTickEvent.Pre event) {
         Minecraft instance = Minecraft.getInstance();

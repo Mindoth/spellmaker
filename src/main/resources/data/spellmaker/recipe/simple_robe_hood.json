@@ -1,15 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "spellmaker:wool_cloth"
+  },
   "pattern": [
     "###",
     "# #",
     "   "
   ],
-  "key": {
-    "#": {
-      "item": "spellmaker:wool_cloth"
-    }
-  },
   "result": {
     "id": "spellmaker:simple_robe_hood",
     "count": 1
