@@ -2,12 +2,18 @@
   "layers": {
     "humanoid": [
       {
-        "texture": "spellmaker:simple_robe"
+        "texture": "spellmaker:simple_robe",
+        "dyeable": {
+          "color_when_undyed": 11711154
+        }
       }
     ],
     "humanoid_leggings": [
       {
-        "texture": "spellmaker:simple_robe"
+        "texture": "spellmaker:simple_robe",
+        "dyeable": {
+          "color_when_undyed": 11711154
+        }
       }
     ]
   }

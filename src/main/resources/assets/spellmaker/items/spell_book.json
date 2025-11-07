@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "spellmaker:item/spell_book"
+    "model": "spellmaker:item/spell_book",
+    "tints": [
+      {
+        "type": "minecraft:dye",
+        "default": -10973003
+      }
+    ]
   }
 }

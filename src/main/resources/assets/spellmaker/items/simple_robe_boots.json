@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "spellmaker:item/simple_robe_boots"
+    "model": "spellmaker:item/simple_robe_boots",
+    "tints": [
+      {
+        "type": "minecraft:dye",
+        "default": -5066062
+      }
+    ]
   }
 }
