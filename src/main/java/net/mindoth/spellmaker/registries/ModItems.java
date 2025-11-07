@@ -3,6 +3,7 @@ package net.mindoth.spellmaker.registries;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.ModDyeableItem;
 import net.mindoth.spellmaker.item.ParchmentItem;
+import net.mindoth.spellmaker.item.armor.ModArmorItem;
 import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
 import net.mindoth.spellmaker.item.sigil.*;
 import net.mindoth.spellmaker.item.weapon.ColorableSpellBookItem;
@@ -49,18 +50,17 @@ public class ModItems {
             (properties) -> new ColorableStaffItem(properties.durability(512),
                     ModDyeableItem.GRAY));
 
-    //TODO: FIX ARMOR
     public static final DeferredItem<Item> SIMPLE_ROBE_HOOD = ITEMS.registerItem("simple_robe_hood",
-            (properties) -> new Item(properties.humanoidArmor(ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.HELMET)));
+            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.HELMET));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_TOP = ITEMS.registerItem("simple_robe_top",
-            (properties) -> new Item(properties.humanoidArmor(ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.CHESTPLATE)));
+            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.CHESTPLATE));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_BOTTOM = ITEMS.registerItem("simple_robe_bottom",
-            (properties) -> new Item(properties.humanoidArmor(ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.LEGGINGS)));
+            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.LEGGINGS));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_BOOTS = ITEMS.registerItem("simple_robe_boots",
-            (properties) -> new Item(properties.humanoidArmor(ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.BOOTS)));
+            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.BOOTS));
 
     //Runes
     public static final DeferredItem<Item> EXCAVATION_SIGIL = ITEMS.registerItem("excavation_sigil",

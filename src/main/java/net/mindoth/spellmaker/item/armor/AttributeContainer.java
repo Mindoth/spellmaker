@@ -7,6 +7,8 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 public record AttributeContainer(Holder<Attribute> attribute, double value, AttributeModifier.Operation operation) {
+
+    //TODO: custom attributes on armor
     public AttributeModifier createModifier(String slot) {
         var attributeName = ResourceLocation.parse(attribute.getRegisteredName()).getPath();
         return new AttributeModifier(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, String.format("%s_%s_modifier", slot, attributeName)), value, operation);
