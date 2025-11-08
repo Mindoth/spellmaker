@@ -292,7 +292,6 @@ public class SpellBookScreen extends AbstractModScreen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        //renderBackground(graphics, mouseX, mouseY, partialTicks);
         super.render(graphics, mouseX, mouseY, partialTicks);
 
         int x = minecraft.getWindow().getGuiScaledWidth() / 2;
@@ -307,7 +306,21 @@ public class SpellBookScreen extends AbstractModScreen {
         if ( this.leftArrow.visible ) renderTexture(this.leftArrow, graphics, TEXTURE, x + this.leftArrowOffsetX, y + this.arrowOffsetY,
                 18, 180, 10, 18, 10, 280, 280);
 
-        boolean spellSelected = false;
+        iterateSpellList(graphics, x, y);
+        iterateSpellListOver(graphics, mouseX, mouseY);
+
+        //Page number
+        for ( int i = 0; i < 2; i++ ) {
+            int pageNum = this.spreadNumber * 2 + 1 + i;
+            Component pageNumTxt = Component.literal(String.valueOf(pageNum)).setStyle(Style.EMPTY.withBold(true));
+            int textX = x - (this.font.width(pageNumTxt) / 2);
+            int pageNumXOff = 67;
+            int pageNumX = pageNum % 2 == 0 ? textX + pageNumXOff : textX - pageNumXOff;
+            graphics.drawString(this.font, pageNumTxt, pageNumX, y + this.arrowOffsetY, ARGB.opaque(0), false);
+        }
+    }
+
+    private void iterateSpellListOver(GuiGraphics graphics, int mouseX, int mouseY) {
         for ( List<ItemStack> page : this.pageList ) {
             if ( this.spreadNumber == this.pageList.indexOf(page) ) {
                 boolean isRightPage = false;
@@ -315,8 +328,6 @@ public class SpellBookScreen extends AbstractModScreen {
                 int column = 0;
                 for ( int i = 0; i < page.size(); i++ ) {
                     ItemStack stack = page.get(i);
-                    CompoundTag bookTag = ModData.getLegacyTag(this.book);
-
                     //Spot calc
                     if ( column == SpellBookItem.maxColumns ) {
                         row++;
@@ -326,10 +337,45 @@ public class SpellBookScreen extends AbstractModScreen {
                             isRightPage = !isRightPage;
                         }
                     }
+                    if ( stack.getItem() instanceof ParchmentItem ) {
+                        if ( this.slotButtonList.get(i).isHovered() ) {
 
+                            List<Component> components = getTooltipFromItem(this.minecraft, stack);
+                            List<ClientTooltipComponent> clientComponents = Lists.newArrayList();
+                            for ( Component component : components ) {
+                                clientComponents.add(ClientTooltipComponent.create(component.getVisualOrderText()));
+                            }
+                            graphics.renderTooltip(this.font, clientComponents, mouseX, mouseY,
+                                    DefaultTooltipPositioner.INSTANCE, stack.get(DataComponents.TOOLTIP_STYLE));
+                        }
+                    }
+                    column++;
+                }
+            }
+        }
+    }
+
+    private void iterateSpellList(GuiGraphics graphics, int x, int y) {
+        boolean spellSelected = false;
+        for ( List<ItemStack> page : this.pageList ) {
+            if ( this.spreadNumber == this.pageList.indexOf(page) ) {
+                boolean isRightPage = false;
+                int row = 0;
+                int column = 0;
+                for ( int i = 0; i < page.size(); i++ ) {
+                    ItemStack stack = page.get(i);
+                    CompoundTag bookTag = ModData.getLegacyTag(this.book);
+                    //Spot calc
+                    if ( column == SpellBookItem.maxColumns ) {
+                        row++;
+                        column = 0;
+                        if ( row == SpellBookItem.maxRows ) {
+                            row = 0;
+                            isRightPage = !isRightPage;
+                        }
+                    }
                     int xPos = isRightPage ? x + (column * this.squareSpacingX) + this.rightButtonOffsetX : x + (column * this.squareSpacingX) + this.leftButtonOffsetX;
                     int yPos = y - 74 + (row * this.squareSpacingY) + this.yOffset;
-
                     if ( stack.getItem() instanceof ParchmentItem ) {
                         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, xPos - 3, yPos - 9, 58, 180, 105, 34, 280, 280);
                         Component spellTitle = stack.has(DataComponents.CUSTOM_NAME) ? Component.literal(stack.getHoverName().getString())
@@ -337,7 +383,6 @@ public class SpellBookScreen extends AbstractModScreen {
                         int titleX = xPos + 61;
                         int titleY = yPos - 5;
                         renderSpellName(graphics, spellTitle, titleX, titleY);
-
                         //Selected Spell
                         if ( !spellSelected && !this.book.isEmpty() && bookTag != null && bookTag.contains(SpellBookItem.NBT_KEY_BOOK_SLOT) ) {
                             if ( getSelectedSlot() > -1 && getSelectedSlot() < this.itemList.size() && stack == this.scrollList.get(getSelectedSlot()) ) {
@@ -349,24 +394,16 @@ public class SpellBookScreen extends AbstractModScreen {
                             graphics.fill(RenderPipelines.GUI, xPos + 22, yPos - 6, xPos + 99, yPos + 22, Integer.MIN_VALUE);
                         }
                     }
-
                     if ( stack.getItem() instanceof ParchmentItem ) {
                         if ( this.slotButtonList.get(i).isHovered() ) {
                             renderItemWithDecorations(graphics, stack, xPos, yPos);
                             graphics.fill(RenderPipelines.GUI, xPos, yPos, xPos + 16, yPos + 16, Integer.MIN_VALUE);
-
-                            //TODO: fix this tooltip
-                            Component component = stack.getStyledHoverName();
-                            ClientTooltipComponent clienttooltipcomponent = ClientTooltipComponent.create(component.getVisualOrderText());
-                            graphics.renderTooltip(this.font, List.of(clienttooltipcomponent), mouseX, mouseY,
-                                    DefaultTooltipPositioner.INSTANCE, stack.get(DataComponents.TOOLTIP_STYLE));
                         }
                         else {
                             ResourceLocation icon = getSpellIcon(stack);
                             graphics.blit(RenderPipelines.GUI_TEXTURED, icon, xPos, yPos, 0, 0, 16, 16, 16, 16);
                         }
                     }
-
                     //Swap Arrows
                     if ( stack.getItem() instanceof ParchmentItem ) {
                         int index = i / SpellBookItem.maxColumns;
@@ -378,20 +415,9 @@ public class SpellBookScreen extends AbstractModScreen {
                         renderTexture(this.downSwapButtonList.get(index), graphics, TEXTURE, newX - 1, yPos + 10,
                                 47, 180, 7, 11, 7, 280, 280);
                     }
-
                     column++;
                 }
             }
-        }
-
-        //Page number
-        for ( int i = 0; i < 2; i++ ) {
-            int pageNum = this.spreadNumber * 2 + 1 + i;
-            Component pageNumTxt = Component.literal(String.valueOf(pageNum)).setStyle(Style.EMPTY.withBold(true));
-            int textX = x - (this.font.width(pageNumTxt) / 2);
-            int pageNumXOff = 67;
-            int pageNumX = pageNum % 2 == 0 ? textX + pageNumXOff : textX - pageNumXOff;
-            graphics.drawString(this.font, pageNumTxt, pageNumX, y + this.arrowOffsetY, ARGB.opaque(0), false);
         }
     }
 

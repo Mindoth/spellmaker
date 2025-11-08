@@ -150,7 +150,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         List<AbstractSpellForm> list = this.menu.getFormList();
         AbstractSpellForm form = this.menu.getSpellForm();
         AbstractSpellForm newForm;
-        if ( form == list.get(0) ) newForm = list.get(list.size() - 1);
+        if ( form == list.getFirst() ) newForm = list.getLast();
         else newForm = list.get(list.indexOf(form) - 1);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(newForm));
         this.menu.editSpellForm(tag);
@@ -162,7 +162,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         List<AbstractSpellForm> list = this.menu.getFormList();
         AbstractSpellForm form = this.menu.getSpellForm();
         AbstractSpellForm newForm;
-        if ( form == list.get(list.size() - 1) ) newForm = list.get(0);
+        if ( form == list.getLast() ) newForm = list.getFirst();
         else newForm = list.get(list.indexOf(form) + 1);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(newForm));
         this.menu.editSpellForm(tag);
@@ -246,10 +246,8 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         super.render(graphics, mouseX, mouseY, partialTicks);
         this.name.render(graphics, mouseX, mouseY, partialTicks);
         renderTooltip(graphics, mouseX, mouseY);
-
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
-
         //Spell Form buttons
         if ( this.menu.isReadyToMake() ) {
             renderArrowButton(this.leftSpellFormButton, graphics, x + LEFT_SPELL_FORM_BUTTON_OFFSET_X, y + SPELL_FORM_BUTTON_OFFSET_Y, 176,
@@ -257,7 +255,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             renderArrowButton(this.rightSpellFormButton, graphics, x + RIGHT_SPELL_FORM_BUTTON_OFFSET_X, y + SPELL_FORM_BUTTON_OFFSET_Y, 183,
                     this.rightSpellFormButton.isMouseOver(mouseX, mouseY) ? 59 : 48);
         }
-
         //Stat buttons
         for ( int i = 0; i < this.magnitudeListLeft.size(); i++ ) {
             if ( canEditStat((byte)0, i, false, this.menu.getMagnitude().get(i)) ) {
@@ -283,7 +280,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                         this.durationListRight.get(i).isMouseOver(mouseX, mouseY) ? 59 : 48);
             }
         }
-
         //Stat number strings
         boolean showMag = false;
         boolean showDur = false;
@@ -360,7 +356,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             Component component = Component.literal(String.valueOf(cost)).setStyle(Style.EMPTY.withBold(true));
             graphics.drawString(this.font, component, x + 16 - this.font.width(String.valueOf(cost)) / 2, y + 66, ARGB.opaque(5804213), false);
         }
-
         //Action button
         if ( this.menu.isReadyToMake() || this.menu.isReadyToDump() ) {
             int xIcon = x + CRAFT_BUTTON_OFFSET_X;
@@ -370,9 +365,8 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                     0, 16, 16, 256, 256);
             Component name = this.menu.isReadyToMake() ? Component.translatable("tooltip.spellmaker.make") : Component.translatable("tooltip.spellmaker.dump");
             if ( mouseX >= xIcon && mouseX <= xIcon + 16 && mouseY >= yIcon && mouseY <= yIcon + 16 ) {
-
-                ClientTooltipComponent clienttooltipcomponent = ClientTooltipComponent.create(name.getVisualOrderText());
-                graphics.renderTooltip(this.font, List.of(clienttooltipcomponent), mouseX, mouseY,
+                ClientTooltipComponent clientComponent = ClientTooltipComponent.create(name.getVisualOrderText());
+                graphics.renderTooltip(this.font, List.of(clientComponent), mouseX, mouseY,
                         DefaultTooltipPositioner.INSTANCE, null);
             }
         }
