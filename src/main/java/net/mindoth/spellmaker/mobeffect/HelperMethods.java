@@ -63,7 +63,7 @@ public abstract class HelperMethods {
         var entity = event.getEntity();
         if ( entity.level().isClientSide() ) return;
         entity.getActiveEffects().forEach(effect -> {
-            if ( effect.getEffect().value() instanceof SyncedMobEffect callback ) callback.onEffectRemoved(entity, effect.getAmplifier());
+            if ( effect.getEffect().value() instanceof SyncedMobEffect callback ) callback.onEffectRemoved(entity, effect.getAmplifier(), true);
         });
     }
 }

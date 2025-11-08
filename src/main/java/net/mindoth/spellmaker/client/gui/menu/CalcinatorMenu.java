@@ -10,11 +10,9 @@ import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipePropertySet;
 
 public class CalcinatorMenu extends AbstractFurnaceMenu {
 
-    //TODO: figure out what is RecipePropertySet, maybe FURNACE_INPUT is enough
     public CalcinatorMenu(int pContainerId, Inventory pPlayerInventory, FriendlyByteBuf buf) {
         super(ModMenus.CALCINATOR_MENU.get(), CalcinatingRecipe.Type.CALCINATING, ModRecipePropertySets.CALCINATOR_INPUT, RecipeBookType.FURNACE, pContainerId, pPlayerInventory);
     }

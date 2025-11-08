@@ -3,6 +3,7 @@ package net.mindoth.spellmaker.client.model;
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.armor.ModArmorItem;
+import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -10,6 +11,7 @@ import net.minecraft.client.renderer.entity.ArmorModelSet;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -42,8 +44,8 @@ public class ModLayerEvents {
             @Override
             @NotNull
             public Model getHumanoidArmorModel(@NotNull ItemStack stack, @NotNull EquipmentClientInfo.LayerType type, @NotNull Model original) {
-                if ( original instanceof HumanoidModel<?> humanoidModel && stack.getItem() instanceof ModArmorItem item ) {
-                    HumanoidModel<?> modArmor = new SimpleRobeModel(SimpleRobeModel.createLayerByType(item.type).bakeRoot());
+                if ( original instanceof HumanoidModel humanoidModel && stack.getItem() instanceof ModArmorItem item ) {
+                    SimpleRobeModel modArmor = new SimpleRobeModel(SimpleRobeModel.createLayerByType(item.type).bakeRoot());
                     ClientHooks.copyModelProperties(humanoidModel, modArmor);
                     return modArmor;
                 }

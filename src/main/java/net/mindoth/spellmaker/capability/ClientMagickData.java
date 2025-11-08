@@ -1,7 +1,6 @@
-package net.mindoth.spellmaker.capability.playermagic;
+package net.mindoth.spellmaker.capability;
 
 public class ClientMagickData {
-
     private static double currentMana;
     public static double getCurrentMana() {
         return currentMana;

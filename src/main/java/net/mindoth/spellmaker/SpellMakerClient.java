@@ -4,24 +4,17 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.mindoth.spellmaker.client.gui.screen.CalcinatorScreen;
 import net.mindoth.spellmaker.client.gui.screen.HudMana;
 import net.mindoth.spellmaker.client.gui.screen.SpellMakingScreen;
-import net.mindoth.spellmaker.client.model.SimpleRobeModel;
 import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.entity.ProjectileSpellMultiRenderer;
 import net.mindoth.spellmaker.entity.ProjectileSpellSingleRenderer;
-import net.mindoth.spellmaker.item.ModDyeableItem;
 import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.network.AskToOpenSpellBookPacket;
 import net.mindoth.spellmaker.registries.ModEntities;
-import net.mindoth.spellmaker.registries.ModItems;
 import net.mindoth.spellmaker.registries.ModMenus;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -37,8 +30,6 @@ import org.lwjgl.glfw.GLFW;
 public class SpellMakerClient {
     public static void registerHandlers(IEventBus modBus, ModContainer modContainer) {
         modBus.addListener(SpellMakerClient::registerEntityRenderers);
-        //modBus.addListener(SpellMakerClient::registerLayerDefinitions);
-        //modBus.addListener(SpellMakerClient::registerItemColors);
         modContainer.registerConfig(ModConfig.Type.CLIENT, ModClientConfig.SPEC);
     }
 
@@ -46,22 +37,6 @@ public class SpellMakerClient {
         event.registerEntityRenderer(ModEntities.SPELL_PROJECTILE_SINGLE.get(), ProjectileSpellSingleRenderer::new);
         event.registerEntityRenderer(ModEntities.SPELL_PROJECTILE_MULTI.get(), ProjectileSpellMultiRenderer::new);
     }
-
-    //TODO: equipment json
-    /*public static void registerItemColors(RegisterColorHandlersEvent event) {
-        for ( ResourceLocation id : ModItems.ITEMS.getRegistry().get().keySet() ) {
-            Item item = BuiltInRegistries.ITEM.get(id);
-            if ( item instanceof ModDyeableItem modItem ) {
-                event.register((stack, layer) -> layer > 0 ? -1 : DyedItemColor.getOrDefault(stack, modItem.getDefaultColor()), item);
-            }
-        }
-    }*/
-
-    //public static final ModelLayerLocation SIMPLE_ROBE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "main"), "simple_robe");
-
-    /*public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(SIMPLE_ROBE, SimpleRobeModel::createBodyLayer);
-    }*/
 
     @EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
     public static class ClientForgeEvents {

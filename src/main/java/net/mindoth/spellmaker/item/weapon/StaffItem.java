@@ -2,7 +2,6 @@ package net.mindoth.spellmaker.item.weapon;
 
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.ModCapabilities;
-import net.mindoth.spellmaker.capability.playermagic.MagickData;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.sigil.SigilItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
@@ -71,13 +70,12 @@ public class StaffItem extends Item {
                 double baseCost = ParchmentItem.calculateSpellCost(form, map);
                 double discount = player.getAttributeValue(ModAttributes.MANA_COST_MULTIPLIER) - ModAttributes.MANA_COST_MULTIPLIER.get().getDefaultValue();
                 int cost = Mth.ceil(baseCost * (1.0D - discount));
-                MagickData magick = MagickData.getPlayerMagickData(player);
-                if ( cost <= magick.getCurrentMana() || player.isCreative() ) {
+                if ( cost <= player.getData(ModCapabilities.MAGICK_DATA) || player.isCreative() ) {
                     form.castMagick(player, player, map);
                     handleCooldowns(player, staff, 20);
                     if ( !player.isCreative() ) {
                         addItemDamage(staff, 1, player);
-                        ModCapabilities.changeMana(player, -cost);
+                        ModCapabilities.changeMana(player, -cost, player.getAttributeValue(ModAttributes.MANA_MAX));
                     }
                     playCastingSound(player);
                 }

@@ -32,7 +32,7 @@ public class LivingEntityMixin {
         if ( !living.level().isClientSide() ) {
             for ( MobEffectInstance instance : instances ) {
                 if ( instance.getEffect().value() instanceof SyncedMobEffect mobEffect ) {
-                    mobEffect.onEffectRemoved(living, instance.getAmplifier());
+                    mobEffect.onEffectRemoved(living, instance.getAmplifier(), false);
                     if ( living.level().getChunkSource() instanceof ServerChunkCache serverChunk ) {
                         serverChunk.sendToTrackingPlayersAndSelf(living, new ClientboundRemoveMobEffectPacket(living.getId(), instance.getEffect()));
                     }

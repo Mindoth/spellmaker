@@ -89,7 +89,6 @@ public class SpellBookItem extends Item implements ModDyeableItem {
         }
     }
 
-    //TODO: figure out how to put UUIDs
     public static void handleSignature(ServerPlayer serverPlayer, ItemStack stack) {
         CompoundTag tag = ModData.getOrCreateLegacyTag(stack);
         if ( !tag.contains(NBT_KEY_BOOK_SLOT) ) tag.putInt(NBT_KEY_BOOK_SLOT, -1);

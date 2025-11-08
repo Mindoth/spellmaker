@@ -20,7 +20,7 @@ public class SleepEffect extends AbstractStunEffect implements SyncedMobEffect {
     }
 
     @Override
-    public void onEffectRemoved(LivingEntity living, int amp) {
+    public void onEffectRemoved(LivingEntity living, int amp, boolean isWasDeath) {
         if ( living.isSleeping() ) living.stopSleeping();
     }
 

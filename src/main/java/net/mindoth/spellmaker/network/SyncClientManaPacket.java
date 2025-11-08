@@ -1,7 +1,7 @@
 package net.mindoth.spellmaker.network;
 
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.capability.playermagic.ClientMagickData;
+import net.mindoth.spellmaker.capability.ClientMagickData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

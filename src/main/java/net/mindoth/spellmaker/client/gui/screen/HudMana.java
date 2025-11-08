@@ -1,7 +1,7 @@
 package net.mindoth.spellmaker.client.gui.screen;
 
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.capability.playermagic.ClientMagickData;
+import net.mindoth.spellmaker.capability.ClientMagickData;
 import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.item.armor.ModArmorItem;
 import net.mindoth.spellmaker.item.sigil.FishFormSigilItem;
@@ -12,8 +12,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.gui.GuiLayer;
 
 public class HudMana implements GuiLayer {
@@ -49,10 +49,11 @@ public class HudMana implements GuiLayer {
                 || !StaffItem.getHeldCastingItem(player).isEmpty() || isWearingMagicArmor(player));
     }
 
-    //TODO: fix armor
     public static boolean isWearingMagicArmor(Player player) {
-        /*for ( ItemStack slot : player.getArmorSlots() ) if ( slot.getItem() instanceof ModArmorItem ) return true;
-        return false;*/
-        return true;
+        if ( player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof ModArmorItem ) return true;
+        if ( player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof ModArmorItem ) return true;
+        if ( player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof ModArmorItem ) return true;
+        if ( player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof ModArmorItem ) return true;
+        return false;
     }
 }

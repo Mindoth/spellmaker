@@ -5,14 +5,15 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.entity.ArmorModelSet;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.item.equipment.ArmorType;
 
 import java.util.Set;
 import java.util.function.Function;
 
-public class SimpleRobeModel extends HumanoidModel {
+public class SimpleRobeModel<S extends HumanoidRenderState> extends HumanoidModel<S> {
 
-    //TODO: Armor "breathes" on an armorstand
+    //TODO: Armor "breathes" on an armorstand. It also doesn't work on babies
     public SimpleRobeModel(ModelPart root) {
         super(root);
     }
@@ -28,18 +29,19 @@ public class SimpleRobeModel extends HumanoidModel {
         return null;
     }
 
+    public void babyTransformer(S humanoid) {
+
+    }
+
     public static LayerDefinition createHeadLayer() {
         return SIMPLE_ROBE_ARMOR_LAYER.head();
     }
-
     public static LayerDefinition createBodyLayer() {
         return SIMPLE_ROBE_ARMOR_LAYER.chest();
     }
-
     public static LayerDefinition createLegsLayer() {
         return SIMPLE_ROBE_ARMOR_LAYER.legs();
     }
-
     public static LayerDefinition createBootsLayer() {
         return SIMPLE_ROBE_ARMOR_LAYER.feet();
     }
@@ -86,6 +88,5 @@ public class SimpleRobeModel extends HumanoidModel {
                         new CubeDeformation(deform)), PartPose.offset(1.9F, 12.0F, 0.0F));
 
         return mesh;
-        //return LayerDefinition.create(mesh, 64, 64);
     }
 }

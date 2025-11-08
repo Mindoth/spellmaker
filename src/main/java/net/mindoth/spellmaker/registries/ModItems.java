@@ -16,6 +16,8 @@ import net.minecraft.world.item.equipment.ArmorType;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import static net.mindoth.spellmaker.item.armor.ModArmorItem.withMagickAttributes;
+
 public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(SpellMaker.MOD_ID);
 
@@ -51,16 +53,16 @@ public class ModItems {
                     ModDyeableItem.GRAY));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_HOOD = ITEMS.registerItem("simple_robe_hood",
-            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.HELMET));
+            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(25, 0.05D)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_TOP = ITEMS.registerItem("simple_robe_top",
-            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.CHESTPLATE));
+            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(25, 0.05D)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_BOTTOM = ITEMS.registerItem("simple_robe_bottom",
-            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.LEGGINGS));
+            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(25, 0.05D)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_BOOTS = ITEMS.registerItem("simple_robe_boots",
-            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.BOOTS));
+            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(25, 0.05D)));
 
     //Runes
     public static final DeferredItem<Item> EXCAVATION_SIGIL = ITEMS.registerItem("excavation_sigil",

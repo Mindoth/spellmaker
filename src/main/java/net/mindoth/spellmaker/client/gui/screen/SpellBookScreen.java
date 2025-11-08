@@ -355,8 +355,7 @@ public class SpellBookScreen extends AbstractModScreen {
                             renderItemWithDecorations(graphics, stack, xPos, yPos);
                             graphics.fill(RenderPipelines.GUI, xPos, yPos, xPos + 16, yPos + 16, Integer.MIN_VALUE);
 
-                            //TODO: no idea if this tooltip works or not
-                            //Update, it doesn't
+                            //TODO: fix this tooltip
                             Component component = stack.getStyledHoverName();
                             ClientTooltipComponent clienttooltipcomponent = ClientTooltipComponent.create(component.getVisualOrderText());
                             graphics.renderTooltip(this.font, List.of(clienttooltipcomponent), mouseX, mouseY,

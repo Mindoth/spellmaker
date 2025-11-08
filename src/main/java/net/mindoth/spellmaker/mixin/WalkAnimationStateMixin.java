@@ -7,7 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(WalkAnimationState.class)
 public interface WalkAnimationStateMixin {
 
-    //TODO: check what positionScale is
     @Accessor
     float getSpeedOld();
 

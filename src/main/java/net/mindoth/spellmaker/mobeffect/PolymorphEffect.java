@@ -77,7 +77,6 @@ public class PolymorphEffect extends MobEffect implements SyncedMobEffect {
             CompoundTag tag = new CompoundTag();
             tag.putString("id", EntityType.getKey(target.getType()).toString());
 
-            //Fuck you.
             try ( ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(LogUtils.getLogger()) ) {
                 TagValueOutput output = TagValueOutput.createWithContext(reporter, target.registryAccess());
                 target.saveWithoutId(output);
@@ -95,7 +94,8 @@ public class PolymorphEffect extends MobEffect implements SyncedMobEffect {
     }
 
     @Override
-    public void onEffectRemoved(LivingEntity living, int pAmplifier) {
+    public void onEffectRemoved(LivingEntity living, int pAmplifier, boolean isWasDeath) {
+        if ( isWasDeath ) return;
         if ( living instanceof Mob mob ) {
             if ( !(mob.level() instanceof ServerLevel level) ) return;
             if ( mob.getPersistentData().contains(NBT_KEY_RE_POLYMORPH) ) mob.getPersistentData().remove(NBT_KEY_RE_POLYMORPH);
@@ -109,14 +109,11 @@ public class PolymorphEffect extends MobEffect implements SyncedMobEffect {
 
     private static void restoreMob(CompoundTag tag, ServerLevel level, LivingEntity living) {
         if ( tag.isEmpty() || !(living instanceof Mob oldMob) ) return;
-
-        //Just fuck you.
         try ( ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(LogUtils.getLogger()) ) {
             ValueInput input = TagValueInput.create(reporter, level.registryAccess(), tag);
-
             BuiltInRegistries.ENTITY_TYPE.get(EntityType.getKey(oldMob.getType()));
             EntityType.create(input, level, EntitySpawnReason.CONVERSION).map((entity -> {
-                entity.setPos(oldMob.position());
+                entity.snapTo(oldMob.position(), oldMob.getYRot(), oldMob.getXRot());
                 entity.setDeltaMovement(oldMob.getDeltaMovement());
                 if ( entity instanceof LivingEntity newLiving ) {
                     if ( newLiving.hasEffect(ModEffects.POLYMORPH) ) newLiving.removeEffect(ModEffects.POLYMORPH);
