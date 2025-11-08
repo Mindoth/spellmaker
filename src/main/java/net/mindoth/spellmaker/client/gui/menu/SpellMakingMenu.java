@@ -325,9 +325,11 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                 }
             }
             else {
-                CompoundTag tag = new CompoundTag();
-                tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(this.initFormList.getFirst()));
-                editSpellForm(tag);
+                if ( level.isClientSide() ) {
+                    CompoundTag tag = new CompoundTag();
+                    tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(this.initFormList.getFirst()));
+                    editSpellForm(tag);
+                }
                 for ( Slot slot : this.slots ) {
                     if ( slot instanceof SigilSlot sigilSlot) {
                         if ( !level.isClientSide() && !sigilSlot.getItem().isEmpty() ) {

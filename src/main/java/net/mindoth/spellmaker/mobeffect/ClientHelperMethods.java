@@ -1,6 +1,5 @@
 package net.mindoth.spellmaker.mobeffect;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.sigil.PolymorphSigilItem;
 import net.mindoth.spellmaker.mixin.EntityMixin;
@@ -8,15 +7,12 @@ import net.mindoth.spellmaker.mixin.WalkAnimationStateMixin;
 import net.mindoth.spellmaker.network.SyncSizeForTrackersPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -24,7 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -119,15 +114,20 @@ public abstract class ClientHelperMethods {
         if ( pose != living.getPose() || (living.getDimensions(living.getPose()) != player.getDimensions(player.getPose())) ) living.refreshDimensions();
     }
 
-    //TODO: render polymorphed player
     private static void render(LivingEntity living, RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
-        /*Minecraft instance = Minecraft.getInstance();
-        float yaw = Mth.lerp(event.getPartialTick(), living.yRotO, living.getYRot());
-        //instance.getEntityRenderDispatcher().getRenderer(living).render(living, yaw, partialTicks, poseStack, buffer, light);
+        Minecraft instance = Minecraft.getInstance();
+        //float yaw = Mth.lerp(event.getPartialTick(), living.yRotO, living.getYRot());
+        //renderer.render(living, yaw, partialTicks, poseStack, buffer, light);
         EntityRenderer renderer = instance.getEntityRenderDispatcher().getRenderer(living);
         EntityRenderState state = renderer.createRenderState(living, event.getPartialTick());
-        Entity camera = instance.getCameraEntity();
-        renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), null);*/
+        state.lightCoords = event.getRenderState().lightCoords;
+        renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), getCameraState(living));
+    }
+
+    private static CameraRenderState getCameraState(LivingEntity living) {
+        CameraRenderState cameraState = new CameraRenderState();
+        cameraState.initialized = true;
+        return cameraState;
     }
 
     @SubscribeEvent
