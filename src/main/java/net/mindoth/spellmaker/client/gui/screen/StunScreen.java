@@ -3,33 +3,21 @@ package net.mindoth.spellmaker.client.gui.screen;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.mobeffect.AbstractStunEffect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.core.Holder;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
-//@OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
 public class StunScreen extends Screen {
 
@@ -49,11 +37,7 @@ public class StunScreen extends Screen {
         this.screen = this;
     }
 
-    public int stunScreenLeftPos = 2;
-    public int stunScreenImageWidth = 0;
-    public int stunScreenTopPos = 2;
-
-    public boolean canSeeEffects() {
+    /*public boolean canSeeEffects() {
         int i = this.leftPos + this.screen.imageWidth + 2;
         int j = this.screen.width - i;
         return j >= 32;
@@ -93,7 +77,7 @@ public class StunScreen extends Screen {
                     MobEffectUtil.formatDuration(this.hoveredEffect, 1.0F, this.minecraft.level.tickRateManager().tickrate())
             );
             // Neo: Allow mods to adjust the tooltip shown when hovering a mob effect.
-            //And so we dont care about it
+            //And so we don't care about it
             //list = net.neoforged.neoforge.client.ClientHooks.getEffectTooltip(screen, this.hoveredEffect, list);
             guiGraphics.setTooltipForNextFrame(this.screen.getFont(), list, Optional.empty(), mouseX, mouseY);
         }
@@ -112,11 +96,11 @@ public class StunScreen extends Screen {
         int i = this.screen.topPos;
         for ( MobEffectInstance mobeffectinstance : activeEffects ) {
             //I wonder what this is...
-            /*var renderer = net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
-            if (renderer.renderInventoryIcon(mobeffectinstance, screen, guiGraphics, x + (large ? 6 : 7), i, 0)) {
-                i += y;
-                continue;
-            }*/
+            //var renderer = net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
+            //if (renderer.renderInventoryIcon(mobeffectinstance, screen, guiGraphics, x + (large ? 6 : 7), i, 0)) {
+            //    i += y;
+            //    continue;
+            //}
             Holder<MobEffect> holder = mobeffectinstance.getEffect();
             ResourceLocation resourcelocation = Gui.getMobEffectSprite(holder);
             guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, resourcelocation, x + (large ? 6 : 7), i + 7, 18, 18);
@@ -128,11 +112,11 @@ public class StunScreen extends Screen {
         int i = this.screen.topPos;
         for ( MobEffectInstance mobeffectinstance : activeEffects ) {
             //I wonder what this is...
-            /*var renderer = net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
-            if (renderer.renderInventoryText(mobeffectinstance, screen, guiGraphics, x, i, 0)) {
-                i += y;
-                continue;
-            }*/
+            //var renderer = net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
+            //if (renderer.renderInventoryText(mobeffectinstance, screen, guiGraphics, x, i, 0)) {
+            //    i += y;
+            //    continue;
+            //}
             Component component = this.getEffectName(mobeffectinstance);
             guiGraphics.drawString(this.screen.getFont(), component, x + 10 + 18, i + 6, -1);
             Component component1 = MobEffectUtil.formatDuration(mobeffectinstance, 1.0F, this.minecraft.level.tickRateManager().tickrate());
@@ -147,19 +131,14 @@ public class StunScreen extends Screen {
             mutablecomponent.append(CommonComponents.SPACE).append(Component.translatable("enchantment.level." + (effect.getAmplifier() + 1)));
         }
         return mutablecomponent;
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
+    }*/
 
     @Override
     public boolean keyPressed(KeyEvent event) {
         Minecraft instance = Minecraft.getInstance();
         if ( instance.player != null ) {
             if ( event.key() == 256 ) pauseGame(false);
-            else if ( event.key() == 257 ) instance.setScreen(new StunChatScreen(""));
+            else if ( event.key() == 84 ) instance.setScreen(new StunChatScreen("", false));
         }
         return true;
     }
@@ -179,7 +158,6 @@ public class StunScreen extends Screen {
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
     }
 
-    //@OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void clientStunTick(ClientTickEvent.Pre event) {
         Minecraft instance = Minecraft.getInstance();
@@ -192,5 +170,10 @@ public class StunScreen extends Screen {
             }
             else if ( instance.screen instanceof StunScreen || instance.screen instanceof StunChatScreen ) player.closeContainer();
         }
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
     }
 }

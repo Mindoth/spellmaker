@@ -1,26 +1,14 @@
 package net.mindoth.spellmaker.client.gui.screen;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.core.Holder;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffectUtil;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
-//@OnlyIn(Dist.CLIENT)
 public class StunChatScreen extends ChatScreen {
 
     private static final ResourceLocation EFFECT_BACKGROUND_LARGE_SPRITE = ResourceLocation.withDefaultNamespace("container/inventory/effect_background_large");
@@ -33,13 +21,31 @@ public class StunChatScreen extends ChatScreen {
     @Nullable
     private MobEffectInstance hoveredEffect;
 
-    public StunChatScreen(String pInitial) {
-        super(pInitial, false);
+    private boolean initHappened = false;
+    private boolean chatReset = false;
+
+    public StunChatScreen(String pInitial, boolean isDraft) {
+        super(pInitial, isDraft);
         this.minecraft = Minecraft.getInstance();
         this.screen = this;
     }
 
-    public boolean canSeeEffects() {
+    @Override
+    public void init() {
+        super.init();
+        this.initHappened = true;
+    }
+
+    //Stupid dumb feature needed to remove the "t" minecraft inserts when opening custom chat with T-key
+    @Override
+    public void tick() {
+        if ( this.initHappened && !this.chatReset ) {
+            this.input.setValue("");
+            this.chatReset = true;
+        }
+    }
+
+    /*public boolean canSeeEffects() {
         int i = this.leftPos + this.screen.imageWidth + 2;
         int j = this.screen.width - i;
         return j >= 32;
@@ -98,11 +104,11 @@ public class StunChatScreen extends ChatScreen {
         int i = this.screen.topPos;
         for ( MobEffectInstance mobeffectinstance : activeEffects ) {
             //wonder what this is...
-            /*var renderer = net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
-            if (renderer.renderInventoryIcon(mobeffectinstance, screen, guiGraphics, x + (large ? 6 : 7), i, 0)) {
-                i += y;
-                continue;
-            }*/
+            //var renderer = net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
+            //if (renderer.renderInventoryIcon(mobeffectinstance, screen, guiGraphics, x + (large ? 6 : 7), i, 0)) {
+            //    i += y;
+            //    continue;
+            //}
             Holder<MobEffect> holder = mobeffectinstance.getEffect();
             ResourceLocation resourcelocation = Gui.getMobEffectSprite(holder);
             guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, resourcelocation, x + (large ? 6 : 7), i + 7, 18, 18);
@@ -113,12 +119,11 @@ public class StunChatScreen extends ChatScreen {
     private void renderLabels(GuiGraphics guiGraphics, int x, int y, Iterable<MobEffectInstance> activeEffects) {
         int i = this.screen.topPos;
         for ( MobEffectInstance mobeffectinstance : activeEffects ) {
-            //I wonder what this is...
-            /*var renderer = net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
-            if (renderer.renderInventoryText(mobeffectinstance, screen, guiGraphics, x, i, 0)) {
-                i += y;
-                continue;
-            }*/
+            //I wonder what this is...*var renderer = net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
+            //if (renderer.renderInventoryText(mobeffectinstance, screen, guiGraphics, x, i, 0)) {
+            //    i += y;
+            //    continue;
+            //}
             Component component = this.getEffectName(mobeffectinstance);
             guiGraphics.drawString(this.screen.getFont(), component, x + 10 + 18, i + 6, -1);
             Component component1 = MobEffectUtil.formatDuration(mobeffectinstance, 1.0F, this.minecraft.level.tickRateManager().tickrate());
@@ -133,15 +138,14 @@ public class StunChatScreen extends ChatScreen {
             mutablecomponent.append(CommonComponents.SPACE).append(Component.translatable("enchantment.level." + (effect.getAmplifier() + 1)));
         }
         return mutablecomponent;
-    }
+    }*/
 
     @Override
     public boolean keyPressed(KeyEvent event) {
         Minecraft instance = Minecraft.getInstance();
         if ( instance.player != null ) {
-            if ( event.key() == 256 ) StunScreen.pauseGame(false);
-            else if ( /*event.key() != 257 &&*/ event.key() != 335 ) return super.keyPressed(event);
-            //else if ( event.key() == 257 ) instance.setScreen(new StunScreen(Component.literal("")));
+            if ( event.key() == 256 ) instance.setScreen(new StunScreen(Component.literal("")));
+            else if ( event.key() != 335 ) return super.keyPressed(event);
         }
         return true;
     }

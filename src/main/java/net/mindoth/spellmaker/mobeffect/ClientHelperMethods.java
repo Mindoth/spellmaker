@@ -36,11 +36,9 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import java.util.Objects;
 import java.util.UUID;
 
-//@OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
 public abstract class ClientHelperMethods {
 
-    //@OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void syncPolymorphSizeClient(ClientTickEvent.Pre event) {
         Player player = Minecraft.getInstance().player;

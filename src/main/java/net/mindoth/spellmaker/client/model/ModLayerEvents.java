@@ -3,7 +3,6 @@ package net.mindoth.spellmaker.client.model;
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.armor.ModArmorItem;
-import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -11,7 +10,6 @@ import net.minecraft.client.renderer.entity.ArmorModelSet;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -41,6 +39,7 @@ public class ModLayerEvents {
     @SubscribeEvent
     public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
         IClientItemExtensions armor = new IClientItemExtensions() {
+            //Hope they add back entity parameter so I can check for things like if the entity wearing armor is a baby
             @Override
             @NotNull
             public Model getHumanoidArmorModel(@NotNull ItemStack stack, @NotNull EquipmentClientInfo.LayerType type, @NotNull Model original) {

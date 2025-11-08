@@ -40,7 +40,6 @@ public class ParchmentItem extends Item {
     public static final String NBT_KEY_SPELL_NAME = "sm_spell_name";
     public static final String NBT_KEY_PAPER_TIER = "sm_paper_tier";
 
-    //@OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> components, TooltipFlag tooltipFlag) {
         if ( ModData.getLegacyTag(stack) != null ) {

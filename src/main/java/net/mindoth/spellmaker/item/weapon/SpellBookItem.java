@@ -47,7 +47,6 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     public static final String NBT_KEY_BOOK_SLOT = "sm_book_slot";
     public static final String NBT_KEY_NULL_NAME = "sm_spell_has_null_name";
 
-    //@OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> components, TooltipFlag tooltipFlag) {
         CompoundTag tag = ModData.getLegacyTag(stack);
@@ -201,7 +200,7 @@ public class SpellBookItem extends Item implements ModDyeableItem {
 
     public static void addSpellTagsToBook(CompoundTag bookTag, String string, String key) {
         if ( bookTag.contains(key) ) {
-            String spellList = bookTag.getString(key) + ";" + string;
+            String spellList = bookTag.getString(key).get() + ";" + string;
             bookTag.remove(key);
             bookTag.putString(key, spellList);
         }

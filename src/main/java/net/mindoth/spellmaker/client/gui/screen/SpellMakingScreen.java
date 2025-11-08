@@ -33,7 +33,6 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-//@OnlyIn(Dist.CLIENT)
 public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> implements ContainerListener {
 
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/spell_making_screen.png");
