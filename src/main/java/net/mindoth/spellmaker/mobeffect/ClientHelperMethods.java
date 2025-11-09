@@ -5,6 +5,7 @@ import net.mindoth.spellmaker.item.sigil.PolymorphSigilItem;
 import net.mindoth.spellmaker.mixin.EntityMixin;
 import net.mindoth.spellmaker.mixin.WalkAnimationStateMixin;
 import net.mindoth.spellmaker.network.SyncSizeForTrackersPacket;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -114,6 +115,7 @@ public abstract class ClientHelperMethods {
         if ( pose != living.getPose() || (living.getDimensions(living.getPose()) != player.getDimensions(player.getPose())) ) living.refreshDimensions();
     }
 
+    //TODO: orientation to fix inventory model view
     private static void render(LivingEntity living, RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
         Minecraft instance = Minecraft.getInstance();
         //float yaw = Mth.lerp(event.getPartialTick(), living.yRotO, living.getYRot());
@@ -121,13 +123,17 @@ public abstract class ClientHelperMethods {
         EntityRenderer renderer = instance.getEntityRenderDispatcher().getRenderer(living);
         EntityRenderState state = renderer.createRenderState(living, event.getPartialTick());
         state.lightCoords = event.getRenderState().lightCoords;
-        renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), getCameraState(living));
+        renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), getCameraState(instance));
     }
 
-    //TODO: camera orientation to fix inventory model view
-    private static CameraRenderState getCameraState(LivingEntity living) {
+    private static CameraRenderState getCameraState(Minecraft instance) {
         CameraRenderState cameraState = new CameraRenderState();
-        cameraState.initialized = true;
+        Camera camera = instance.gameRenderer.getMainCamera();
+        cameraState.orientation = camera.rotation();
+        cameraState.pos = camera.getPosition();
+        cameraState.blockPos = camera.getBlockPosition();
+        cameraState.entityPos = camera.getEntity().position();
+        cameraState.initialized = camera.isInitialized();
         return cameraState;
     }
 
