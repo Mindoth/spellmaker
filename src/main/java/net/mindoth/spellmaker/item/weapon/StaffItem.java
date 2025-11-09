@@ -71,15 +71,20 @@ public class StaffItem extends Item {
                 double discount = player.getAttributeValue(ModAttributes.MANA_COST_MULTIPLIER) - ModAttributes.MANA_COST_MULTIPLIER.get().getDefaultValue();
                 int cost = Mth.ceil(baseCost * (1.0D - discount));
                 if ( cost <= player.getData(ModCapabilities.MAGICK_DATA) || player.isCreative() ) {
-                    form.castMagick(player, player, map);
-                    handleCooldowns(player, staff, 20);
-                    if ( !player.isCreative() ) {
-                        addItemDamage(staff, 1, player);
-                        ModCapabilities.changeMana(player, -cost, player.getAttributeValue(ModAttributes.MANA_MAX));
+                    if ( form.castMagick(player, player, map) ) {
+                        handleCooldowns(player, staff, 20);
+                        if ( !player.isCreative() ) {
+                            addItemDamage(staff, 1, player);
+                            ModCapabilities.changeMana(player, -cost, player.getAttributeValue(ModAttributes.MANA_MAX));
+                        }
+                        playCastingSound(player);
                     }
-                    playCastingSound(player);
+                    else {
+                        handleCooldowns(player, staff, 20);
+                        whiffSpell(player);
+                    }
                 }
-                else if ( !player.isCreative() ) {
+                else {
                     handleCooldowns(player, staff, 20);
                     whiffSpell(player);
                 }

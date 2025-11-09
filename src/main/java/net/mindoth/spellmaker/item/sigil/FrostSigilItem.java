@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,6 +19,11 @@ import java.util.List;
 public class FrostSigilItem extends AbstractSigilItem {
     public FrostSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier);
+    }
+
+    @Override
+    public boolean canAffectBlock(Block block) {
+        return block instanceof LiquidBlock liquid && liquid.fluid == Fluids.WATER;
     }
 
     @Override

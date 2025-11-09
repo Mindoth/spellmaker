@@ -26,6 +26,11 @@ public class ExcavationSigilItem extends AbstractSigilItem {
     }
 
     @Override
+    public boolean canAffectEntity(Entity target) {
+        return false;
+    }
+
+    @Override
     public void effectOnAllBlocksInList(Entity source, Entity directSource, BlockPos target, List<Integer> stats, DimVec3 location, Direction direction, boolean isInside) {
         int magnitude = stats.get(0);
         if ( magnitude > 0 ) handleMine(target, location.getLevel(), magnitude);

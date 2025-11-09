@@ -22,7 +22,7 @@ public class AreaAroundCasterForm extends AbstractSpellForm {
     }
 
     @Override
-    public void castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
+    public boolean castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
         Level level = source.level();
         AABB box = source.getBoundingBox().inflate(2.0D, 0.0D, 2.0D);
         List<Entity> list = level.getEntities(source, box).stream().filter((entity -> entity instanceof LivingEntity)).toList();
@@ -41,5 +41,7 @@ public class AreaAroundCasterForm extends AbstractSpellForm {
         MultiBlockHitResult mBlockResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(source.position(), level));
         for ( AbstractSigilItem sigil : map.keySet() ) sigil.effectOnBlock(source, directSource, map.get(sigil), mBlockResult);
         ProjectileSpellMultiEntity.aoeEntitySpellParticles(level, box, (float)box.getYsize() * 0.5F, getColorStats(map));
+
+        return true;
     }
 }

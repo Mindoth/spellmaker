@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Collections;
@@ -26,21 +27,33 @@ public class ByTouchForm extends AbstractSpellForm {
     }
 
     @Override
-    public void castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
+    public boolean castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
         Entity target = getPointedEntity(source.getEyePosition(), source.getLookAngle(), source, source.level(), 4.5F, 0.25F, true, true, map);
-        if ( target != null ) {
+        if ( target != null && canCastOnEntity(target, map) ) {
             MultiEntityHitResult mResult = new MultiEntityHitResult(source, Collections.singletonList(target), new DimVec3(target.position(), target.level()));
-            LightEvents.addEnchantParticles(target, 0.15F, getColorStats(map));
-            for ( AbstractSigilItem sigil : map.keySet() ) sigil.effectOnEntity(source, directSource, map.get(sigil), mResult);
+            return handleTarget(source, directSource, map, mResult);
         }
         else {
             MultiBlockHitResult mResult = getPOVHitResult(source.getEyePosition(), source.getLookAngle(), source, source.level(), ClipContext.Fluid.SOURCE_ONLY, 4.5F);
-            if ( mResult.getBlocks().size() == 1 ) {
-                BlockPos blockPos = mResult.getBlocks().get(0);
-                LightEvents.addAoeParticles(true, source.level(), new AABB(blockPos), 0.15F, 8, getColorStats(map));
+            if ( mResult.getBlocks().size() == 1 && canCastOnBlock(mResult.getPos().getLevel().getBlockState(mResult.getBlocks().getFirst()).getBlock(), map) ) {
+                return handleTarget(source, directSource, map, mResult);
             }
-            for ( AbstractSigilItem sigil : map.keySet() ) sigil.effectOnBlock(source, directSource, map.get(sigil), mResult);
         }
+        return false;
+    }
+
+    private boolean handleTarget(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map, HitResult result) {
+        if ( result instanceof MultiEntityHitResult mResult ) {
+            LightEvents.addEnchantParticles(mResult.getEntities().getFirst(), 0.15F, getColorStats(map));
+            for ( AbstractSigilItem sigil : map.keySet() ) sigil.effectOnEntity(source, directSource, map.get(sigil), mResult);
+            return true;
+        }
+        else if ( result instanceof MultiBlockHitResult mResult ) {
+            LightEvents.addAoeParticles(true, source.level(), new AABB(mResult.getBlocks().getFirst()), 0.15F, 8, getColorStats(map));
+            for ( AbstractSigilItem sigil : map.keySet() ) sigil.effectOnBlock(source, directSource, map.get(sigil), mResult);
+            return true;
+        }
+        return false;
     }
 
     public static MultiBlockHitResult getPOVHitResult(Vec3 position, Vec3 direction, Entity caster, Level level, ClipContext.Fluid pFluidMode, float range) {

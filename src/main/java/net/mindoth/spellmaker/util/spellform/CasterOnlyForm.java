@@ -16,9 +16,11 @@ public class CasterOnlyForm extends AbstractSpellForm {
     }
 
     @Override
-    public void castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
+    public boolean castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
+        if ( !canCastOnEntity(source, map) ) return false;
         MultiEntityHitResult mResult = new MultiEntityHitResult(source, Collections.singletonList(source), new DimVec3(source.position(), source.level()));
         LightEvents.addEnchantParticles(source, 0.15F, getColorStats(map));
         for ( AbstractSigilItem sigil : map.keySet() ) sigil.effectOnEntity(source, directSource, map.get(sigil), mResult);
+        return true;
     }
 }

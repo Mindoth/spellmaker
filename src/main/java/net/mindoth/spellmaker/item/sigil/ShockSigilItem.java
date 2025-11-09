@@ -3,16 +3,23 @@ package net.mindoth.spellmaker.item.sigil;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.util.SpellColor;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.Block;
 
 import java.util.List;
 
 public class ShockSigilItem extends AbstractSigilItem {
     public ShockSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier);
+    }
+
+    @Override
+    public boolean canAffectBlock(Block block) {
+        return false;
     }
 
     @Override

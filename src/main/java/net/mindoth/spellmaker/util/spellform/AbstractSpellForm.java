@@ -5,7 +5,9 @@ import net.mindoth.shadowizardlib.event.LightEvents;
 import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.registries.ModSpellForms;
 import net.mindoth.spellmaker.util.SpellColor;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.Block;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -25,7 +27,18 @@ public abstract class AbstractSpellForm {
         this.cost = cost;
     }
 
-    public void castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
+    public boolean castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
+        return false;
+    }
+
+    protected boolean canCastOnEntity(Entity entity, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
+        for ( AbstractSigilItem sigil : map.keySet() ) if ( sigil.canAffectEntity(entity) ) return true;
+        return false;
+    }
+
+    protected boolean canCastOnBlock(Block block, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
+        for ( AbstractSigilItem sigil : map.keySet() ) if ( sigil.canAffectBlock(block) ) return true;
+        return false;
     }
 
     public static AbstractSigilItem getHighestCostSigil(LinkedHashMap<AbstractSigilItem, List<Integer>> map) {

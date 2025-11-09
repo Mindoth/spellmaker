@@ -7,6 +7,7 @@ import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.registries.ModItems;
 import net.mindoth.spellmaker.util.SpellColor;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -15,6 +16,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.CommonHooks;
@@ -42,6 +44,11 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier);
         this.id = id;
         this.entityType = entityType;
+    }
+
+    @Override
+    public boolean canAffectBlock(Block block) {
+        return false;
     }
 
     @Override

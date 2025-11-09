@@ -1,6 +1,5 @@
 package net.mindoth.spellmaker.item.sigil;
 
-import net.mindoth.shadowizardlib.event.LightEvents;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
@@ -13,11 +12,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.level.block.Block;
 
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class AbstractSigilItem extends Item {
@@ -72,6 +71,14 @@ public abstract class AbstractSigilItem extends Item {
         this.minDuration = minDuration;
         this.maxDuration = maxDuration;
         this.durationMultiplier = durationMultiplier;
+    }
+
+    public boolean canAffectEntity(Entity target) {
+        return target instanceof LivingEntity;
+    }
+
+    public boolean canAffectBlock(Block block) {
+        return true;
     }
 
     public void effectOnEntity(Entity source, Entity directSource, List<Integer> stats, MultiEntityHitResult result) {

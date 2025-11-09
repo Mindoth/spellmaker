@@ -17,7 +17,7 @@ public class SingleTargetAtRangeForm extends AbstractSpellForm {
     }
 
     @Override
-    public void castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
+    public boolean castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
         Level level = source.level();
         ProjectileSpellSingleEntity projectile = new ProjectileSpellSingleEntity(level);
         projectile.setOwner(source);
@@ -37,6 +37,7 @@ public class SingleTargetAtRangeForm extends AbstractSpellForm {
         projectile.setNoGravity(true);
         projectile.setPos(source.getEyePosition());
         projectile.shoot(source.getLookAngle().x, source.getLookAngle().y, source.getLookAngle().z, projectile.getSpeed(), 0.0F);
-        level.addFreshEntity(projectile);
+
+        return level.addFreshEntity(projectile);
     }
 }
