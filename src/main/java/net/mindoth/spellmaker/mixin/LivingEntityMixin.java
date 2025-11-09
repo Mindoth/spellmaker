@@ -64,7 +64,7 @@ public class LivingEntityMixin {
     private static final MobEffectInstance NIGHT_VISION = new MobEffectInstance(MobEffects.NIGHT_VISION, -1, 0);
     private static boolean isFishInWater(LivingEntity living) {
         if ( !(living instanceof Player player) ) return false;
-        return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getTransformationSigil(player) == ModItems.FISH_FORM_SIGIL.get() && player.isUnderWater();
+        return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getFormSigil(player) == ModItems.FISH_FORM_SIGIL.get() && player.isUnderWater();
     }
 
     @Inject(method = "hasEffect", at=@At("HEAD"), cancellable = true)

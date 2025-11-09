@@ -124,6 +124,7 @@ public abstract class ClientHelperMethods {
         renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), getCameraState(living));
     }
 
+    //TODO: camera orientation to fix inventory model view
     private static CameraRenderState getCameraState(LivingEntity living) {
         CameraRenderState cameraState = new CameraRenderState();
         cameraState.initialized = true;

@@ -41,8 +41,8 @@ public class PolymorphEffect extends MobEffect implements SyncedMobEffect {
     public static void reAddedPolymorphEffect(MobEffectEvent.Added event) {
         if ( !(event.getEffectInstance().getEffect().value() instanceof PolymorphEffect) ) return;
         if ( event.getOldEffectInstance() == null ) return;
-        if ( !(event.getEntity() instanceof Mob mob) ) return;
-        mob.getPersistentData().putBoolean(NBT_KEY_RE_POLYMORPH, true);
+        if ( event.getEntity() instanceof Mob mob ) mob.getPersistentData().putBoolean(NBT_KEY_RE_POLYMORPH, true);
+        else if ( event.getEntity() instanceof Player player ) removeModifiers(player);
     }
 
     public static void doPolymorph(LivingEntity living, AttributeModifier nameTagModifier) {
@@ -143,7 +143,7 @@ public class PolymorphEffect extends MobEffect implements SyncedMobEffect {
         return false;
     }
 
-    public static PolymorphSigilItem getTransformationSigil(LivingEntity living) {
+    public static PolymorphSigilItem getFormSigil(LivingEntity living) {
         if ( living.getAttributes() == null ) return null;
         AttributeInstance nameTagDistance = living.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
         if ( nameTagDistance == null ) return null;

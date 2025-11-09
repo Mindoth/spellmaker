@@ -128,9 +128,19 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
         event.setNewSize(dimensions);
     }
 
+    public static boolean isSprintPrevented(LivingEntity living) {
+        PolymorphSigilItem sigil = PolymorphEffect.getFormSigil(living);
+        if ( sigil != null ) return !sigil.canSprint(living);
+        return false;
+    }
+
+    protected boolean canSprint(LivingEntity living) {
+        return false;
+    }
+
     public static boolean isFish(LivingEntity living) {
         if ( !(living instanceof Player player) ) return false;
-        return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getTransformationSigil(player) == ModItems.FISH_FORM_SIGIL.get();
+        return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getFormSigil(player) == ModItems.FISH_FORM_SIGIL.get();
     }
 
     @SubscribeEvent

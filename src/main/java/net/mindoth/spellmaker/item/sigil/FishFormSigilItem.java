@@ -3,6 +3,7 @@ package net.mindoth.spellmaker.item.sigil;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 public class FishFormSigilItem extends PolymorphSigilItem {
@@ -17,6 +18,12 @@ public class FishFormSigilItem extends PolymorphSigilItem {
 
     @Override
     protected AttributeModifier getSwimSpeedModifier() {
-        return new AttributeModifier(getUUID(), 5.0D, AttributeModifier.Operation.ADD_VALUE);
+        return new AttributeModifier(getUUID(), 4.0D, AttributeModifier.Operation.ADD_VALUE);
+    }
+
+    @Override
+    protected boolean canSprint(LivingEntity living) {
+        boolean isFish = PolymorphSigilItem.isFish(living);
+        return isFish && living.isInWater();
     }
 }

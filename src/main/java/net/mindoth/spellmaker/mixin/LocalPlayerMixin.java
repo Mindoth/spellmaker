@@ -1,6 +1,6 @@
 package net.mindoth.spellmaker.mixin;
 
-import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
+import net.mindoth.spellmaker.item.sigil.PolymorphSigilItem;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +14,7 @@ public class LocalPlayerMixin {
     @Inject(method = "canStartSprinting", at = @At("RETURN"))
     public boolean preventSprintingWhilePolymorphed(CallbackInfoReturnable<Boolean> callback) {
         LivingEntity living = (LivingEntity)(Object)this;
-        if ( PolymorphEffect.isPolymorphed(living) ) return false;
+        if ( PolymorphSigilItem.isSprintPrevented(living) ) return false;
         else return callback.getReturnValue();
     }
 }
