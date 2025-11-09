@@ -1,6 +1,6 @@
 package net.mindoth.spellmaker.entity;
 
-import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -156,8 +156,8 @@ public abstract class AbstractSpellEntity extends Projectile {
         return map;
     }
 
-    public LinkedHashMap<SigilItem, List<Integer>> getMap() {
-        List<SigilItem> sigilList = DataHelper.getSigilListFromString(this.entityData.get(SIGIL_LIST));
+    public LinkedHashMap<AbstractSigilItem, List<Integer>> getMap() {
+        List<AbstractSigilItem> sigilList = DataHelper.getSigilListFromString(this.entityData.get(SIGIL_LIST));
         List<Integer> magnitudes = DataHelper.getStatsFromString(this.entityData.get(MAGNITUDES));
         List<Integer> durations = DataHelper.getStatsFromString(this.entityData.get(DURATIONS));
         return DataHelper.createMapFromLists(sigilList, magnitudes, durations);

@@ -3,7 +3,7 @@ package net.mindoth.spellmaker.item.weapon;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.ModCapabilities;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
 import net.mindoth.spellmaker.registries.ModData;
 import net.mindoth.spellmaker.util.DataHelper;
@@ -66,7 +66,7 @@ public class StaffItem extends Item {
             if ( scroll != null && ModData.getLegacyTag(scroll) != null ) {
                 CompoundTag scrollTag = ModData.getLegacyTag(scroll);
                 AbstractSpellForm form = DataHelper.getFormFromNbt(scrollTag);
-                LinkedHashMap<SigilItem, List<Integer>> map = DataHelper.createMapFromTag(scrollTag);
+                LinkedHashMap<AbstractSigilItem, List<Integer>> map = DataHelper.createMapFromTag(scrollTag);
                 double baseCost = ParchmentItem.calculateSpellCost(form, map);
                 double discount = player.getAttributeValue(ModAttributes.MANA_COST_MULTIPLIER) - ModAttributes.MANA_COST_MULTIPLIER.get().getDefaultValue();
                 int cost = Mth.ceil(baseCost * (1.0D - discount));

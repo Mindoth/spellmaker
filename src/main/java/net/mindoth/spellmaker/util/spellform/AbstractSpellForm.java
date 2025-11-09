@@ -2,7 +2,7 @@ package net.mindoth.spellmaker.util.spellform;
 
 import com.google.common.collect.Lists;
 import net.mindoth.shadowizardlib.event.LightEvents;
-import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.registries.ModSpellForms;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.world.entity.Entity;
@@ -25,14 +25,14 @@ public abstract class AbstractSpellForm {
         this.cost = cost;
     }
 
-    public void castMagick(Entity source, Entity directSource, LinkedHashMap<SigilItem, List<Integer>> map) {
+    public void castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
     }
 
-    public static SigilItem getHighestCostSigil(LinkedHashMap<SigilItem, List<Integer>> map) {
-        SigilItem state = null;
+    public static AbstractSigilItem getHighestCostSigil(LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
+        AbstractSigilItem state = null;
         int highestCost = 0;
         List<Integer> equals = Lists.newArrayList();
-        for ( SigilItem sigil : map.keySet() ) {
+        for ( AbstractSigilItem sigil : map.keySet() ) {
             int cost = sigil.getCost();
             List<Integer> stats = map.get(sigil);
             if ( sigil.canModifyMagnitude() ) cost += Math.abs(stats.get(0)) * sigil.getMagnitudeMultiplier();
@@ -49,8 +49,8 @@ public abstract class AbstractSpellForm {
         return state;
     }
 
-    protected HashMap<String, Float> getColorStats(LinkedHashMap<SigilItem, List<Integer>> map) {
-        SigilItem sigil = getHighestCostSigil(map);
+    public HashMap<String, Float> getColorStats(LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
+        AbstractSigilItem sigil = getHighestCostSigil(map);
         if ( sigil != null ) return makeSpellParticleStats(sigil.getColor());
         else return LightEvents.defaultStats();
     }

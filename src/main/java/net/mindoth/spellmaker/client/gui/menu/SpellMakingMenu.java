@@ -2,7 +2,7 @@ package net.mindoth.spellmaker.client.gui.menu;
 
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.network.DumpSpellPacket;
 import net.mindoth.spellmaker.network.EditSpellFormPacket;
 import net.mindoth.spellmaker.network.EditSpellStatsPacket;
@@ -58,7 +58,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         }
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return this.isOpen && stack.getItem() instanceof SigilItem;
+            return this.isOpen && stack.getItem() instanceof AbstractSigilItem;
         }
         @Override
         public void setByPlayer(ItemStack pStack) {
@@ -280,7 +280,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         List<ItemStack> restList = Lists.newArrayList();
         for ( int i = 1; i < container.getContainerSize(); i++ ) {
             ItemStack stack = container.getItem(i);
-            if ( stack.getItem() instanceof SigilItem || stack.isEmpty() ) sigilStackList.add(stack);
+            if ( stack.getItem() instanceof AbstractSigilItem || stack.isEmpty() ) sigilStackList.add(stack);
             else restList.add(stack);
         }
         if ( restList.isEmpty() ) {

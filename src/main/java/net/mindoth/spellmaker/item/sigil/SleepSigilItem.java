@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
 
-public class SleepSigilItem extends SigilItem {
+public class SleepSigilItem extends AbstractSigilItem {
     public SleepSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier);
     }

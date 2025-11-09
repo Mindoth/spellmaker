@@ -6,7 +6,7 @@ import net.mindoth.shadowizardlib.event.ShadowEvents;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
-import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.registries.ModEntities;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.EntityType;
@@ -31,13 +31,13 @@ public class ProjectileSpellSingleEntity extends AbstractSpellEntity {
     @Override
     protected void doMobEffects(EntityHitResult result) {
         MultiEntityHitResult mResult = new MultiEntityHitResult(this, Collections.singletonList(result.getEntity()), new DimVec3(this.position(), level()));
-        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnEntity(this.getOwner(), this, getMap().get(sigil), mResult);
+        for ( AbstractSigilItem sigil : getMap().keySet() ) sigil.effectOnEntity(this.getOwner(), this, getMap().get(sigil), mResult);
     }
 
     @Override
     protected void doBlockEffects(BlockHitResult result) {
         MultiBlockHitResult mResult = new MultiBlockHitResult(result.getDirection(), result.isInside(), Collections.singletonList(result.getBlockPos()), new DimVec3(result.getLocation(), level()));
-        for ( SigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(this.getOwner(), this, getMap().get(sigil), mResult);
+        for ( AbstractSigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(this.getOwner(), this, getMap().get(sigil), mResult);
     }
 
     @Override

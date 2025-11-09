@@ -1,5 +1,6 @@
 package net.mindoth.spellmaker.item.sigil;
 
+import net.mindoth.shadowizardlib.event.LightEvents;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
@@ -14,10 +15,12 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 
+import java.util.HashMap;
 import java.util.List;
 
-public abstract class SigilItem extends Item {
+public abstract class AbstractSigilItem extends Item {
     private final SpellColor color;
     public SpellColor getColor() {
         return this.color;
@@ -59,7 +62,7 @@ public abstract class SigilItem extends Item {
         return this.getMaxDuration() > 0 || this.getMinDuration() < 0;
     }
 
-    public SigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier) {
+    public AbstractSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier) {
         super(pProperties);
         this.color = color;
         this.cost = cost;

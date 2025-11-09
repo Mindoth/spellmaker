@@ -74,32 +74,27 @@ public class PolymorphEffect extends MobEffect implements SyncedMobEffect {
             finalizeMobTransformation(target, getTypeFromUUID(nameTagModifier.id()), target.getPersistentData().getCompound(NBT_KEY_OLD_MOB).get());
         }
         else {
-            CompoundTag tag = new CompoundTag();
-            tag.putString("id", EntityType.getKey(target.getType()).toString());
-
             try ( ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(LogUtils.getLogger()) ) {
                 TagValueOutput output = TagValueOutput.createWithContext(reporter, target.registryAccess());
-                target.saveWithoutId(output);
-                finalizeMobTransformation(target, getTypeFromUUID(nameTagModifier.id()), tag);
+                target.save(output);
+                finalizeMobTransformation(target, getTypeFromUUID(nameTagModifier.id()), output.buildResult());
             }
         }
     }
 
     private static void finalizeMobTransformation(Mob target, EntityType entityType, CompoundTag tag) {
-        Mob mob = target.convertTo(entityType, new ConversionParams(ConversionType.SINGLE, false, true, target.getTeam()), EntitySpawnReason.TRIGGERED, (newMob) -> {
-            newMob.snapTo(target.position(), target.getYRot(), target.getXRot());
+        target.convertTo(entityType, new ConversionParams(ConversionType.SINGLE, false, true, target.getTeam()), EntitySpawnReason.CONVERSION, (newMob) -> {
             newMob.getPersistentData().put(NBT_KEY_OLD_MOB, tag);
         });
-        if ( mob != null ) target.discard();
     }
 
     @Override
     public void onEffectRemoved(LivingEntity living, int pAmplifier, boolean isWasDeath) {
         if ( isWasDeath ) return;
         if ( living instanceof Mob mob ) {
-            if ( !(mob.level() instanceof ServerLevel level) ) return;
+            if ( !(mob.level() instanceof ServerLevel) ) return;
             if ( mob.getPersistentData().contains(NBT_KEY_RE_POLYMORPH) ) mob.getPersistentData().remove(NBT_KEY_RE_POLYMORPH);
-            else if ( mob.getPersistentData().contains(NBT_KEY_OLD_MOB) ) restoreMob(mob.getPersistentData().getCompound(NBT_KEY_OLD_MOB).get(), level, mob);
+            else if ( mob.getPersistentData().contains(NBT_KEY_OLD_MOB) ) restoreMob(mob.getPersistentData().getCompound(NBT_KEY_OLD_MOB).get(), mob);
         }
         else if ( living instanceof Player player ) {
             removeModifiers(player);
@@ -107,19 +102,18 @@ public class PolymorphEffect extends MobEffect implements SyncedMobEffect {
         }
     }
 
-    private static void restoreMob(CompoundTag tag, ServerLevel level, LivingEntity living) {
-        if ( tag.isEmpty() || !(living instanceof Mob oldMob) ) return;
+    private static void restoreMob(CompoundTag tag, LivingEntity living) {
+        if ( tag.isEmpty() || !(living instanceof Mob disguisedMob) ) return;
         try ( ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(LogUtils.getLogger()) ) {
-            ValueInput input = TagValueInput.create(reporter, level.registryAccess(), tag);
-            BuiltInRegistries.ENTITY_TYPE.get(EntityType.getKey(oldMob.getType()));
-            EntityType.create(input, level, EntitySpawnReason.CONVERSION).map((entity -> {
-                entity.snapTo(oldMob.position(), oldMob.getYRot(), oldMob.getXRot());
-                entity.setDeltaMovement(oldMob.getDeltaMovement());
+            ValueInput input = TagValueInput.create(reporter, disguisedMob.registryAccess(), tag);
+            EntityType.create(input, disguisedMob.level(), EntitySpawnReason.CONVERSION).map((entity -> {
+                entity.snapTo(disguisedMob.position(), disguisedMob.getYRot(), disguisedMob.getXRot());
+                entity.setDeltaMovement(disguisedMob.getDeltaMovement());
                 if ( entity instanceof LivingEntity newLiving ) {
                     if ( newLiving.hasEffect(ModEffects.POLYMORPH) ) newLiving.removeEffect(ModEffects.POLYMORPH);
                 }
-                level.addFreshEntity(entity);
-                oldMob.discard();
+                entity.level().addFreshEntity(entity);
+                disguisedMob.discard();
                 return entity;
             }));
         }

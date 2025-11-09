@@ -15,7 +15,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 
 import java.util.List;
 
-public class FrostSigilItem extends SigilItem {
+public class FrostSigilItem extends AbstractSigilItem {
     public FrostSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier);
     }

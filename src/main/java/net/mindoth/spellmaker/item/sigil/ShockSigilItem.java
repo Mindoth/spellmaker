@@ -10,7 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
 
-public class ShockSigilItem extends SigilItem {
+public class ShockSigilItem extends AbstractSigilItem {
     public ShockSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier);
     }

@@ -4,7 +4,7 @@ import net.mindoth.shadowizardlib.event.LightEvents;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
-import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -26,20 +26,20 @@ public class ByTouchForm extends AbstractSpellForm {
     }
 
     @Override
-    public void castMagick(Entity source, Entity directSource, LinkedHashMap<SigilItem, List<Integer>> map) {
+    public void castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
         Entity target = getPointedEntity(source.getEyePosition(), source.getLookAngle(), source, source.level(), 4.5F, 0.25F, true, true, map);
         if ( target != null ) {
             MultiEntityHitResult mResult = new MultiEntityHitResult(source, Collections.singletonList(target), new DimVec3(target.position(), target.level()));
-            for ( SigilItem sigil : map.keySet() ) sigil.effectOnEntity(source, directSource, map.get(sigil), mResult);
             LightEvents.addEnchantParticles(target, 0.15F, getColorStats(map));
+            for ( AbstractSigilItem sigil : map.keySet() ) sigil.effectOnEntity(source, directSource, map.get(sigil), mResult);
         }
         else {
             MultiBlockHitResult mResult = getPOVHitResult(source.getEyePosition(), source.getLookAngle(), source, source.level(), ClipContext.Fluid.SOURCE_ONLY, 4.5F);
-            for ( SigilItem sigil : map.keySet() ) sigil.effectOnBlock(source, directSource, map.get(sigil), mResult);
             if ( mResult.getBlocks().size() == 1 ) {
                 BlockPos blockPos = mResult.getBlocks().get(0);
                 LightEvents.addAoeParticles(true, source.level(), new AABB(blockPos), 0.15F, 8, getColorStats(map));
             }
+            for ( AbstractSigilItem sigil : map.keySet() ) sigil.effectOnBlock(source, directSource, map.get(sigil), mResult);
         }
     }
 
@@ -51,7 +51,7 @@ public class ByTouchForm extends AbstractSpellForm {
                 Collections.singletonList(result.getBlockPos()), new DimVec3(result.getLocation(), level));
     }
 
-    private Entity getPointedEntity(Vec3 position, Vec3 direction, Entity caster, Level level, float range, float error, boolean stopsAtSolid, boolean stopsAtLiquid, LinkedHashMap<SigilItem, List<Integer>> map) {
+    private Entity getPointedEntity(Vec3 position, Vec3 direction, Entity caster, Level level, float range, float error, boolean stopsAtSolid, boolean stopsAtLiquid, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
         Vec3 center = position.add(direction.multiply(range, range, range));
         Entity returnEntity = null;
         double playerX = position.x();
