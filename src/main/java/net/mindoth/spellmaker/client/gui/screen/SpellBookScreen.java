@@ -307,7 +307,6 @@ public class SpellBookScreen extends AbstractModScreen {
                 18, 180, 10, 18, 10, 280, 280);
 
         iterateSpellList(graphics, x, y);
-        iterateSpellListOver(graphics, mouseX, mouseY);
 
         //Page number
         for ( int i = 0; i < 2; i++ ) {
@@ -318,6 +317,8 @@ public class SpellBookScreen extends AbstractModScreen {
             int pageNumX = pageNum % 2 == 0 ? textX + pageNumXOff : textX - pageNumXOff;
             graphics.drawString(this.font, pageNumTxt, pageNumX, y + this.arrowOffsetY, ARGB.opaque(0), false);
         }
+
+        iterateSpellListOver(graphics, mouseX, mouseY);
     }
 
     private void iterateSpellListOver(GuiGraphics graphics, int mouseX, int mouseY) {

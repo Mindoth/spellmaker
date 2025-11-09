@@ -243,7 +243,8 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+        this.renderContents(graphics, mouseX, mouseY, partialTicks);
+        this.renderSnapbackItem(graphics);
         this.name.render(graphics, mouseX, mouseY, partialTicks);
         renderTooltip(graphics, mouseX, mouseY);
         int x = (this.width - this.imageWidth) / 2;
@@ -297,6 +298,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                 graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, boxX + 54 * i, boxY, 194, 70, 54, 18, 256, 256);
             }
         }
+        //Stat plates
         for ( int i = 0; i < this.maxSlots; i++ ) {
             //Magnitude plates
             if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof AbstractSigilItem sigil && sigil.canModifyMagnitude() ) {
@@ -311,6 +313,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                 graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, durX, durY + 18 * i, 176, 70, 18, 18, 256, 256);
             }
         }
+        //Stat strings
         if ( this.menu.isReadyToMake() ) {
             int stringX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 62;
             int stringY = y + SPELL_FORM_BUTTON_OFFSET_Y;
@@ -322,7 +325,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                 graphics.drawCenteredString(this.font, Component.translatable("tooltip.spellmaker.duration"),
                         stringX + 54, stringY - 7 + this.font.lineHeight, ARGB.opaque(16777215));
             }
-
             for ( int i = 0; i < this.menu.howManySigilSlotsOpen(); i++ ) {
                 if ( this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof AbstractSigilItem sigil ) {
                     int numOffY = 18 * i;
@@ -370,7 +372,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                         DefaultTooltipPositioner.INSTANCE, null);
             }
         }
-
         //Spell Form icon rendering
         if ( this.menu.isReadyToMake() ) {
             ResourceLocation iconBg = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/spellform/icon_background.png");
@@ -388,6 +389,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
                         DefaultTooltipPositioner.INSTANCE, null);
             }
         }
+        this.renderCarriedItem(graphics, mouseX, mouseY);
     }
 
     private ResourceLocation getSpellIcon() {
