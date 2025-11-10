@@ -168,12 +168,18 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         this.menu.editSpellForm(tag);
     }
 
+    private AbstractSigilItem getSigil(int index) {
+        return (AbstractSigilItem)this.menu.getCraftSlots().getItem(index + 1).getItem();
+    }
+
     private void handleLeftMagnitudeButton(Button button) {
         int index = this.magnitudeListLeft.indexOf(button);
         int magnitude = this.menu.getMagnitude().get(index);
         if ( !canEditStat((byte)0, index, false, magnitude) ) return;
         List<Integer> newList = new ArrayList<>(this.menu.getMagnitude());
-        newList.set(index, magnitude - 1);
+        int reduction = magnitude - 1;
+        if ( minecraft.hasShiftDown() ) reduction = Math.max(getSigil(index).getMinMagnitude(), magnitude - 10);
+        newList.set(index, reduction);
         this.menu.editSpellStats((byte)0, newList);
     }
 
@@ -182,7 +188,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         int magnitude = this.menu.getMagnitude().get(index);
         if ( !canEditStat((byte)0, index, true, magnitude) ) return;
         List<Integer> newList = new ArrayList<>(this.menu.getMagnitude());
-        newList.set(index, magnitude + 1);
+        int addition = magnitude + 1;
+        if ( minecraft.hasShiftDown() ) addition = Math.min(getSigil(index).getMaxMagnitude(), magnitude + 10);
+        newList.set(index, addition);
         this.menu.editSpellStats((byte)0, newList);
     }
 
@@ -191,7 +199,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         int duration = this.menu.getDuration().get(index);
         if ( !canEditStat((byte)1, index, false, duration) ) return;
         List<Integer> newList = new ArrayList<>(this.menu.getDuration());
-        newList.set(index, duration - 1);
+        int reduction = duration - 1;
+        if ( minecraft.hasShiftDown() ) reduction = Math.max(getSigil(index).getMinDuration(), duration - 10);
+        newList.set(index, reduction);
         this.menu.editSpellStats((byte)1, newList);
     }
 
@@ -200,7 +210,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         int duration = this.menu.getDuration().get(index);
         if ( !canEditStat((byte)1, index, true, duration) ) return;
         List<Integer> newList = new ArrayList<>(this.menu.getDuration());
-        newList.set(index, duration + 1);
+        int addition = duration + 1;
+        if ( minecraft.hasShiftDown() ) addition = Math.min(getSigil(index).getMaxDuration(), duration + 10);
+        newList.set(index, addition);
         this.menu.editSpellStats((byte)1, newList);
     }
 
@@ -383,7 +395,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             Component name = Component.translatable("spellform.spellmaker." + this.menu.getSpellForm().getName());
             if ( mouseX >= xIcon && mouseX <= xIcon + 16 && mouseY >= yIcon && mouseY <= yIcon + 16 ) {
                 graphics.fill(RenderPipelines.GUI, xIcon, yIcon, xIcon + 16, yIcon + 16, Integer.MAX_VALUE);
-
                 ClientTooltipComponent clienttooltipcomponent = ClientTooltipComponent.create(name.getVisualOrderText());
                 graphics.renderTooltip(this.font, List.of(clienttooltipcomponent), mouseX, mouseY,
                         DefaultTooltipPositioner.INSTANCE, null);

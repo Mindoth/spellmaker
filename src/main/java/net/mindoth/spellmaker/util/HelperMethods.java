@@ -1,8 +1,9 @@
-package net.mindoth.spellmaker.mobeffect;
+package net.mindoth.spellmaker.util;
 
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
+import net.mindoth.spellmaker.mobeffect.SyncedMobEffect;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;

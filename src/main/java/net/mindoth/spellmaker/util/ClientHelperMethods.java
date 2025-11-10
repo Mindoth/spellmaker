@@ -1,9 +1,10 @@
-package net.mindoth.spellmaker.mobeffect;
+package net.mindoth.spellmaker.util;
 
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.sigil.PolymorphSigilItem;
 import net.mindoth.spellmaker.mixin.EntityMixin;
 import net.mindoth.spellmaker.mixin.WalkAnimationStateMixin;
+import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
 import net.mindoth.spellmaker.network.SyncSizeForTrackersPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -136,6 +137,7 @@ public abstract class ClientHelperMethods {
         state0.shadowRadius = state1.shadowRadius;
         state0.ageInTicks = state1.ageInTicks;
         if ( state0 instanceof LivingEntityRenderState livingState ) {
+            livingState.partialTick = state1.partialTick;
             livingState.bodyRot = state1.bodyRot;
             livingState.xRot = state1.xRot;
             livingState.yRot = state1.yRot;
