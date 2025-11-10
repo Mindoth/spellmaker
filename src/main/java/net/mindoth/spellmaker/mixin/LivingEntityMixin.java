@@ -1,5 +1,7 @@
 package net.mindoth.spellmaker.mixin;
 
+import com.google.common.collect.Lists;
+import net.mindoth.spellmaker.item.sigil.PolymorphSigilItem;
 import net.mindoth.spellmaker.mobeffect.AbstractStunEffect;
 import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
 import net.mindoth.spellmaker.mobeffect.SyncedMobEffect;
@@ -10,7 +12,6 @@ import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -22,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Collection;
+import java.util.List;
 
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
@@ -61,21 +63,27 @@ public class LivingEntityMixin {
     }
 
     @Unique
-    private static final MobEffectInstance NIGHT_VISION = new MobEffectInstance(MobEffects.NIGHT_VISION, -1, 0);
-    private static boolean isFishInWater(LivingEntity living) {
-        if ( !(living instanceof Player player) ) return false;
-        return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getFormSigil(player) == ModItems.FISH_FORM_SIGIL.get() && player.isUnderWater();
+    private static List<Holder<MobEffect>> getEffects(LivingEntity living) {
+        List<Holder<MobEffect>> list = Lists.newArrayList();
+        PolymorphSigilItem sigil = PolymorphEffect.getFormSigil(living);
+        if ( sigil != null ) list.addAll(sigil.polymorphEffects(living));
+        return list;
     }
 
     @Inject(method = "hasEffect", at=@At("HEAD"), cancellable = true)
     private void fishHasEffect(Holder<MobEffect> mobEffect, CallbackInfoReturnable<Boolean> callback) {
         LivingEntity living = (LivingEntity)(Object)this;
-        if ( mobEffect == MobEffects.NIGHT_VISION && isFishInWater(living) ) callback.setReturnValue(true);
+        if ( getEffects(living).contains(mobEffect) ) callback.setReturnValue(true);
+    }
+
+    @Unique
+    private static MobEffectInstance createEffectInstance(Holder<MobEffect> effect) {
+        return new MobEffectInstance(effect, -1, 0);
     }
 
     @Inject(method = "getEffect", at=@At("HEAD"), cancellable = true)
     private void fishGetEffect(Holder<MobEffect> mobEffect, CallbackInfoReturnable<MobEffectInstance> callback) {
         LivingEntity living = (LivingEntity)(Object)this;
-        if ( mobEffect == MobEffects.NIGHT_VISION && isFishInWater(living) ) callback.setReturnValue(NIGHT_VISION);
+        if ( getEffects(living).contains(mobEffect) ) callback.setReturnValue(createEffectInstance(mobEffect));
     }
 }

@@ -39,7 +39,7 @@ public class ModLayerEvents {
     @SubscribeEvent
     public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
         IClientItemExtensions armor = new IClientItemExtensions() {
-            //Hope they add back entity parameter so I can check for things like if the entity wearing armor is a baby
+            //Hope they add back entity parameter, so I can check for things like if the entity wearing armor is a baby
             @Override
             @NotNull
             public Model getHumanoidArmorModel(@NotNull ItemStack stack, @NotNull EquipmentClientInfo.LayerType type, @NotNull Model original) {

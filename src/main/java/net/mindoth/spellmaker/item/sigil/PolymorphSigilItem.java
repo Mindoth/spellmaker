@@ -7,9 +7,12 @@ import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.registries.ModItems;
 import net.mindoth.spellmaker.util.SpellColor;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -135,16 +138,24 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
         event.setNewSize(dimensions);
     }
 
+    protected boolean canSprint(LivingEntity living) {
+        return false;
+    }
+
     public static boolean isSprintPrevented(LivingEntity living) {
         PolymorphSigilItem sigil = PolymorphEffect.getFormSigil(living);
         if ( sigil != null ) return !sigil.canSprint(living);
         return false;
     }
 
-    protected boolean canSprint(LivingEntity living) {
-        return false;
+    public List<Holder<MobEffect>> polymorphEffects(LivingEntity living) {
+        return Lists.newArrayList();
     }
 
+    public void extraSync(LivingEntity living, Player player, float partialTick) {
+    }
+
+    //Because of NeoForge, these methods have to be here instead of in their respective Sigil Classes.
     public static boolean isFish(LivingEntity living) {
         if ( !(living instanceof Player player) ) return false;
         return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getFormSigil(player) == ModItems.FISH_FORM_SIGIL.get();

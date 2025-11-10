@@ -22,7 +22,7 @@ public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(SpellMaker.MOD_ID);
 
     //Materials
-    public static final DeferredItem<Item> RUNE_ESSENCE = ITEMS.registerItem("rune_essence",
+    public static final DeferredItem<Item> SIGIL_ESSENCE = ITEMS.registerItem("sigil_essence",
             (properties) -> new Item(properties));
 
     public static final DeferredItem<Item> WOOL_CLOTH = ITEMS.registerItem("wool_cloth",
@@ -87,4 +87,8 @@ public class ModItems {
     public static final DeferredItem<Item> FISH_FORM_SIGIL = ITEMS.registerItem("fish_form_sigil",
             (properties) -> new FishFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
                     ResourceLocation.parse("b2bc1fd5-a121-42cf-b7cb-d29c61e3211c"), EntityType.COD));
+
+    public static final DeferredItem<Item> CHICKEN_FORM_SIGIL = ITEMS.registerItem("chicken_form_sigil",
+            (properties) -> new ChickenFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
+                    ResourceLocation.parse("baa27f16-774d-4767-99e0-218112d9241f"), EntityType.CHICKEN));
 }

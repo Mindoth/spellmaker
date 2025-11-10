@@ -50,8 +50,8 @@ public abstract class ClientHelperMethods {
 
     @SubscribeEvent
     public static void renderPolymorphedPlayer(RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
-        Minecraft mc = Minecraft.getInstance();
-        if ( mc.level == null || !(mc.level.getEntity(event.getRenderState().id) instanceof Player player) ) return;
+        Minecraft instance = Minecraft.getInstance();
+        if ( instance.level == null || !(instance.level.getEntity(event.getRenderState().id) instanceof Player player) ) return;
         AttributeInstance nameTagDistance = player.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
         if ( nameTagDistance == null ) return;
         for ( AttributeModifier modifier : nameTagDistance.getModifiers() ) {
@@ -67,12 +67,18 @@ public abstract class ClientHelperMethods {
     private static void renderPolymorphModel(LivingEntity living, Player player, RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
         UUID livingUUID = living.getUUID();
         living.setUUID(player.getUUID());
-        syncEntityWithPlayer(living, player);
+        syncEntityWithPlayer(living, player, event.getPartialTick());
         living.setUUID(livingUUID);
         render(living, event);
     }
 
-    private static void syncEntityWithPlayer(LivingEntity living, Player player) {
+    private static void syncEntityWithPlayer(LivingEntity living, Player player, float partialTick) {
+        living.xOld = player.xOld;
+        living.yOld = player.yOld;
+        living.zOld = player.zOld;
+
+        living.setPos(player.position());
+
         living.yBodyRotO = player.yBodyRotO;
         living.yBodyRot = player.yBodyRot;
 
@@ -112,19 +118,23 @@ public abstract class ClientHelperMethods {
         Pose pose = living.getPose();
         living.setPose(player.getPose());
         if ( pose != living.getPose() || (living.getDimensions(living.getPose()) != player.getDimensions(player.getPose())) ) living.refreshDimensions();
+
+        PolymorphSigilItem sigil = PolymorphEffect.getFormSigil(player);
+        if ( sigil != null ) sigil.extraSync(living, player, partialTick);
     }
 
     private static void render(LivingEntity living, RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
         Minecraft instance = Minecraft.getInstance();
         EntityRenderer renderer = instance.getEntityRenderDispatcher().getRenderer(living);
         EntityRenderState state = renderer.createRenderState(living, event.getPartialTick());
-        syncRenderStates(state, event.getRenderState());
+        syncRenderState(state, event.getRenderState());
         renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), instance.gameRenderer.getLevelRenderState().cameraRenderState);
     }
 
-    private static void syncRenderStates(EntityRenderState state0, AvatarRenderState state1) {
+    private static void syncRenderState(EntityRenderState state0, AvatarRenderState state1) {
         state0.lightCoords = state1.lightCoords;
         state0.shadowRadius = state1.shadowRadius;
+        state0.ageInTicks = state1.ageInTicks;
         if ( state0 instanceof LivingEntityRenderState livingState ) {
             livingState.bodyRot = state1.bodyRot;
             livingState.xRot = state1.xRot;

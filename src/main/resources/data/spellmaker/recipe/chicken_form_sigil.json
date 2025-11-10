@@ -3,10 +3,10 @@
   "ingredients": [
     "spellmaker:sigil_essence",
     "spellmaker:alteration_dust",
-    "#minecraft:fishes"
+    "minecraft:feather"
   ],
   "result": {
-    "id": "spellmaker:fish_form_sigil",
+    "id": "spellmaker:chicken_form_sigil",
     "count": 1
   }
 }

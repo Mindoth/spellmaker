@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "spellmaker:item/rune_essence",
+    "layer0": "spellmaker:item/sigil_essence",
     "layer1": "spellmaker:item/sigil/excavation"
   }
 }

@@ -7,14 +7,14 @@
 
 
   "container.spellmaker.calcinator": "Calcinator",
-  "container.spellmaker.spell_making": "Spell Making",
+  "container.spellmaker.spell_making": "Spell Making Table",
 
 
   "block.spellmaker.calcinator": "Calcinator",
   "block.spellmaker.spell_making_table": "Spell Making Table",
 
 
-  "item.spellmaker.rune_essence": "Rune Essence",
+  "item.spellmaker.sigil_essence": "Sigil Essence",
   "item.spellmaker.wool_cloth": "Wool Cloth",
   "item.spellmaker.parchment": "Parchment",
   "item.spellmaker.wood_ash": "Wood Ash",
@@ -36,6 +36,7 @@
   "item.spellmaker.sleep_sigil": "Sleep Sigil",
   "item.spellmaker.sheep_form_sigil": "Sheep Form Sigil",
   "item.spellmaker.fish_form_sigil": "Fish Form Sigil",
+  "item.spellmaker.chicken_form_sigil": "Chicken Form Sigil",
 
 
   "spellform.spellmaker.caster_only": "Caster only",
