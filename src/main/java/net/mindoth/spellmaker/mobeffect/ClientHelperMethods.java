@@ -5,12 +5,12 @@ import net.mindoth.spellmaker.item.sigil.PolymorphSigilItem;
 import net.mindoth.spellmaker.mixin.EntityMixin;
 import net.mindoth.spellmaker.mixin.WalkAnimationStateMixin;
 import net.mindoth.spellmaker.network.SyncSizeForTrackersPacket;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
@@ -70,7 +70,6 @@ public abstract class ClientHelperMethods {
         syncEntityWithPlayer(living, player);
         living.setUUID(livingUUID);
         render(living, event);
-        //poseStack.pushPose();
     }
 
     private static void syncEntityWithPlayer(LivingEntity living, Player player) {
@@ -115,26 +114,22 @@ public abstract class ClientHelperMethods {
         if ( pose != living.getPose() || (living.getDimensions(living.getPose()) != player.getDimensions(player.getPose())) ) living.refreshDimensions();
     }
 
-    //TODO: orientation to fix inventory model view
     private static void render(LivingEntity living, RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
         Minecraft instance = Minecraft.getInstance();
-        //float yaw = Mth.lerp(event.getPartialTick(), living.yRotO, living.getYRot());
-        //renderer.render(living, yaw, partialTicks, poseStack, buffer, light);
         EntityRenderer renderer = instance.getEntityRenderDispatcher().getRenderer(living);
         EntityRenderState state = renderer.createRenderState(living, event.getPartialTick());
-        state.lightCoords = event.getRenderState().lightCoords;
-        renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), getCameraState(instance));
+        syncRenderStates(state, event.getRenderState());
+        renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), instance.gameRenderer.getLevelRenderState().cameraRenderState);
     }
 
-    private static CameraRenderState getCameraState(Minecraft instance) {
-        CameraRenderState cameraState = new CameraRenderState();
-        Camera camera = instance.gameRenderer.getMainCamera();
-        cameraState.orientation = camera.rotation();
-        cameraState.pos = camera.getPosition();
-        cameraState.blockPos = camera.getBlockPosition();
-        cameraState.entityPos = camera.getEntity().position();
-        cameraState.initialized = camera.isInitialized();
-        return cameraState;
+    private static void syncRenderStates(EntityRenderState state0, AvatarRenderState state1) {
+        state0.lightCoords = state1.lightCoords;
+        state0.shadowRadius = state1.shadowRadius;
+        if ( state0 instanceof LivingEntityRenderState livingState ) {
+            livingState.bodyRot = state1.bodyRot;
+            livingState.xRot = state1.xRot;
+            livingState.yRot = state1.yRot;
+        }
     }
 
     @SubscribeEvent
