@@ -63,17 +63,29 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     @Override
     public InteractionResult use(Level level, Player player, @Nonnull InteractionHand handIn) {
         InteractionResult result = InteractionResult.FAIL;
-        if ( !level.isClientSide() && player instanceof ServerPlayer serverPlayer ) {
-            if ( StaffItem.getHeldCastingItem(serverPlayer).isEmpty() ) {
-                ItemStack book = serverPlayer.getItemInHand(handIn);
-                openSpellBook(serverPlayer, book);
-            }
+        if ( StaffItem.getHeldCastingItem(player).isEmpty() ) {
+            ItemStack book = player.getItemInHand(handIn);
+            handleSignature(player, book);
+            if ( !level.isClientSide() && player instanceof ServerPlayer serverPlayer ) openSpellBook(serverPlayer, book);
         }
         return result;
     }
 
-    public static void openSpellBook(ServerPlayer player, ItemStack book) {
-        handleSignature(player, book);
+    public static void handleSignature(Player player, ItemStack stack) {
+        CompoundTag tag = ModData.getOrCreateLegacyTag(stack);
+        if ( !tag.contains(NBT_KEY_BOOK_SLOT) ) tag.putInt(NBT_KEY_BOOK_SLOT, -1);
+        if ( !tag.contains(NBT_KEY_OWNER_UUID) ) {
+            tag.putString(NBT_KEY_OWNER_UUID, player.getUUID().toString());
+            tag.putString(NBT_KEY_OWNER_NAME, player.getDisplayName().getString());
+        }
+        if ( tag.contains(NBT_KEY_OWNER_UUID) && tag.contains(NBT_KEY_OWNER_NAME) ) {
+            if ( tag.getString(NBT_KEY_OWNER_UUID).get().equals(player.getUUID().toString()) && !tag.getString(NBT_KEY_OWNER_NAME).get().equals(player.getDisplayName().getString()) ) {
+                tag.putString(NBT_KEY_OWNER_NAME, player.getDisplayName().getString());
+            }
+        }
+    }
+
+    public static void openSpellBook(ServerPlayer serverPlayer, ItemStack book) {
         CompoundTag tag = ModData.getLegacyTag(book);
         if ( tag != null ) {
             int slot = tag.getInt(NBT_KEY_BOOK_SLOT).get();
@@ -84,22 +96,8 @@ public class SpellBookItem extends Item implements ModDyeableItem {
                     if ( i == slot ) break;
                 }
             }
-            PacketDistributor.sendToPlayer(player, new OpenSpellBookPacket(book, page));
+            PacketDistributor.sendToPlayer(serverPlayer, new OpenSpellBookPacket(book, page));
         }
-    }
-
-    public static void handleSignature(ServerPlayer serverPlayer, ItemStack stack) {
-        CompoundTag tag = ModData.getOrCreateLegacyTag(stack);
-        if ( !tag.contains(NBT_KEY_BOOK_SLOT) ) tag.putInt(NBT_KEY_BOOK_SLOT, -1);
-        /*if ( !tag.contains(NBT_KEY_OWNER_UUID) ) {
-            tag.putUUID(NBT_KEY_OWNER_UUID, serverPlayer.getUUID());
-            tag.putString(NBT_KEY_OWNER_NAME, serverPlayer.getDisplayName().getString());
-        }
-        if ( tag.contains(NBT_KEY_OWNER_UUID) && tag.contains(NBT_KEY_OWNER_NAME) ) {
-            if ( tag.getUUID(NBT_KEY_OWNER_UUID) == serverPlayer.getUUID() && !tag.getString(NBT_KEY_OWNER_NAME).equals(serverPlayer.getDisplayName().getString())) {
-                tag.putString(NBT_KEY_OWNER_NAME, serverPlayer.getDisplayName().getString());
-            }
-        }*/
     }
 
     public static int getNewSlotFromScrollRemoval(int oldSlot, int bookSlot) {
