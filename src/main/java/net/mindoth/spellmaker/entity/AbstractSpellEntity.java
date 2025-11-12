@@ -2,7 +2,6 @@ package net.mindoth.spellmaker.entity;
 
 import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.util.DataHelper;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -56,25 +55,9 @@ public abstract class AbstractSpellEntity extends Projectile {
         }
     }
 
-    //TODO: handle portal travel for projectiles
     public void handleHitDetection() {
         HitResult result = getHitResult(position(), this, this::hitFilter, getDeltaMovement(), level());
-        boolean flag = false;
-        if ( result.getType() == HitResult.Type.BLOCK ) {
-            BlockPos blockpos = ((BlockHitResult)result).getBlockPos();
-            BlockState blockstate = this.level().getBlockState(blockpos);
-            /*if ( blockstate.is(Blocks.NETHER_PORTAL) ) {
-                flag = true;
-            }
-            else if ( blockstate.is(Blocks.END_GATEWAY) ) {
-                BlockEntity blockentity = level().getBlockEntity(blockpos);
-                if ( blockentity instanceof TheEndGatewayBlockEntity && TheEndGatewayBlockEntity.canEntityTeleport(this) ) {
-                    TheEndGatewayBlockEntity.teleportEntity(level(), blockpos, blockstate, this, (TheEndGatewayBlockEntity)blockentity);
-                }
-                flag = true;
-            }*/
-        }
-        if ( result.getType() != HitResult.Type.MISS && !flag && !EventHooks.onProjectileImpact(this, result) ) onHit(result);
+        if ( result.getType() != HitResult.Type.MISS && !EventHooks.onProjectileImpact(this, result) ) onHit(result);
     }
 
     protected boolean hitFilter(Entity target) {

@@ -1,8 +1,10 @@
 package net.mindoth.spellmaker.item.weapon;
 
+import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.ModCapabilities;
 import net.mindoth.spellmaker.item.ParchmentItem;
+import net.mindoth.spellmaker.item.armor.ModArmorItem;
 import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
 import net.mindoth.spellmaker.registries.ModData;
@@ -32,6 +34,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -157,5 +160,30 @@ public class StaffItem extends Item {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return slotChanged;
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
+        if ( slot == null || entity.tickCount % 20 != 0 || !(entity instanceof Player player) ) return;
+        if ( !player.getAttributes().hasAttribute(ModAttributes.MANA_MAX) || !player.getAttributes().hasAttribute(ModAttributes.MANA_REGENERATION) ) return;
+        if ( player.getData(ModCapabilities.MAGICK_DATA) < player.getAttribute(ModAttributes.MANA_MAX).getValue() ) return;
+        List<EquipmentSlot> list = getSlotList(player);
+        if ( list.isEmpty() ) return;
+        int index = player.getRandom().nextInt(0, list.size());
+        if ( list.get(index) != slot ) return;
+        if ( !(stack.getItem() instanceof StaffItem) ) return;
+        stack.hurtAndBreak(-(int)player.getAttribute(ModAttributes.MANA_REGENERATION).getValue(), level, player,
+                (holder) -> player.onEquippedItemBroken(stack.getItem(), slot));
+    }
+
+    private List<EquipmentSlot> getSlotList(Player player) {
+        List<EquipmentSlot> list = Lists.newArrayList();
+        if ( player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof ModArmorItem && player.getItemBySlot(EquipmentSlot.HEAD).isDamaged() ) list.add(EquipmentSlot.HEAD);
+        if ( player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof ModArmorItem && player.getItemBySlot(EquipmentSlot.CHEST).isDamaged() ) list.add(EquipmentSlot.CHEST);
+        if ( player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof ModArmorItem && player.getItemBySlot(EquipmentSlot.LEGS).isDamaged() ) list.add(EquipmentSlot.LEGS);
+        if ( player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof ModArmorItem && player.getItemBySlot(EquipmentSlot.FEET).isDamaged() ) list.add(EquipmentSlot.FEET);
+        if ( player.getItemBySlot(EquipmentSlot.MAINHAND).getItem() instanceof StaffItem && player.getItemBySlot(EquipmentSlot.MAINHAND).isDamaged() ) list.add(EquipmentSlot.MAINHAND);
+        if ( player.getItemBySlot(EquipmentSlot.OFFHAND).getItem() instanceof StaffItem && player.getItemBySlot(EquipmentSlot.OFFHAND).isDamaged() ) list.add(EquipmentSlot.OFFHAND);
+        return list;
     }
 }
