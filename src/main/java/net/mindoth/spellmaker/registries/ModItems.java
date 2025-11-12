@@ -58,7 +58,7 @@ public class ModItems {
                     ModDyeableItem.BLUE));
 
     public static final DeferredItem<Item> WOODEN_STAFF = ITEMS.registerItem("wooden_staff",
-            (properties) -> new ColorableStaffItem(properties.durability(512),
+            (properties) -> new ColorableStaffItem(properties.durability(128),
                     ModDyeableItem.GRAY));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_HOOD = ITEMS.registerItem("simple_robe_hood",
