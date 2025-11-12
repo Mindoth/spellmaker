@@ -12,6 +12,7 @@
 
   "block.spellmaker.calcinator": "Calcinator",
   "block.spellmaker.spell_making_table": "Spell Making Table",
+  "tooltip.recipebook.toggleRecipes.calcinatable": "Showing Calcinatable",
 
 
   "item.spellmaker.sigil_essence": "Sigil Essence",

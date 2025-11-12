@@ -1,8 +1,10 @@
 package net.mindoth.spellmaker.client.gui.screen;
 
-import net.mindoth.spellmaker.SpellMaker;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.navigation.ScreenPosition;
+import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
+import net.minecraft.client.gui.screens.recipebook.FurnaceRecipeBookComponent;
+import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -10,20 +12,30 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 
-public class AbstractCalcinatorScreen<T extends AbstractFurnaceMenu> extends AbstractContainerScreen<T> {
+import java.util.List;
 
-    private final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/calcinator_screen.png");
-    private final ResourceLocation litProgressSprite = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/calcinator_lit_progress.png");
-    private final ResourceLocation burnProgressSprite = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/calcinator_burn_progress.png");
+public class AbstractCalcinatorScreen<T extends AbstractFurnaceMenu> extends AbstractRecipeBookScreen<T> {
 
-    public AbstractCalcinatorScreen(T pMenu, Inventory pPlayerInventory, Component pTitle) {
-        super(pMenu, pPlayerInventory, pTitle);
+    private final ResourceLocation texture;
+    private final ResourceLocation litProgressSprite;
+    private final ResourceLocation burnProgressSprite;
+
+    public AbstractCalcinatorScreen(T menu, Inventory playerInventory, Component title, Component recipeFilterName, ResourceLocation texture, ResourceLocation litProgressSprite, ResourceLocation burnProgressSprite, List<RecipeBookComponent.TabInfo> tabInfos) {
+        super(menu, new FurnaceRecipeBookComponent(menu, recipeFilterName, tabInfos), playerInventory, title);
+        this.texture = texture;
+        this.litProgressSprite = litProgressSprite;
+        this.burnProgressSprite = burnProgressSprite;
     }
 
     @Override
     public void init() {
         super.init();
         this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
+    }
+
+    @Override
+    protected ScreenPosition getRecipeBookButtonPosition() {
+        return new ScreenPosition(this.leftPos + 20, this.height / 2 - 49);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.registries.ModBlocks;
+import net.mindoth.spellmaker.registries.ModRecipes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -48,7 +49,7 @@ public class CalcinatingRecipe extends AbstractCookingRecipe {
 
     @Override
     public RecipeBookCategory recipeBookCategory() {
-        return RecipeBookCategories.FURNACE_MISC;
+        return ModRecipes.CALCINATOR_CATEGORY.get();
     }
 
     @Override

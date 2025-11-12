@@ -24,7 +24,6 @@ public class SpellMaker {
         ModCreativeTab.CREATIVE_MODE_TABS.register(modBus);
         ModData.DATA_COMPONENT_TYPES.register(modBus);
         ModItems.ITEMS.register(modBus);
-        //ModArmorMaterials.ARMOR_MATERIALS.register(modBus);
         ModBlocks.BLOCKS.register(modBus);
         ModBlocks.BLOCK_ENTITIES.register(modBus);
         ModEntities.ENTITY_TYPES.register(modBus);
@@ -32,6 +31,7 @@ public class SpellMaker {
         ModAttributes.ATTRIBUTES.register(modBus);
         ModMenus.MENUS.register(modBus);
         ModRecipes.SERIALIZERS.register(modBus);
+        ModRecipes.RECIPE_BOOK_CATEGORIES.register(modBus);
         ModCapabilities.ATTACHMENT_TYPES.register(modBus);
         ModSpellForms.SPELL_FORMS.register(modBus);
     }
