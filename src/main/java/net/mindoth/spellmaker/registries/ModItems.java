@@ -43,6 +43,9 @@ public class ModItems {
     public static final DeferredItem<Item> RESTORATION_DUST = ITEMS.registerItem("restoration_dust",
             (properties) -> new Item(properties));
 
+    public static final DeferredItem<Item> MYSTIC_DUST = ITEMS.registerItem("mystic_dust",
+            (properties) -> new Item(properties));
+
     //Equipment
     public static final DeferredItem<Item> SPELL_BOOK = ITEMS.registerItem("spell_book",
             (properties) -> new ColorableSpellBookItem(properties,
@@ -64,10 +67,9 @@ public class ModItems {
     public static final DeferredItem<Item> SIMPLE_ROBE_BOOTS = ITEMS.registerItem("simple_robe_boots",
             (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(25, 0.05D)));
 
-    //Runes
-    public static final DeferredItem<Item> EXCAVATION_SIGIL = ITEMS.registerItem("excavation_sigil",
-            (properties) -> new ExcavationSigilItem(properties, SpellColor.NATURE, 0, 0, 4, 5, 0, 0, 0));
+    //Sigils
 
+    //Destruction
     public static final DeferredItem<Item> FIRE_SIGIL = ITEMS.registerItem("fire_sigil",
             (properties) -> new FireSigilItem(properties, SpellColor.FIRE, 0, 0, 64, 2, 0, 64, 1));
 
@@ -80,6 +82,10 @@ public class ModItems {
     public static final DeferredItem<Item> SLEEP_SIGIL = ITEMS.registerItem("sleep_sigil",
             (properties) -> new SleepSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1));
 
+    //Alteration
+    public static final DeferredItem<Item> EXCAVATION_SIGIL = ITEMS.registerItem("excavation_sigil",
+            (properties) -> new ExcavationSigilItem(properties, SpellColor.NATURE, 0, 0, 4, 5, 0, 0, 0));
+
     public static final DeferredItem<Item> SHEEP_FORM_SIGIL = ITEMS.registerItem("sheep_form_sigil",
             (properties) -> new SheepFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
                     ResourceLocation.parse("84527dc5-d3e5-4550-98ed-c8186c5d3089"), EntityType.SHEEP));
@@ -91,4 +97,11 @@ public class ModItems {
     public static final DeferredItem<Item> CHICKEN_FORM_SIGIL = ITEMS.registerItem("chicken_form_sigil",
             (properties) -> new ChickenFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
                     ResourceLocation.parse("baa27f16-774d-4767-99e0-218112d9241f"), EntityType.CHICKEN));
+
+    //Restoration
+
+    //Mystic
+    public static final DeferredItem<Item> FORCE_SIGIL = ITEMS.registerItem("force_sigil",
+            (properties) -> new ForceSigilItem(properties, SpellColor.ARCANE, 0, -10, 10, 10, 0, 0, 0));
+
 }

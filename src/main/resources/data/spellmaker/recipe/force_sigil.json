@@ -2,11 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     "spellmaker:sigil_essence",
-    "spellmaker:destruction_dust",
-    "minecraft:copper_ingot"
+    "spellmaker:mystic_dust",
+    "minecraft:piston"
   ],
   "result": {
-    "id": "spellmaker:shock_sigil",
+    "id": "spellmaker:force_sigil",
     "count": 1
   }
 }

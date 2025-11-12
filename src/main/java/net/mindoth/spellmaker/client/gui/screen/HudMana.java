@@ -20,8 +20,8 @@ public class HudMana implements GuiLayer {
 
     private static final Minecraft MINECRAFT = Minecraft.getInstance();
 
-    private static final ResourceLocation MANA_EMPTY_BAR = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/mana_empty_bar.png");
-    private static final ResourceLocation MANA_FULL_BAR = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/mana_full_bar.png");
+    private static final ResourceLocation MANA_EMPTY_BAR = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/mana_empty_gem.png");
+    private static final ResourceLocation MANA_FULL_BAR = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/mana_full_gem.png");
 
     @Override
     public void render(GuiGraphics graphics, DeltaTracker pDeltaTracker) {

@@ -21,6 +21,7 @@
   "item.spellmaker.destruction_dust": "Destruction Dust",
   "item.spellmaker.alteration_dust": "Alteration Dust",
   "item.spellmaker.restoration_dust": "Restoration Dust",
+  "item.spellmaker.mystic_dust": "Mystic Dust",
 
   "item.spellmaker.wooden_staff": "Wooden Staff",
   "item.spellmaker.spell_book": "Spell Book",
@@ -37,6 +38,7 @@
   "item.spellmaker.sheep_form_sigil": "Sheep Form Sigil",
   "item.spellmaker.fish_form_sigil": "Fish Form Sigil",
   "item.spellmaker.chicken_form_sigil": "Chicken Form Sigil",
+  "item.spellmaker.force_sigil": "Force Sigil",
 
 
   "spellform.spellmaker.caster_only": "Caster only",
