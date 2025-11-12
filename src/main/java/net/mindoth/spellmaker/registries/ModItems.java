@@ -43,6 +43,12 @@ public class ModItems {
     public static final DeferredItem<Item> RESTORATION_DUST = ITEMS.registerItem("restoration_dust",
             (properties) -> new Item(properties));
 
+    public static final DeferredItem<Item> CONJURATION_DUST = ITEMS.registerItem("conjuration_dust",
+            (properties) -> new Item(properties));
+
+    public static final DeferredItem<Item> ILLUSION_DUST = ITEMS.registerItem("illusion_dust",
+            (properties) -> new Item(properties));
+
     public static final DeferredItem<Item> MYSTIC_DUST = ITEMS.registerItem("mystic_dust",
             (properties) -> new Item(properties));
 
