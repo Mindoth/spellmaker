@@ -72,9 +72,16 @@ public class UpdateBookDataPacket implements CustomPacketPayload {
                     if ( ItemStack.isSameItemSameComponents(player.getOffhandItem(), packet.book) && !(player.getMainHandItem().getItem() instanceof SpellBookItem) ) book = player.getOffhandItem();
                     else book = player.getInventory().getItem(player.getInventory().findSlotMatchingItem(packet.book));
                     CompoundTag newTag = ModData.getLegacyTag(SpellBookItem.constructBook(packet.book, packet.scrollList));
-                    if ( packet.index != newTag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT).get() ) newTag.putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, packet.index);
-                    ModData.setLegacyTag(book, newTag);
-                    PacketDistributor.sendToPlayer(player, new UpdateBookDataClientPacket(packet.index, packet.refresh, packet.isRemoval));
+                    if ( packet.index != newTag.getInt(SpellBookItem.NBT_KEY_BOOK_SLOT).get() ) {
+                        newTag.putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, packet.index);
+                        ModData.setLegacyTag(book, newTag);
+                        PacketDistributor.sendToPlayer(player, new UpdateBookDataClientPacket(packet.index, packet.refresh, packet.isRemoval));
+                    }
+                    else {
+                        newTag.putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, -1);
+                        ModData.setLegacyTag(book, newTag);
+                        PacketDistributor.sendToPlayer(player, new UpdateBookDataClientPacket(-1, packet.refresh, packet.isRemoval));
+                    }
                 }
             }
         });
