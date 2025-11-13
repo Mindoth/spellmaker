@@ -1,6 +1,7 @@
 package net.mindoth.spellmaker.registries;
 
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.consumable.ModFood;
 import net.mindoth.spellmaker.item.ModDyeableItem;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.armor.ModArmorItem;
@@ -52,6 +53,10 @@ public class ModItems {
     public static final DeferredItem<Item> MYSTIC_DUST = ITEMS.registerItem("mystic_dust",
             (properties) -> new Item(properties));
 
+    //Consumables
+    public static final DeferredItem<Item> GOLDEN_BREAD = ITEMS.registerItem("golden_bread",
+            (properties) -> new Item(properties.food(ModFood.GOLDEN_BREAD)));
+
     //Equipment
     public static final DeferredItem<Item> SPELL_BOOK = ITEMS.registerItem("spell_book",
             (properties) -> new ColorableSpellBookItem(properties,
@@ -62,16 +67,16 @@ public class ModItems {
                     ModDyeableItem.GRAY));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_HOOD = ITEMS.registerItem("simple_robe_hood",
-            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(25, 0.05D)));
+            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 0.05D)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_TOP = ITEMS.registerItem("simple_robe_top",
-            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(25, 0.05D)));
+            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(40, 0.05D)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_BOTTOM = ITEMS.registerItem("simple_robe_bottom",
-            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(25, 0.05D)));
+            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(30, 0.05D)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_BOOTS = ITEMS.registerItem("simple_robe_boots",
-            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(25, 0.05D)));
+            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(15, 0.05D)));
 
     //Sigils
 
