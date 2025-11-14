@@ -12,9 +12,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.gui.GuiLayer;
+
+import javax.management.Attribute;
 
 public class HudMana implements GuiLayer {
 
@@ -33,6 +38,14 @@ public class HudMana implements GuiLayer {
         String mana = (int)currentMana + "/" + (int)maxMana;
         int posX = (MINECRAFT.getWindow().getGuiScaledWidth() / 2) + 10;
         int posY = MINECRAFT.getWindow().getGuiScaledHeight() - 49;
+        if ( player.getVehicle() != null && player.getVehicle() instanceof LivingEntity mount
+                && mount.getAttributes() != null && mount.getAttributes().hasAttribute(Attributes.MAX_HEALTH) ) {
+            double maxHealth = mount.getAttributeValue(Attributes.MAX_HEALTH);
+            if ( maxHealth > 20.0D ) {
+                int extraRows = Mth.ceil((maxHealth - 20.0D) / 20);
+                posY -= 10 * extraRows;
+            }
+        }
         if ( player.getAirSupply() != player.getMaxAirSupply() || FishFormSigilItem.isFish(player) ) posY -= 10;
         double manaPercentage = currentMana / maxMana;
         int barPercentage = (int)(manaPercentage * 79.0D);
