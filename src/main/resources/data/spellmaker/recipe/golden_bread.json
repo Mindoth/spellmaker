@@ -2,12 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "key": {
     "#": "minecraft:gold_nugget",
+    "D": "spellmaker:restoration_dust",
     "B": "minecraft:bread"
   },
   "pattern": [
     "###",
     "#B#",
-    "###"
+    "DDD"
   ],
   "result": {
     "id": "spellmaker:golden_bread",

@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "spellmaker:item/mystic_dust"
+    "model": "spellmaker:item/arcane_dust"
   }
 }

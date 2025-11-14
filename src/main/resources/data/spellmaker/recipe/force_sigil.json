@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     "spellmaker:sigil_essence",
-    "spellmaker:mystic_dust",
+    "spellmaker:arcane_dust",
     "minecraft:piston"
   ],
   "result": {

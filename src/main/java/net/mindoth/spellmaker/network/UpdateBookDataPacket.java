@@ -47,9 +47,9 @@ public class UpdateBookDataPacket implements CustomPacketPayload {
     }
 
     public UpdateBookDataPacket(FriendlyByteBuf buf) {
-        this.book = ModNetwork.readItem(buf);
+        this.book = ModNetwork.readItemStack(buf);
         int size = buf.readVarInt();
-        for ( int i = 0; i < size; i++ ) this.scrollList.add(ModNetwork.readItem(buf));
+        for ( int i = 0; i < size; i++ ) this.scrollList.add(ModNetwork.readItemStack(buf));
         this.index = buf.readInt();
         this.refresh = buf.readBoolean();
         this.isRemoval = buf.readBoolean();

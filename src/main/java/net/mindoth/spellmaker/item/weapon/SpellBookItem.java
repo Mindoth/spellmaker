@@ -71,20 +71,6 @@ public class SpellBookItem extends Item implements ModDyeableItem {
         return result;
     }
 
-    public static void handleSignature(Player player, ItemStack stack) {
-        CompoundTag tag = ModData.getOrCreateLegacyTag(stack);
-        if ( !tag.contains(NBT_KEY_BOOK_SLOT) ) tag.putInt(NBT_KEY_BOOK_SLOT, -1);
-        if ( !tag.contains(NBT_KEY_OWNER_UUID) ) {
-            tag.putString(NBT_KEY_OWNER_UUID, player.getUUID().toString());
-            tag.putString(NBT_KEY_OWNER_NAME, player.getDisplayName().getString());
-        }
-        if ( tag.contains(NBT_KEY_OWNER_UUID) && tag.contains(NBT_KEY_OWNER_NAME) ) {
-            if ( tag.getString(NBT_KEY_OWNER_UUID).get().equals(player.getUUID().toString()) && !tag.getString(NBT_KEY_OWNER_NAME).get().equals(player.getDisplayName().getString()) ) {
-                tag.putString(NBT_KEY_OWNER_NAME, player.getDisplayName().getString());
-            }
-        }
-    }
-
     public static void openSpellBook(ServerPlayer serverPlayer, ItemStack book) {
         CompoundTag tag = ModData.getLegacyTag(book);
         if ( tag != null ) {
@@ -97,6 +83,21 @@ public class SpellBookItem extends Item implements ModDyeableItem {
                 }
             }
             PacketDistributor.sendToPlayer(serverPlayer, new OpenSpellBookPacket(book, page));
+        }
+    }
+
+    public static void handleSignature(Player player, ItemStack stack) {
+        if ( !(stack.getItem() instanceof SpellBookItem) ) return;
+        CompoundTag tag = ModData.getOrCreateLegacyTag(stack);
+        if ( !tag.contains(NBT_KEY_BOOK_SLOT) ) tag.putInt(NBT_KEY_BOOK_SLOT, -1);
+        if ( !tag.contains(NBT_KEY_OWNER_UUID) ) {
+            tag.putString(NBT_KEY_OWNER_UUID, player.getUUID().toString());
+            tag.putString(NBT_KEY_OWNER_NAME, player.getDisplayName().getString());
+        }
+        if ( tag.contains(NBT_KEY_OWNER_UUID) && tag.contains(NBT_KEY_OWNER_NAME) ) {
+            if ( tag.getString(NBT_KEY_OWNER_UUID).get().equals(player.getUUID().toString()) && !tag.getString(NBT_KEY_OWNER_NAME).get().equals(player.getDisplayName().getString()) ) {
+                tag.putString(NBT_KEY_OWNER_NAME, player.getDisplayName().getString());
+            }
         }
     }
 
@@ -218,13 +219,11 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     public static ItemStack getTaggedSpellBookSlot(Player player) {
         ItemStack offHand = player.getOffhandItem();
         CompoundTag offTag = ModData.getLegacyTag(offHand);
-        if ( offHand.getItem() instanceof SpellBookItem && offTag != null && offTag.contains(NBT_KEY_BOOK_FORMS)
-                && !offTag.getString(NBT_KEY_BOOK_FORMS).isEmpty() ) return offHand;
+        if ( offHand.getItem() instanceof SpellBookItem && offTag != null && offTag.contains(NBT_KEY_BOOK_SLOT) ) return offHand;
         for ( int i = 0; i <= player.getInventory().getContainerSize(); i++ ) {
             ItemStack slot = player.getInventory().getItem(i);
             CompoundTag slotTag = ModData.getLegacyTag(slot);
-            if ( slot.getItem() instanceof SpellBookItem && ModData.getLegacyTag(slot) != null && slotTag.contains(NBT_KEY_BOOK_FORMS)
-                    && !slotTag.getString(NBT_KEY_BOOK_FORMS).isEmpty() ) return slot;
+            if ( slot.getItem() instanceof SpellBookItem && ModData.getLegacyTag(slot) != null && slotTag.contains(NBT_KEY_BOOK_SLOT) ) return slot;
         }
         return ItemStack.EMPTY;
     }

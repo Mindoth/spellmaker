@@ -50,7 +50,7 @@ public class ModItems {
     public static final DeferredItem<Item> ILLUSION_DUST = ITEMS.registerItem("illusion_dust",
             (properties) -> new Item(properties));
 
-    public static final DeferredItem<Item> MYSTIC_DUST = ITEMS.registerItem("mystic_dust",
+    public static final DeferredItem<Item> ARCANE_DUST = ITEMS.registerItem("arcane_dust",
             (properties) -> new Item(properties));
 
     //Consumables

@@ -15,6 +15,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -53,7 +54,14 @@ public class SpellMakerClient {
             if ( player == null ) return;
             if ( instance.screen == null ) {
                 if ( key == OPEN_SPELL_BOOK.getKey().getValue() ) {
-                    if ( keyAction == 1 && !SpellBookItem.getSpellBookSlot(player).isEmpty() ) ClientPacketDistributor.sendToServer(new AskToOpenSpellBookPacket());
+                    if ( keyAction == 1 && !SpellBookItem.getSpellBookSlot(player).isEmpty() ) {
+                        if ( SpellBookItem.getTaggedSpellBookSlot(player).isEmpty() ) {
+                            ItemStack book = SpellBookItem.getSpellBookSlot(player);
+                            SpellBookItem.handleSignature(player, book);
+                            ClientPacketDistributor.sendToServer(new AskToOpenSpellBookPacket(book));
+                        }
+                        else ClientPacketDistributor.sendToServer(new AskToOpenSpellBookPacket(SpellBookItem.getTaggedSpellBookSlot(player)));
+                    }
                 }
             }
         }

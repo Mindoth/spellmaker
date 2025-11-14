@@ -12,11 +12,11 @@ import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 
 @EventBusSubscriber(modid = SpellMaker.MOD_ID)
 public class ModFood {
-    public static final FoodProperties GOLDEN_BREAD = new FoodProperties.Builder().nutrition(6).saturationModifier(1.2F).alwaysEdible().build();
+    public static final FoodProperties GOLDEN_BREAD = new FoodProperties.Builder().nutrition(5).saturationModifier(1.2F).alwaysEdible().build();
 
     @SubscribeEvent
     public static void onFoodConsume(LivingEntityUseItemEvent.Finish event) {
         if ( !(event.getEntity() instanceof Player player) || event.getItem().getItem() != ModItems.GOLDEN_BREAD.get() ) return;
-        ModCapabilities.changeMana(player, 25.0D, player.getAttributeValue(ModAttributes.MANA_MAX));
+        ModCapabilities.changeMana(player, 40.0D, player.getAttributeValue(ModAttributes.MANA_MAX));
     }
 }
