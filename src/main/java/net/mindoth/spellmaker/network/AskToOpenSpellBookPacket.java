@@ -24,26 +24,25 @@ public class AskToOpenSpellBookPacket implements CustomPacketPayload {
         return TYPE;
     }
 
-    public boolean tagged;
-
-    public AskToOpenSpellBookPacket(boolean tagged) {
-        this.tagged = tagged;
+    public AskToOpenSpellBookPacket() {
     }
 
     public AskToOpenSpellBookPacket(FriendlyByteBuf buf) {
-        this.tagged = buf.readBoolean();
     }
 
     public void encode(FriendlyByteBuf buf) {
-        buf.writeBoolean(this.tagged);
     }
 
     public static void handle(AskToOpenSpellBookPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             if ( context.player() instanceof ServerPlayer player ) {
                 player.stopUsingItem();
-                ItemStack book = packet.tagged ? SpellBookItem.getTaggedSpellBookSlot(player) : SpellBookItem.getSpellBookSlot(player);
-                SpellBookItem.openSpellBook(player, book);
+                if ( SpellBookItem.getTaggedSpellBookSlot(player).isEmpty() ) {
+                    ItemStack book = SpellBookItem.getSpellBookSlot(player);
+                    SpellBookItem.handleSignature(player, book);
+                    SpellBookItem.openSpellBook(player, book);
+                }
+                else SpellBookItem.openSpellBook(player, SpellBookItem.getTaggedSpellBookSlot(player));
             }
         });
     }

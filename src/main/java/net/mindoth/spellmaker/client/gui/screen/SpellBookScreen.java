@@ -2,6 +2,7 @@ package net.mindoth.spellmaker.client.gui.screen;
 
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.SpellMakerClient;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.network.RemoveScrollFromBookPacket;
@@ -488,7 +489,7 @@ public class SpellBookScreen extends AbstractModScreen {
         Minecraft instance = Minecraft.getInstance();
         if ( instance.player != null ) {
             Player player = instance.player;
-            if ( event.key() == instance.options.keyInventory.getKey().getValue() ) {
+            if ( event.key() == instance.options.keyInventory.getKey().getValue() || event.key() == SpellMakerClient.OPEN_SPELL_BOOK.getKey().getValue() ) {
                 player.closeContainer();
                 return true;
             }

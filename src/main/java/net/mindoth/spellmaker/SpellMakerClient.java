@@ -43,24 +43,25 @@ public class SpellMakerClient {
 
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event) {
-            Minecraft mc = Minecraft.getInstance();
-            if ( mc.level == null ) return;
-            onInput(mc, event.getKey(), event.getAction());
+            Minecraft instance = Minecraft.getInstance();
+            if ( instance.level == null ) return;
+            onInput(instance, event.getKey(), event.getAction());
         }
 
-        private static void onInput(Minecraft mc, int key, int keyAction) {
-            Player player = mc.player;
-            if ( mc.screen == null && keyAction == 0 && key == OPEN_SPELL_BOOK.getKey().getValue() ) {
-                if ( !SpellBookItem.getTaggedSpellBookSlot(player).isEmpty() ) ClientPacketDistributor.sendToServer(new AskToOpenSpellBookPacket(true));
-                else if ( !SpellBookItem.getSpellBookSlot(player).isEmpty() ) ClientPacketDistributor.sendToServer(new AskToOpenSpellBookPacket(false));
+        private static void onInput(Minecraft instance, int key, int keyAction) {
+            Player player = instance.player;
+            if ( player == null ) return;
+            if ( instance.screen == null ) {
+                if ( key == OPEN_SPELL_BOOK.getKey().getValue() ) {
+                    if ( keyAction == 1 && !SpellBookItem.getSpellBookSlot(player).isEmpty() ) ClientPacketDistributor.sendToServer(new AskToOpenSpellBookPacket());
+                }
             }
         }
     }
 
-    public static final String KEY_OPEN_SPELL_BOOK = "key.spellmaker.open_spell_book";
-    public static final KeyMapping.Category KEY_CATEGORY_SPELLMAKER =
-            new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "spellmaker"));
-    public static final KeyMapping OPEN_SPELL_BOOK = new KeyMapping(KEY_OPEN_SPELL_BOOK, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM,
+    public static final KeyMapping.Category KEY_CATEGORY_SPELLMAKER = new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "spellmaker"));
+
+    public static final KeyMapping OPEN_SPELL_BOOK = new KeyMapping("key.spellmaker.open_spell_book", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_B, KEY_CATEGORY_SPELLMAKER);
 
     @EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
