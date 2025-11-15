@@ -6,6 +6,10 @@
     "spellmaker:simple_robe_hood",
     "spellmaker:simple_robe_top",
     "spellmaker:simple_robe_bottom",
-    "spellmaker:simple_robe_boots"
+    "spellmaker:simple_robe_boots",
+    "spellmaker:arcane_robe_hat",
+    "spellmaker:arcane_robe_top",
+    "spellmaker:arcane_robe_bottom",
+    "spellmaker:arcane_robe_boots"
   ]
 }

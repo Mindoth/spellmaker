@@ -2,7 +2,9 @@ package net.mindoth.spellmaker.client.model;
 
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.item.armor.ArcaneRobeItem;
 import net.mindoth.spellmaker.item.armor.ModArmorItem;
+import net.mindoth.spellmaker.item.armor.SimpleRobeItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -27,6 +29,7 @@ import java.util.List;
 public class ModLayerEvents {
 
     public static final ArmorModelSet<ModelLayerLocation> SIMPLE_ROBE = registerArmorSet("simple_robe");
+    public static final ArmorModelSet<ModelLayerLocation> ARCANE_ROBE = registerArmorSet("arcane_robe");
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -34,6 +37,11 @@ public class ModLayerEvents {
         event.registerLayerDefinition(SIMPLE_ROBE.chest(), SimpleRobeModel::createBodyLayer);
         event.registerLayerDefinition(SIMPLE_ROBE.legs(), SimpleRobeModel::createLegsLayer);
         event.registerLayerDefinition(SIMPLE_ROBE.feet(), SimpleRobeModel::createBootsLayer);
+
+        event.registerLayerDefinition(ARCANE_ROBE.head(), ArcaneRobeModel::createHeadLayer);
+        event.registerLayerDefinition(ARCANE_ROBE.chest(), ArcaneRobeModel::createBodyLayer);
+        event.registerLayerDefinition(ARCANE_ROBE.legs(), ArcaneRobeModel::createLegsLayer);
+        event.registerLayerDefinition(ARCANE_ROBE.feet(), ArcaneRobeModel::createBootsLayer);
     }
 
     @SubscribeEvent
@@ -43,12 +51,19 @@ public class ModLayerEvents {
             @Override
             @NotNull
             public Model getHumanoidArmorModel(@NotNull ItemStack stack, @NotNull EquipmentClientInfo.LayerType type, @NotNull Model original) {
-                if ( original instanceof HumanoidModel humanoidModel && stack.getItem() instanceof ModArmorItem item ) {
-                    SimpleRobeModel modArmor = new SimpleRobeModel(SimpleRobeModel.createLayerByType(item.type).bakeRoot());
-                    ClientHooks.copyModelProperties(humanoidModel, modArmor);
-                    return modArmor;
+                if ( original instanceof HumanoidModel humanoidModel ) {
+                    if ( stack.getItem() instanceof SimpleRobeItem item ) {
+                        SimpleRobeModel model = new SimpleRobeModel(SimpleRobeModel.createLayerByType(item.type).bakeRoot());
+                        ClientHooks.copyModelProperties(humanoidModel, model);
+                        return model;
+                    }
+                    if ( stack.getItem() instanceof ArcaneRobeItem item ) {
+                        ArcaneRobeModel model = new ArcaneRobeModel(ArcaneRobeModel.createLayerByType(item.type).bakeRoot());
+                        ClientHooks.copyModelProperties(humanoidModel, model);
+                        return model;
+                    }
                 }
-                else return original;
+                return original;
             }
         };
         List<Item> items = Lists.newArrayList();

@@ -26,7 +26,6 @@ public class ChickenFormSigilItem extends PolymorphSigilItem {
         return list;
     }
 
-    //TODO: fix animations
     @Override
     public void extraSync(LivingEntity living, Player player, float partialTick) {
         if ( living instanceof Chicken chicken ) {

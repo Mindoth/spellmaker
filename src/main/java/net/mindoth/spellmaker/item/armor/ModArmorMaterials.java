@@ -24,4 +24,15 @@ public class ModArmorMaterials {
             }), 25, SoundEvents.ARMOR_EQUIP_LEATHER,
             0, 0, ModTags.Items.WOOL_CLOTH_REPAIRABLE,
             ResourceKey.create(EquipmentAssets.ROOT_ID, ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "simple_robe")));
+
+    public static final ArmorMaterial ARCANE_ROBE_MATERIAL = new ArmorMaterial(7,
+            Util.make(new EnumMap<>(ArmorType.class), attribute -> {
+                attribute.put(ArmorType.BOOTS, 0);
+                attribute.put(ArmorType.LEGGINGS, 0);
+                attribute.put(ArmorType.CHESTPLATE, 0);
+                attribute.put(ArmorType.HELMET, 0);
+                attribute.put(ArmorType.BODY, 0);
+            }), 25, SoundEvents.ARMOR_EQUIP_LEATHER,
+            0, 0, ModTags.Items.WOOL_CLOTH_REPAIRABLE,
+            ResourceKey.create(EquipmentAssets.ROOT_ID, ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "arcane_robe")));
 }

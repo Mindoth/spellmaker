@@ -2,13 +2,13 @@ package net.mindoth.spellmaker.registries;
 
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.consumable.ModFood;
-import net.mindoth.spellmaker.item.ModDyeableItem;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.armor.ModArmorItem;
+import net.mindoth.spellmaker.item.armor.ArcaneRobeItem;
 import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
+import net.mindoth.spellmaker.item.armor.SimpleRobeItem;
 import net.mindoth.spellmaker.item.sigil.*;
-import net.mindoth.spellmaker.item.weapon.ColorableSpellBookItem;
-import net.mindoth.spellmaker.item.weapon.ColorableStaffItem;
+import net.mindoth.spellmaker.item.weapon.SpellBookItem;
+import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -59,24 +59,34 @@ public class ModItems {
 
     //Equipment
     public static final DeferredItem<Item> SPELL_BOOK = ITEMS.registerItem("spell_book",
-            (properties) -> new ColorableSpellBookItem(properties,
-                    ModDyeableItem.BLUE));
+            (properties) -> new SpellBookItem(properties));
 
     public static final DeferredItem<Item> WOODEN_STAFF = ITEMS.registerItem("wooden_staff",
-            (properties) -> new ColorableStaffItem(properties.durability(128),
-                    ModDyeableItem.GRAY));
+            (properties) -> new StaffItem(properties.durability(128)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_HOOD = ITEMS.registerItem("simple_robe_hood",
-            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 0.05D)));
+            (properties) -> new SimpleRobeItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 0.05D)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_TOP = ITEMS.registerItem("simple_robe_top",
-            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(40, 0.05D)));
+            (properties) -> new SimpleRobeItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(40, 0.05D)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_BOTTOM = ITEMS.registerItem("simple_robe_bottom",
-            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(30, 0.05D)));
+            (properties) -> new SimpleRobeItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(30, 0.05D)));
 
     public static final DeferredItem<Item> SIMPLE_ROBE_BOOTS = ITEMS.registerItem("simple_robe_boots",
-            (properties) -> new ModArmorItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(15, 0.05D)));
+            (properties) -> new SimpleRobeItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(15, 0.05D)));
+
+    public static final DeferredItem<Item> ARCANE_ROBE_HAT = ITEMS.registerItem("arcane_robe_hat",
+            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(60, 0.10D)));
+
+    public static final DeferredItem<Item> ARCANE_ROBE_TOP = ITEMS.registerItem("arcane_robe_top",
+            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(95, 0.10D)));
+
+    public static final DeferredItem<Item> ARCANE_ROBE_BOTTOM = ITEMS.registerItem("arcane_robe_bottom",
+            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(85, 0.10D)));
+
+    public static final DeferredItem<Item> ARCANE_ROBE_BOOTS = ITEMS.registerItem("arcane_robe_boots",
+            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(60, 0.10D)));
 
     //Sigils
 
