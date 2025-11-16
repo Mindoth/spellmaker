@@ -3,7 +3,7 @@
   "ingredients": [
     "spellmaker:sigil_essence",
     "spellmaker:destruction_dust",
-    "minecraft:coal"
+    "minecraft:magma_block"
   ],
   "result": {
     "id": "spellmaker:fire_sigil",

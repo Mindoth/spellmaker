@@ -3,7 +3,7 @@
   "ingredients": [
     "spellmaker:sigil_essence",
     "spellmaker:destruction_dust",
-    "minecraft:snowball"
+    "minecraft:powder_snow_bucket"
   ],
   "result": {
     "id": "spellmaker:frost_sigil",

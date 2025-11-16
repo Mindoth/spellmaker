@@ -3,7 +3,7 @@
   "ingredients": [
     "spellmaker:sigil_essence",
     "spellmaker:destruction_dust",
-    "minecraft:copper_ingot"
+    "minecraft:prismarine_shard"
   ],
   "result": {
     "id": "spellmaker:shock_sigil",
