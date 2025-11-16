@@ -77,16 +77,16 @@ public class ModItems {
             (properties) -> new SimpleRobeItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(15, 0.05D)));
 
     public static final DeferredItem<Item> ARCANE_ROBE_HAT = ITEMS.registerItem("arcane_robe_hat",
-            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(60, 0.10D)));
+            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(45, 0.10D)));
 
     public static final DeferredItem<Item> ARCANE_ROBE_TOP = ITEMS.registerItem("arcane_robe_top",
-            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(95, 0.10D)));
+            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(120, 0.10D)));
 
     public static final DeferredItem<Item> ARCANE_ROBE_BOTTOM = ITEMS.registerItem("arcane_robe_bottom",
-            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(85, 0.10D)));
+            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(90, 0.10D)));
 
     public static final DeferredItem<Item> ARCANE_ROBE_BOOTS = ITEMS.registerItem("arcane_robe_boots",
-            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(60, 0.10D)));
+            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(45, 0.10D)));
 
     //Sigils
 
