@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     "spellmaker:sigil_essence",
-    "spellmaker:destruction_dust",
+    "spellmaker:illusion_dust",
     "minecraft:cocoa_beans"
   ],
   "result": {

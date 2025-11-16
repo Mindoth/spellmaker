@@ -58,16 +58,11 @@ public class ArcaneRobeModel<S extends HumanoidRenderState> extends HumanoidMode
     }
 
     public static MeshDefinition createBaseArmor(CubeDeformation scale) {
-        float deform = 1.0F;
         MeshDefinition mesh = HumanoidModel.createMesh(scale, 0);
         PartDefinition root = mesh.getRoot();
 
         PartDefinition headPart = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0)
                         .addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, scale),
-                PartPose.offset(0.0F, 0.0F, 0.0F));
-
-        PartDefinition hatPart = headPart.addOrReplaceChild("hat", CubeListBuilder.create().texOffs(32, 0)
-                        .addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, scale.extend(0.5F)),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         headPart.addOrReplaceChild("bot", CubeListBuilder.create().texOffs(0, 47)
@@ -80,12 +75,12 @@ public class ArcaneRobeModel<S extends HumanoidRenderState> extends HumanoidMode
                         new CubeDeformation(0.5F)), PartPose.offsetAndRotation(0.0F, -13.0F, 0.25F, -0.1745F, 0.0F, 0.0F));
 
         root.addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(0, 16)
-                .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F,
-                        new CubeDeformation(deform)), PartPose.offset(-1.9F, 12.0F, 0.0F));
+                .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, scale),
+                PartPose.offset(-1.9F, 12.0F, 0.0F));
 
         root.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(0, 16).mirror()
-                .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F,
-                        new CubeDeformation(deform)), PartPose.offset(1.9F, 12.0F, 0.0F));
+                .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, scale),
+                PartPose.offset(1.9F, 12.0F, 0.0F));
 
         return mesh;
     }

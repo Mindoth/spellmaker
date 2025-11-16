@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "spellmaker:arcane_dust",
+    "S": "spellmaker:simple_robe_hood"
+  },
+  "pattern": [
+    " # ",
+    "#S#",
+    " # "
+  ],
+  "result": {
+    "id": "spellmaker:arcane_robe_hat",
+    "count": 1
+  }
+}
