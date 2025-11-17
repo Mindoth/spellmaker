@@ -21,7 +21,7 @@ public class ModArmorMaterials {
                 attribute.put(ArmorType.CHESTPLATE, 0);
                 attribute.put(ArmorType.HELMET, 0);
                 attribute.put(ArmorType.BODY, 0);
-            }), 25, SoundEvents.ARMOR_EQUIP_LEATHER,
+            }), 15, SoundEvents.ARMOR_EQUIP_LEATHER,
             0, 0, ModTags.Items.WOOL_CLOTH_REPAIRABLE,
             ResourceKey.create(EquipmentAssets.ROOT_ID, ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "simple_robe")));
 
