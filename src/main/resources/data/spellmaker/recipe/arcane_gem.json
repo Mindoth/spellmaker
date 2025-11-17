@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": "spellmaker:arcane_dust",
+    "D": "minecraft:diamond",
+    "L": "minecraft:lava_bucket"
+  },
+  "pattern": [
+    " A ",
+    " D ",
+    " L "
+  ],
+  "result": {
+    "id": "spellmaker:arcane_gem",
+    "count": 1
+  }
+}

@@ -29,6 +29,12 @@ public class ModItems {
     public static final DeferredItem<Item> WOOL_CLOTH = ITEMS.registerItem("wool_cloth",
             (properties) -> new Item(properties));
 
+    public static final DeferredItem<Item> ARCANE_SILK = ITEMS.registerItem("arcane_silk",
+            (properties) -> new Item(properties));
+
+    public static final DeferredItem<Item> ARCANE_GEM = ITEMS.registerItem("arcane_gem",
+            (properties) -> new Item(properties));
+
     public static final DeferredItem<Item> PARCHMENT = ITEMS.registerItem("parchment",
             (properties) -> new ParchmentItem(properties, 3));
 

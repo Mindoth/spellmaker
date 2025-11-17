@@ -1,13 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "#": "minecraft:string",
-    "W": "#minecraft:wool"
+    "#": "#minecraft:wool"
   },
   "pattern": [
-    " # ",
-    "#W#",
-    " # "
+    "## ",
+    "## ",
+    "   "
   ],
   "result": {
     "id": "spellmaker:wool_cloth",

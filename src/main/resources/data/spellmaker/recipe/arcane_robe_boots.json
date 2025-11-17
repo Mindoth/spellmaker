@@ -1,13 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "#": "spellmaker:arcane_dust",
-    "S": "spellmaker:simple_robe_boots"
+    "#": "spellmaker:arcane_silk",
+    "G": "spellmaker:arcane_gem"
   },
   "pattern": [
-    " # ",
-    "#S#",
-    " # "
+    "#G#",
+    "# #",
+    "   "
   ],
   "result": {
     "id": "spellmaker:arcane_robe_boots",
