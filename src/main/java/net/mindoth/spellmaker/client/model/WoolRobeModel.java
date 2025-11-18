@@ -17,32 +17,35 @@ public class WoolRobeModel<S extends HumanoidRenderState> extends HumanoidModel<
         super(root);
     }
 
-    public static ArmorModelSet<LayerDefinition> WOOL_ROBE_ARMOR_LAYER =
-            WoolRobeModel.createArmorSet().map(mesh -> LayerDefinition.create(mesh, 64, 64));
+    public static ArmorModelSet<LayerDefinition> WOOL_ROBE_ARMOR_HOOD_LAYER = WoolRobeModel.createArmorSet(true)
+            .map(mesh -> LayerDefinition.create(mesh, 64, 64));
 
-    public static LayerDefinition createLayerByType(ArmorType type) {
-        if ( type == ArmorType.HELMET ) return createHeadLayer();
+    public static ArmorModelSet<LayerDefinition> WOOL_ROBE_ARMOR_HAT_LAYER = WoolRobeModel.createArmorSet(false)
+            .map(mesh -> LayerDefinition.create(mesh, 64, 64));
+
+    public static LayerDefinition createLayerByType(ArmorType type, boolean isHood) {
+        if ( type == ArmorType.HELMET ) return createHeadLayer(isHood);
         if ( type == ArmorType.CHESTPLATE ) return createBodyLayer();
         if ( type == ArmorType.LEGGINGS ) return createLegsLayer();
         if ( type == ArmorType.BOOTS ) return createBootsLayer();
         return null;
     }
 
-    public static LayerDefinition createHeadLayer() {
-        return WOOL_ROBE_ARMOR_LAYER.head();
+    public static LayerDefinition createHeadLayer(boolean isHood) {
+        return isHood ? WOOL_ROBE_ARMOR_HOOD_LAYER.head() : WOOL_ROBE_ARMOR_HAT_LAYER.head();
     }
     public static LayerDefinition createBodyLayer() {
-        return WOOL_ROBE_ARMOR_LAYER.chest();
+        return WOOL_ROBE_ARMOR_HOOD_LAYER.chest();
     }
     public static LayerDefinition createLegsLayer() {
-        return WOOL_ROBE_ARMOR_LAYER.legs();
+        return WOOL_ROBE_ARMOR_HOOD_LAYER.legs();
     }
     public static LayerDefinition createBootsLayer() {
-        return WOOL_ROBE_ARMOR_LAYER.feet();
+        return WOOL_ROBE_ARMOR_HOOD_LAYER.feet();
     }
 
-    public static ArmorModelSet<MeshDefinition> createArmorSet() {
-        return createArmorSet(WoolRobeModel::createBaseArmor);
+    public static ArmorModelSet<MeshDefinition> createArmorSet(boolean isHood) {
+        return createArmorSet(scale -> createBaseArmor(scale, isHood));
     }
 
     public static ArmorModelSet<MeshDefinition> createArmorSet(Function<CubeDeformation, MeshDefinition> base) {
@@ -57,30 +60,45 @@ public class WoolRobeModel<S extends HumanoidRenderState> extends HumanoidModel<
         return new ArmorModelSet(head, body, legs, boots);
     }
 
-    public static MeshDefinition createBaseArmor(CubeDeformation scale) {
-        float deform = 1.0F;
+    public static MeshDefinition createBaseArmor(CubeDeformation scale, boolean isHood) {
         MeshDefinition mesh = HumanoidModel.createMesh(scale, 0);
         PartDefinition root = mesh.getRoot();
 
-        PartDefinition headPart = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0)
-                .addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, scale),
-                PartPose.offset(0.0F, 0.0F, 0.0F));
+        if ( isHood ) {
+            PartDefinition headPart = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0)
+                            .addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, scale),
+                    PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        PartDefinition hatPart = headPart.addOrReplaceChild("hat", CubeListBuilder.create().texOffs(32, 0)
-                .addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, scale.extend(0.5F)),
-                PartPose.offset(0.0F, 0.0F, 0.0F));
+            PartDefinition hatPart = headPart.addOrReplaceChild("hat", CubeListBuilder.create().texOffs(32, 0)
+                            .addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, scale.extend(0.5F)),
+                    PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        hatPart.addOrReplaceChild("hood", CubeListBuilder.create().texOffs(0, 57)
-                .addBox(-4.0F, -4.0F, -1.0F, 8.0F, 5.0F, 2.0F,
-                        new CubeDeformation(deform - 0.05F)), PartPose.offsetAndRotation(0.0F, -3.65F, 4.9F, -0.3927F, 0.0F, 0.0F));
+            hatPart.addOrReplaceChild("hood", CubeListBuilder.create().texOffs(44, 40)
+                    .addBox(-4.0F, -4.0F, -1.0F, 8.0F, 5.0F, 2.0F, scale.extend(-0.05F)),
+                    PartPose.offsetAndRotation(0.0F, -3.65F, 4.9F, -0.3927F, 0.0F, 0.0F));
+        }
+        else {
+            PartDefinition headPart = root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0)
+                            .addBox(-4.0F, -8.0F, -4.0F, 0, 0, 0, scale),
+                    PartPose.offset(0.0F, 0.0F, 0.0F));
+
+            headPart.addOrReplaceChild("bot", CubeListBuilder.create().texOffs(0, 47)
+                    .addBox(-8.0F, -30.0F, -8.0F, 16.0F, 1.0F, 16.0F, new CubeDeformation(0.0F))
+                    .texOffs(0, 35).addBox(-4.0F, -34.5F, -4.0F, 8.0F, 4.0F, 8.0F,
+                            new CubeDeformation(0.51F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+            headPart.addOrReplaceChild("top", CubeListBuilder.create().texOffs(0, 53)
+                    .addBox(-2.0F, -4.0F, -2.0F, 4.0F, 6.0F, 4.0F,
+                            new CubeDeformation(0.5F)), PartPose.offsetAndRotation(0.0F, -13.0F, 0.25F, -0.1745F, 0.0F, 0.0F));
+        }
 
         root.addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(0, 16)
-                .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F,
-                        new CubeDeformation(deform)), PartPose.offset(-1.9F, 12.0F, 0.0F));
+                .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, scale),
+                PartPose.offset(-1.9F, 12.0F, 0.0F));
 
         root.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(0, 16).mirror()
-                .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F,
-                        new CubeDeformation(deform)), PartPose.offset(1.9F, 12.0F, 0.0F));
+                .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, scale),
+                PartPose.offset(1.9F, 12.0F, 0.0F));
 
         return mesh;
     }

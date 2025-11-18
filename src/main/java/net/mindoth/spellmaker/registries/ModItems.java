@@ -74,6 +74,9 @@ public class ModItems {
     public static final DeferredItem<Item> WOODEN_STAFF = ITEMS.registerItem("wooden_staff",
             (properties) -> new StaffItem(properties.durability(128)));
 
+    public static final DeferredItem<Item> WOOL_ROBE_HAT = ITEMS.registerItem("wool_robe_hat",
+            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 0.05D)));
+
     public static final DeferredItem<Item> WOOL_ROBE_HOOD = ITEMS.registerItem("wool_robe_hood",
             (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 0.05D)));
 

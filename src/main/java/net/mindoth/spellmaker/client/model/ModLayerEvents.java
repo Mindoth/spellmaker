@@ -5,6 +5,7 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.armor.ModArmorItem;
 import net.mindoth.spellmaker.item.armor.RuneRobeItem;
 import net.mindoth.spellmaker.item.armor.WoolRobeItem;
+import net.mindoth.spellmaker.registries.ModItems;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -33,7 +34,8 @@ public class ModLayerEvents {
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(WOOL_ROBE.head(), WoolRobeModel::createHeadLayer);
+        event.registerLayerDefinition(WOOL_ROBE.head(), () -> WoolRobeModel.createHeadLayer(true));
+        event.registerLayerDefinition(WOOL_ROBE.head(), () -> WoolRobeModel.createHeadLayer(false));
         event.registerLayerDefinition(WOOL_ROBE.chest(), WoolRobeModel::createBodyLayer);
         event.registerLayerDefinition(WOOL_ROBE.legs(), WoolRobeModel::createLegsLayer);
         event.registerLayerDefinition(WOOL_ROBE.feet(), WoolRobeModel::createBootsLayer);
@@ -53,7 +55,8 @@ public class ModLayerEvents {
             public Model getHumanoidArmorModel(@NotNull ItemStack stack, @NotNull EquipmentClientInfo.LayerType type, @NotNull Model original) {
                 if ( original instanceof HumanoidModel humanoidModel ) {
                     if ( stack.getItem() instanceof WoolRobeItem item ) {
-                        WoolRobeModel model = new WoolRobeModel(WoolRobeModel.createLayerByType(item.type).bakeRoot());
+                        boolean isHood = item == ModItems.WOOL_ROBE_HOOD.get();
+                        WoolRobeModel model = new WoolRobeModel(WoolRobeModel.createLayerByType(item.type, isHood).bakeRoot());
                         ClientHooks.copyModelProperties(humanoidModel, model);
                         return model;
                     }
