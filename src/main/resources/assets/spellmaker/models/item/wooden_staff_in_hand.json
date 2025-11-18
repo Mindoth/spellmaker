@@ -1,0 +1,19 @@
+{
+  "parent": "spellmaker:item/base/staff",
+  "textures": {
+    "layer0": "spellmaker:item/wooden_staff_in_hand",
+    "layer1": "spellmaker:item/wooden_staff_in_hand_overlay"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [ 0, -90, 55 ],
+      "translation": [ 0, 1, 2 ],
+      "scale": [ 1.7, 1.7, 0.85 ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [ 0, 90, -55 ],
+      "translation": [ 0, 1, 2 ],
+      "scale": [ 1.7, 1.7, 0.85 ]
+    }
+  }
+}

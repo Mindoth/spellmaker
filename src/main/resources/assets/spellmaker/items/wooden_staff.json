@@ -1,12 +1,30 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "spellmaker:item/wooden_staff",
-    "tints": [
+    "type": "minecraft:select",
+    "cases": [
       {
-        "type": "minecraft:dye",
-        "default": -5066062
+        "model": {
+          "type": "minecraft:model",
+          "model": "spellmaker:item/wooden_staff",
+          "tints": [
+            {
+              "type": "minecraft:dye",
+              "default": -5066062
+            }
+          ]
+        },
+        "when": [
+          "gui",
+          "ground",
+          "fixed",
+          "on_shelf"
+        ]
       }
-    ]
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "spellmaker:item/wooden_staff_in_hand"
+    },
+    "property": "minecraft:display_context"
   }
 }
