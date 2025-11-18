@@ -5,12 +5,12 @@
     "G": "spellmaker:arcane_gem"
   },
   "pattern": [
-    " # ",
-    "# #",
-    "#G#"
+    "###",
+    "#G#",
+    "   "
   ],
   "result": {
-    "id": "spellmaker:arcane_robe_hat",
+    "id": "spellmaker:arcane_robe_hood",
     "count": 1
   }
 }

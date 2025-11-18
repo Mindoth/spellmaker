@@ -2,24 +2,24 @@
   "layers": {
     "humanoid": [
       {
-        "texture": "spellmaker:rune_robe",
+        "texture": "spellmaker:arcane_robe",
         "dyeable": {
           "color_when_undyed": -10973003
         }
       },
       {
-        "texture": "spellmaker:rune_robe_overlay"
+        "texture": "spellmaker:arcane_robe_overlay"
       }
     ],
     "humanoid_leggings": [
       {
-        "texture": "spellmaker:rune_robe",
+        "texture": "spellmaker:arcane_robe",
         "dyeable": {
           "color_when_undyed": -10973003
         }
       },
       {
-        "texture": "spellmaker:rune_robe_overlay"
+        "texture": "spellmaker:arcane_robe_overlay"
       }
     ]
   }

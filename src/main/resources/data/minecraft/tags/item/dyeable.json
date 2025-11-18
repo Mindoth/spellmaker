@@ -3,14 +3,15 @@
   "values": [
     "spellmaker:spell_book",
     "spellmaker:wooden_staff",
-    "spellmaker:wool_robe_hat",
     "spellmaker:wool_robe_hood",
+    "spellmaker:wool_robe_hat",
     "spellmaker:wool_robe_top",
     "spellmaker:wool_robe_bottom",
     "spellmaker:wool_robe_boots",
-    "spellmaker:rune_robe_hat",
-    "spellmaker:rune_robe_top",
-    "spellmaker:rune_robe_bottom",
-    "spellmaker:rune_robe_boots"
+    "spellmaker:arcane_robe_hood",
+    "spellmaker:arcane_robe_hat",
+    "spellmaker:arcane_robe_top",
+    "spellmaker:arcane_robe_bottom",
+    "spellmaker:arcane_robe_boots"
   ]
 }

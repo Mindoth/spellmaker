@@ -1,7 +1,7 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "spellmaker:item/rune_robe_top",
+    "model": "spellmaker:item/arcane_robe_bottom",
     "tints": [
       {
         "type": "minecraft:dye",

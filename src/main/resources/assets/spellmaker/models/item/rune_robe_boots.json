@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "spellmaker:item/rune_robe_boots",
-    "layer1": "spellmaker:item/rune_robe_boots_overlay"
-  }
-}
