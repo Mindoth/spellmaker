@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "spellmaker:item/rune_robe_hat",
+    "tints": [
+      {
+        "type": "minecraft:dye",
+        "default": -10973003
+      }
+    ]
+  }
+}

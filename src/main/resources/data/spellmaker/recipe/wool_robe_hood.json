@@ -1,16 +1,15 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "#": "spellmaker:arcane_cloth",
-    "G": "spellmaker:arcane_gem"
+    "#": "spellmaker:wool_cloth"
   },
   "pattern": [
-    "#G#",
+    "###",
     "# #",
     "   "
   ],
   "result": {
-    "id": "spellmaker:arcane_robe_boots",
+    "id": "spellmaker:wool_robe_hood",
     "count": 1
   }
 }

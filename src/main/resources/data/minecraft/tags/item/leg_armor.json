@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "spellmaker:simple_robe_bottom",
-    "spellmaker:arcane_robe_bottom"
+    "spellmaker:wool_robe_bottom",
+    "spellmaker:rune_robe_bottom"
   ]
 }

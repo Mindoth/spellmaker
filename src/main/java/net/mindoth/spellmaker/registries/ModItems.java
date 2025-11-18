@@ -5,7 +5,8 @@ import net.mindoth.spellmaker.consumable.ModFood;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.armor.ArcaneRobeItem;
 import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
-import net.mindoth.spellmaker.item.armor.SimpleRobeItem;
+import net.mindoth.spellmaker.item.armor.RuneRobeItem;
+import net.mindoth.spellmaker.item.armor.WoolRobeItem;
 import net.mindoth.spellmaker.item.sigil.*;
 import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
@@ -29,7 +30,10 @@ public class ModItems {
     public static final DeferredItem<Item> WOOL_CLOTH = ITEMS.registerItem("wool_cloth",
             (properties) -> new Item(properties));
 
-    public static final DeferredItem<Item> ARCANE_SILK = ITEMS.registerItem("arcane_silk",
+    public static final DeferredItem<Item> RUNE_CLOTH = ITEMS.registerItem("rune_cloth",
+            (properties) -> new Item(properties));
+
+    public static final DeferredItem<Item> ARCANE_CLOTH = ITEMS.registerItem("arcane_cloth",
             (properties) -> new Item(properties));
 
     public static final DeferredItem<Item> ARCANE_GEM = ITEMS.registerItem("arcane_gem",
@@ -70,19 +74,31 @@ public class ModItems {
     public static final DeferredItem<Item> WOODEN_STAFF = ITEMS.registerItem("wooden_staff",
             (properties) -> new StaffItem(properties.durability(128)));
 
-    public static final DeferredItem<Item> SIMPLE_ROBE_HOOD = ITEMS.registerItem("simple_robe_hood",
-            (properties) -> new SimpleRobeItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 0.05D)));
+    public static final DeferredItem<Item> WOOL_ROBE_HOOD = ITEMS.registerItem("wool_robe_hood",
+            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 0.05D)));
 
-    public static final DeferredItem<Item> SIMPLE_ROBE_TOP = ITEMS.registerItem("simple_robe_top",
-            (properties) -> new SimpleRobeItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(40, 0.05D)));
+    public static final DeferredItem<Item> WOOL_ROBE_TOP = ITEMS.registerItem("wool_robe_top",
+            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(40, 0.05D)));
 
-    public static final DeferredItem<Item> SIMPLE_ROBE_BOTTOM = ITEMS.registerItem("simple_robe_bottom",
-            (properties) -> new SimpleRobeItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(30, 0.05D)));
+    public static final DeferredItem<Item> WOOL_ROBE_BOTTOM = ITEMS.registerItem("wool_robe_bottom",
+            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(30, 0.05D)));
 
-    public static final DeferredItem<Item> SIMPLE_ROBE_BOOTS = ITEMS.registerItem("simple_robe_boots",
-            (properties) -> new SimpleRobeItem(properties, ModArmorMaterials.SIMPLE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(15, 0.05D)));
+    public static final DeferredItem<Item> WOOL_ROBE_BOOTS = ITEMS.registerItem("wool_robe_boots",
+            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(15, 0.05D)));
 
-    public static final DeferredItem<Item> ARCANE_ROBE_HAT = ITEMS.registerItem("arcane_robe_hat",
+    public static final DeferredItem<Item> RUNE_ROBE_HAT = ITEMS.registerItem("rune_robe_hat",
+            (properties) -> new RuneRobeItem(properties, ModArmorMaterials.RUNE_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(30, 0.075D)));
+
+    public static final DeferredItem<Item> RUNE_ROBE_TOP = ITEMS.registerItem("rune_robe_top",
+            (properties) -> new RuneRobeItem(properties, ModArmorMaterials.RUNE_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(80, 0.075D)));
+
+    public static final DeferredItem<Item> RUNE_ROBE_BOTTOM = ITEMS.registerItem("rune_robe_bottom",
+            (properties) -> new RuneRobeItem(properties, ModArmorMaterials.RUNE_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(60, 0.075D)));
+
+    public static final DeferredItem<Item> RUNE_ROBE_BOOTS = ITEMS.registerItem("rune_robe_boots",
+            (properties) -> new RuneRobeItem(properties, ModArmorMaterials.RUNE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(30, 0.075D)));
+
+    /*public static final DeferredItem<Item> ARCANE_ROBE_HAT = ITEMS.registerItem("arcane_robe_hat",
             (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(45, 0.10D)));
 
     public static final DeferredItem<Item> ARCANE_ROBE_TOP = ITEMS.registerItem("arcane_robe_top",
@@ -92,7 +108,7 @@ public class ModItems {
             (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(90, 0.10D)));
 
     public static final DeferredItem<Item> ARCANE_ROBE_BOOTS = ITEMS.registerItem("arcane_robe_boots",
-            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(45, 0.10D)));
+            (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(45, 0.10D)));*/
 
     //Sigils
 

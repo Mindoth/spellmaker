@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "spellmaker:item/wool_robe_bottom",
+    "tints": [
+      {
+        "type": "minecraft:dye",
+        "default": -5066062
+      }
+    ]
+  }
+}

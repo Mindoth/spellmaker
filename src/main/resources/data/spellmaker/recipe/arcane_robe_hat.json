@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "#": "spellmaker:arcane_silk",
+    "#": "spellmaker:arcane_cloth",
     "G": "spellmaker:arcane_gem"
   },
   "pattern": [

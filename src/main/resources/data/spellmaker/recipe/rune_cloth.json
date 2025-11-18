@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "minecraft:string",
+    "A": "spellmaker:arcane_dust"
+  },
+  "pattern": [
+    " # ",
+    "#A#",
+    " # "
+  ],
+  "result": {
+    "id": "spellmaker:rune_cloth",
+    "count": 4
+  }
+}
