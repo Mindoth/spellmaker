@@ -23,7 +23,13 @@
     ],
     "fallback": {
       "type": "minecraft:model",
-      "model": "spellmaker:item/wooden_staff_in_hand"
+      "model": "spellmaker:item/wooden_staff_in_hand",
+      "tints": [
+        {
+          "type": "minecraft:dye",
+          "default": -5066062
+        }
+      ]
     },
     "property": "minecraft:display_context"
   }
