@@ -44,7 +44,6 @@ public abstract class ClientHelperMethods {
         if ( nameTagDistance == null ) return;
         if ( nameTagDistance.hasModifier(PolymorphSigilItem.SYNC_POLYMORPH_SIZE_CLIENT.id()) ) {
             nameTagDistance.removeModifier(PolymorphSigilItem.SYNC_POLYMORPH_SIZE_CLIENT);
-            //player.refreshDimensions();
             ClientPacketDistributor.sendToServer(new SyncSizeForTrackersPacket(player.getId()));
         }
     }

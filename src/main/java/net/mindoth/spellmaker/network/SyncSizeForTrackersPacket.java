@@ -41,8 +41,8 @@ public class SyncSizeForTrackersPacket implements CustomPacketPayload {
     public static void handle(SyncSizeForTrackersPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             Player player = context.player();
-            PacketDistributor.sendToPlayersTrackingEntity(player, new SyncSizePacket(packet.id, false));
-            if ( player instanceof ServerPlayer serverPlayer ) PacketDistributor.sendToPlayer(serverPlayer, new SyncSizePacket(packet.id, false));
+            PacketDistributor.sendToPlayersTrackingEntity(player, new SyncSizePacket(packet.id));
+            if ( player instanceof ServerPlayer serverPlayer ) PacketDistributor.sendToPlayer(serverPlayer, new SyncSizePacket(packet.id));
         });
     }
 }

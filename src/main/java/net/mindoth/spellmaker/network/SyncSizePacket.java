@@ -26,21 +26,17 @@ public class SyncSizePacket implements CustomPacketPayload {
     }
 
     public int id;
-    public boolean self;
 
-    public SyncSizePacket(int id, boolean self) {
+    public SyncSizePacket(int id) {
         this.id = id;
-        this.self = self;
     }
 
     public SyncSizePacket(FriendlyByteBuf buf) {
         this.id = buf.readInt();
-        this.self = buf.readBoolean();
     }
 
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(this.id);
-        buf.writeBoolean(this.self);
     }
 
     public static void handle(SyncSizePacket packet, IPayloadContext context) {
