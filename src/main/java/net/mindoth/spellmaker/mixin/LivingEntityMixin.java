@@ -12,8 +12,8 @@ import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -41,6 +41,16 @@ public class LivingEntityMixin {
                 }
             }
         }
+    }
+
+    @Inject(method = "getDimensions", at = @At(value = "RETURN"))
+    public final EntityDimensions onPolymorphedDimensions(Pose pose, CallbackInfoReturnable<EntityDimensions> callback) {
+        LivingEntity living = (LivingEntity)(Object)this;
+        if ( PolymorphEffect.isPolymorphed(living) && PolymorphEffect.getPolymorphType(living) != null && pose != Pose.SLEEPING ) {
+            EntityType type = PolymorphEffect.getPolymorphType(living);
+            return type.getDimensions().scale(living.getAgeScale());
+        }
+        else return callback.getReturnValue();
     }
 
     @Inject(method = "isImmobile", at = @At(value = "HEAD"), cancellable = true)
