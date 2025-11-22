@@ -1,16 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "#": "minecraft:netherite_ingot",
+    "#": "minecraft:gold_ingot",
+    "W": "spellmaker:wool_cloth",
     "G": "spellmaker:arcane_gem"
   },
   "pattern": [
     " G ",
-    " # ",
+    " W ",
     " # "
   ],
   "result": {
-    "id": "spellmaker:arcane_staff",
+    "id": "spellmaker:golden_staff",
     "count": 1
   }
 }

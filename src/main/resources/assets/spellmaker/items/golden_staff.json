@@ -5,7 +5,13 @@
       {
         "model": {
           "type": "minecraft:model",
-          "model": "spellmaker:item/arcane_staff"
+          "model": "spellmaker:item/golden_staff",
+          "tints": [
+            {
+              "type": "minecraft:dye",
+              "default": -4109757
+            }
+          ]
         },
         "when": [
           "gui",
@@ -17,7 +23,13 @@
     ],
     "fallback": {
       "type": "minecraft:model",
-      "model": "spellmaker:item/arcane_staff_in_hand"
+      "model": "spellmaker:item/golden_staff_in_hand",
+      "tints": [
+        {
+          "type": "minecraft:dye",
+          "default": -4109757
+        }
+      ]
     },
     "property": "minecraft:display_context"
   }

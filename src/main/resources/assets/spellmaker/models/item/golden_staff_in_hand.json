@@ -1,0 +1,7 @@
+{
+  "parent": "spellmaker:item/base/staff",
+  "textures": {
+    "layer0": "spellmaker:item/golden_staff_in_hand",
+    "layer1": "spellmaker:item/golden_staff_in_hand_overlay"
+  }
+}

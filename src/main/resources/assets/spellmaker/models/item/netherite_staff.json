@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "spellmaker:item/arcane_staff"
+    "layer0": "spellmaker:item/netherite_staff"
   }
 }

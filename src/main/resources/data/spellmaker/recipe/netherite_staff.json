@@ -1,16 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "#": "#c:rods/wooden",
-    "W": "spellmaker:wool_cloth"
+    "#": "minecraft:netherite_ingot",
+    "G": "spellmaker:arcane_gem"
   },
   "pattern": [
+    " G ",
     " # ",
-    " W ",
     " # "
   ],
   "result": {
-    "id": "spellmaker:wooden_staff",
+    "id": "spellmaker:netherite_staff",
     "count": 1
   }
 }

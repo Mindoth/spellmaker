@@ -1,6 +1,6 @@
 {
   "parent": "spellmaker:item/base/staff",
   "textures": {
-    "layer0": "spellmaker:item/arcane_staff_in_hand"
+    "layer0": "spellmaker:item/netherite_staff_in_hand"
   }
 }
