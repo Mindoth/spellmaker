@@ -3,11 +3,11 @@
   "package": "net.mindoth.spellmaker.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "LivingEntityMixin",
-    "WalkAnimationStateMixin",
-    "LocalPlayerMixin",
     "EntityMixin",
+    "LivingEntityMixin",
+    "LocalPlayerMixin",
     "RecipeManagerMixin"
+    "WalkAnimationStateMixin",
   ],
   "injectors": {
     "defaultRequire": 1
