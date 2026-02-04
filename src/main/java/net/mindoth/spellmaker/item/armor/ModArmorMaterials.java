@@ -22,11 +22,19 @@ public class ModArmorMaterials {
 
     public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, SpellMaker.MOD_ID);
 
-    public static DeferredHolder<ArmorMaterial, ArmorMaterial> SIMPLE_ROBE = register("simple_robe",
+    public static DeferredHolder<ArmorMaterial, ArmorMaterial> WOOL_ROBE = register("wool_robe",
             makeArmorMap(0, 0, 0, 0),
-            25,
+            15,
             SoundEvents.ARMOR_EQUIP_LEATHER,
             () -> Ingredient.of(ModItems.WOOL_CLOTH.get()),
+            0,
+            0);
+
+    public static DeferredHolder<ArmorMaterial, ArmorMaterial> ARCANE_ROBE = register("arcane_robe",
+            makeArmorMap(0, 0, 0, 0),
+            20,
+            SoundEvents.ARMOR_EQUIP_LEATHER,
+            () -> Ingredient.of(ModItems.ARCANE_CLOTH.get()),
             0,
             0);
 
@@ -39,8 +47,11 @@ public class ModArmorMaterials {
             float toughness,
             float knockbackResistance
     ) {
-        List<ArmorMaterial.Layer> list = List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, name)));
-        return ARMOR_MATERIALS.register(name, ()-> new ArmorMaterial(defense, enchantmentValue, equipSound, repairIngredient, list, toughness, knockbackResistance));
+        List<ArmorMaterial.Layer> list = List.of(
+                new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, name), "", true),
+                new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, name), "_overlay", false)
+        );
+        return ARMOR_MATERIALS.register(name, () -> new ArmorMaterial(defense, enchantmentValue, equipSound, repairIngredient, list, toughness, knockbackResistance));
     }
 
     static public EnumMap<ArmorItem.Type, Integer> makeArmorMap(int helmet, int chestplate, int leggings, int boots) {

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "spellmaker:sigil_essence"
+    },
+    {
+      "item": "spellmaker:arcane_dust"
+    },
+    {
+      "item": "minecraft:piston"
+    }
+  ],
+  "result": {
+    "id": "spellmaker:force_sigil",
+    "count": 1
+  }
+}

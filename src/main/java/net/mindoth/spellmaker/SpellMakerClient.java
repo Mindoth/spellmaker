@@ -4,7 +4,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.mindoth.spellmaker.client.gui.screen.CalcinatorScreen;
 import net.mindoth.spellmaker.client.gui.screen.HudMana;
 import net.mindoth.spellmaker.client.gui.screen.SpellMakingScreen;
-import net.mindoth.spellmaker.client.model.SimpleRobeModel;
+import net.mindoth.spellmaker.client.model.ArcaneRobeModel;
+import net.mindoth.spellmaker.client.model.WoolRobeModel;
 import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.entity.ProjectileSpellMultiRenderer;
 import net.mindoth.spellmaker.entity.ProjectileSpellSingleRenderer;
@@ -56,10 +57,14 @@ public class SpellMakerClient {
         event.registerEntityRenderer(ModEntities.SPELL_PROJECTILE_MULTI.get(), ProjectileSpellMultiRenderer::new);
     }
 
-    public static final ModelLayerLocation SIMPLE_ROBE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "main"), "simple_robe");
+    public static final ModelLayerLocation WOOL_ROBE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "main"), "wool_robe");
+    public static final ModelLayerLocation ARCANE_ROBE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "main"), "arcane_robe");
 
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(SIMPLE_ROBE, SimpleRobeModel::createBodyLayer);
+        event.registerLayerDefinition(WOOL_ROBE, () -> WoolRobeModel.createBodyLayer(true));
+        event.registerLayerDefinition(WOOL_ROBE, () -> WoolRobeModel.createBodyLayer(false));
+        event.registerLayerDefinition(ARCANE_ROBE, () -> ArcaneRobeModel.createBodyLayer(true));
+        event.registerLayerDefinition(ARCANE_ROBE, () -> ArcaneRobeModel.createBodyLayer(false));
     }
 
     @EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
@@ -86,6 +91,7 @@ public class SpellMakerClient {
     public static final KeyMapping OPEN_SPELL_BOOK = new KeyMapping(KEY_OPEN_SPELL_BOOK, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_B, KEY_CATEGORY_SPELLMAKER);
 
+    @SuppressWarnings("removal")
     @EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
     public static class ClientModBusEvents {
 

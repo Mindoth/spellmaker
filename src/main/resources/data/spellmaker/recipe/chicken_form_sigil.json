@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "spellmaker:sigil_essence"
+    },
+    {
+      "item": "spellmaker:alteration_dust"
+    },
+    {
+      "item": "minecraft:feather"
+    }
+  ],
+  "result": {
+    "id": "spellmaker:chicken_form_sigil",
+    "count": 1
+  }
+}

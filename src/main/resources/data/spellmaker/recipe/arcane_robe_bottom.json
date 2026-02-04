@@ -1,23 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " G ",
-    " W ",
-    " # "
+    "###",
+    "#G#",
+    "# #"
   ],
   "key": {
     "#": {
-      "item": "minecraft:gold_ingot"
-    },
-    "W": {
-      "item": "spellmaker:wool_cloth"
+      "item": "spellmaker:arcane_cloth"
     },
     "G": {
       "item": "spellmaker:arcane_gem"
     }
   },
   "result": {
-    "id": "spellmaker:golden_staff",
+    "id": "spellmaker:arcane_robe_bottom",
     "count": 1
   }
 }

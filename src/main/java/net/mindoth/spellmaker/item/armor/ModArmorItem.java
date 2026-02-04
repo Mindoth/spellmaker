@@ -2,8 +2,9 @@ package net.mindoth.spellmaker.item.armor;
 
 import com.google.common.base.Suppliers;
 import net.mindoth.spellmaker.SpellMakerClient;
-import net.mindoth.spellmaker.client.model.SimpleRobeModel;
+import net.mindoth.spellmaker.client.model.WoolRobeModel;
 import net.mindoth.spellmaker.registries.ModAttributes;
+import net.mindoth.spellmaker.registries.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.Holder;
@@ -71,7 +72,7 @@ public class ModArmorItem extends ArmorItem {
 
     @OnlyIn(Dist.CLIENT)
     public HumanoidModel<?> provideArmorModelForSlot() {
-        return new SimpleRobeModel(Minecraft.getInstance().getEntityModels().bakeLayer(SpellMakerClient.SIMPLE_ROBE));
+        return new WoolRobeModel(Minecraft.getInstance().getEntityModels().bakeLayer(SpellMakerClient.WOOL_ROBE));
     }
 
     @SuppressWarnings("removal")
@@ -85,7 +86,7 @@ public class ModArmorItem extends ArmorItem {
             }
             @Override
             public int getArmorLayerTintColor(ItemStack stack, LivingEntity entity, ArmorMaterial.Layer layer, int layerIdx, int fallbackColor) {
-                if ( stack.getItem() instanceof ColorableArmorItem armorItem ) return DyedItemColor.getOrDefault(stack, armorItem.getDefaultColor());
+                if ( stack.getItem() instanceof ColorableArmorItem armorItem && layer.dyeable() ) return DyedItemColor.getOrDefault(stack, armorItem.getDefaultColor());
                 return IClientItemExtensions.super.getArmorLayerTintColor(stack, entity, layer, layerIdx, fallbackColor);
             }
         });

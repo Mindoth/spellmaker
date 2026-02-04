@@ -4,8 +4,9 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.consumable.ModFood;
 import net.mindoth.spellmaker.item.ModDyeableItem;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.armor.ColorableArmorItem;
+import net.mindoth.spellmaker.item.armor.ArcaneRobeItem;
 import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
+import net.mindoth.spellmaker.item.armor.WoolRobeItem;
 import net.mindoth.spellmaker.item.sigil.*;
 import net.mindoth.spellmaker.item.weapon.ColorableSpellBookItem;
 import net.mindoth.spellmaker.item.weapon.ColorableStaffItem;
@@ -81,29 +82,59 @@ public class ModItems {
                     ModDyeableItem.GRAY));
 
     public static final DeferredItem<Item> WOOL_ROBE_HOOD = ITEMS.register("wool_robe_hood",
-            () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.HELMET,
+            () -> new WoolRobeItem(ModArmorMaterials.WOOL_ROBE, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(11)),
+                    ModDyeableItem.GRAY, withMagickAttributes(15, 0.05D)));
+
+    public static final DeferredItem<Item> WOOL_ROBE_HAT = ITEMS.register("wool_robe_hat",
+            () -> new WoolRobeItem(ModArmorMaterials.WOOL_ROBE, ArmorItem.Type.HELMET,
                     new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(11)),
                     ModDyeableItem.GRAY, withMagickAttributes(15, 0.05D)));
 
     public static final DeferredItem<Item> WOOL_ROBE_TOP = ITEMS.register("wool_robe_top",
-            () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.CHESTPLATE,
+            () -> new WoolRobeItem(ModArmorMaterials.WOOL_ROBE, ArmorItem.Type.CHESTPLATE,
                     new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(16)),
                     ModDyeableItem.GRAY, withMagickAttributes(40, 0.05D)));
 
     public static final DeferredItem<Item> WOOL_ROBE_BOTTOM = ITEMS.register("wool_robe_bottom",
-            () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.LEGGINGS,
+            () -> new WoolRobeItem(ModArmorMaterials.WOOL_ROBE, ArmorItem.Type.LEGGINGS,
                     new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(16)),
                     ModDyeableItem.GRAY, withMagickAttributes(30, 0.05D)));
 
     public static final DeferredItem<Item> WOOL_ROBE_BOOTS = ITEMS.register("wool_robe_boots",
-            () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.BOOTS,
+            () -> new WoolRobeItem(ModArmorMaterials.WOOL_ROBE, ArmorItem.Type.BOOTS,
                     new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(13)),
                     ModDyeableItem.GRAY, withMagickAttributes(15, 0.05D)));
 
-    //Runes
-    public static final DeferredItem<Item> EXCAVATION_SIGIL = ITEMS.register("excavation_sigil",
-            () -> new ExcavationSigilItem(new Item.Properties(), SpellColor.NATURE, 0, 0, 4, 5, 0, 0, 0));
+    public static final DeferredItem<Item> ARCANE_ROBE_HOOD = ITEMS.register("arcane_robe_hood",
+            () -> new ArcaneRobeItem(ModArmorMaterials.ARCANE_ROBE, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(11)),
+                    ModDyeableItem.BLUE, withMagickAttributes(30, 0.10D)));
 
+    public static final DeferredItem<Item> ARCANE_ROBE_HAT = ITEMS.register("arcane_robe_hat",
+            () -> new ArcaneRobeItem(ModArmorMaterials.ARCANE_ROBE, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(11)),
+                    ModDyeableItem.BLUE, withMagickAttributes(30, 0.10D)));
+
+    public static final DeferredItem<Item> ARCANE_ROBE_TOP = ITEMS.register("arcane_robe_top",
+            () -> new ArcaneRobeItem(ModArmorMaterials.ARCANE_ROBE, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(16)),
+                    ModDyeableItem.BLUE, withMagickAttributes(80, 0.10D)));
+
+    public static final DeferredItem<Item> ARCANE_ROBE_BOTTOM = ITEMS.register("arcane_robe_bottom",
+            () -> new ArcaneRobeItem(ModArmorMaterials.ARCANE_ROBE, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(16)),
+                    ModDyeableItem.BLUE, withMagickAttributes(60, 0.10D)));
+
+    public static final DeferredItem<Item> ARCANE_ROBE_BOOTS = ITEMS.register("arcane_robe_boots",
+            () -> new ArcaneRobeItem(ModArmorMaterials.ARCANE_ROBE, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(13)),
+                    ModDyeableItem.BLUE, withMagickAttributes(30, 0.10D)));
+
+    //Sigils
+
+
+    //Destruction
     public static final DeferredItem<Item> FIRE_SIGIL = ITEMS.register("fire_sigil",
             () -> new FireSigilItem(new Item.Properties(), SpellColor.FIRE, 0, 0, 64, 2, 0, 64, 1));
 
@@ -116,6 +147,10 @@ public class ModItems {
     public static final DeferredItem<Item> SLEEP_SIGIL = ITEMS.register("sleep_sigil",
             () -> new SleepSigilItem(new Item.Properties(), SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1));
 
+    //Alteration
+    public static final DeferredItem<Item> EXCAVATION_SIGIL = ITEMS.register("excavation_sigil",
+            () -> new ExcavationSigilItem(new Item.Properties(), SpellColor.NATURE, 0, 0, 4, 5, 0, 0, 0));
+
     public static final DeferredItem<Item> SHEEP_FORM_SIGIL = ITEMS.register("sheep_form_sigil",
             () -> new SheepFormSigilItem(new Item.Properties(), SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
                     ResourceLocation.parse("84527dc5-d3e5-4550-98ed-c8186c5d3089"), EntityType.SHEEP));
@@ -123,4 +158,12 @@ public class ModItems {
     public static final DeferredItem<Item> FISH_FORM_SIGIL = ITEMS.register("fish_form_sigil",
             () -> new FishFormSigilItem(new Item.Properties(), SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
                     ResourceLocation.parse("b2bc1fd5-a121-42cf-b7cb-d29c61e3211c"), EntityType.COD));
+
+    public static final DeferredItem<Item> CHICKEN_FORM_SIGIL = ITEMS.register("chicken_form_sigil",
+            () -> new ChickenFormSigilItem(new Item.Properties(), SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
+                    ResourceLocation.parse("baa27f16-774d-4767-99e0-218112d9241f"), EntityType.CHICKEN));
+
+    //Arcane
+    public static final DeferredItem<Item> FORCE_SIGIL = ITEMS.register("force_sigil",
+            () -> new ForceSigilItem(new Item.Properties(), SpellColor.ARCANE, 0, -10, 10, 10, 0, 0, 0));
 }
