@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "spellmaker:item/wooden_staff",
+    "layer1": "spellmaker:item/wooden_staff_overlay"
+  }
+}

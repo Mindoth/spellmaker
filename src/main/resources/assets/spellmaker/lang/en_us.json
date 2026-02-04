@@ -2,32 +2,48 @@
   "itemGroup.spellmaker_tab": "Spell Maker",
 
 
-  "key.category.spellmaker": "Spell Maker",
+  "key.category.spellmaker.spellmaker": "Spell Maker",
   "key.spellmaker.open_spell_book": "Open Spell Book",
 
 
   "container.spellmaker.calcinator": "Calcinator",
-  "container.spellmaker.spell_making": "Spell Making",
+  "container.spellmaker.spell_making": "Spell Making Table",
 
 
   "block.spellmaker.calcinator": "Calcinator",
   "block.spellmaker.spell_making_table": "Spell Making Table",
+  "tooltip.recipebook.toggleRecipes.calcinatable": "Showing Calcinatable",
 
 
-  "item.spellmaker.rune_essence": "Rune Essence",
+  "item.spellmaker.sigil_essence": "Sigil Essence",
   "item.spellmaker.wool_cloth": "Wool Cloth",
+  "item.spellmaker.arcane_cloth": "Arcane Cloth",
+  "item.spellmaker.arcane_gem": "Arcane Gem",
   "item.spellmaker.parchment": "Parchment",
   "item.spellmaker.wood_ash": "Wood Ash",
   "item.spellmaker.destruction_dust": "Destruction Dust",
   "item.spellmaker.alteration_dust": "Alteration Dust",
   "item.spellmaker.restoration_dust": "Restoration Dust",
+  "item.spellmaker.conjuration_dust": "Conjuration Dust",
+  "item.spellmaker.illusion_dust": "Illusion Dust",
+  "item.spellmaker.arcane_dust": "Arcane Dust",
+
+  "item.spellmaker.golden_bread": "Golden Bread",
 
   "item.spellmaker.wooden_staff": "Wooden Staff",
+  "item.spellmaker.golden_staff": "Golden Staff",
+  "item.spellmaker.netherite_staff": "Netherite Staff",
   "item.spellmaker.spell_book": "Spell Book",
-  "item.spellmaker.simple_robe_hood": "Simple Robe Hood",
-  "item.spellmaker.simple_robe_top": "Simple Robe Top",
-  "item.spellmaker.simple_robe_bottom": "Simple Robe Bottom",
-  "item.spellmaker.simple_robe_boots": "Simple Robe Boots",
+  "item.spellmaker.wool_robe_hood": "Wool Robe Hood",
+  "item.spellmaker.wool_robe_hat": "Wool Robe Hat",
+  "item.spellmaker.wool_robe_top": "Wool Robe Top",
+  "item.spellmaker.wool_robe_bottom": "Wool Robe Bottom",
+  "item.spellmaker.wool_robe_boots": "Wool Robe Boots",
+  "item.spellmaker.arcane_robe_hood": "Arcane Robe Hood",
+  "item.spellmaker.arcane_robe_hat": "Arcane Robe Hat",
+  "item.spellmaker.arcane_robe_top": "Arcane Robe Top",
+  "item.spellmaker.arcane_robe_bottom": "Arcane Robe Bottom",
+  "item.spellmaker.arcane_robe_boots": "Arcane Robe Boots",
 
   "item.spellmaker.excavation_sigil": "Excavation Sigil",
   "item.spellmaker.fire_sigil": "Fire Sigil",
@@ -36,6 +52,8 @@
   "item.spellmaker.sleep_sigil": "Sleep Sigil",
   "item.spellmaker.sheep_form_sigil": "Sheep Form Sigil",
   "item.spellmaker.fish_form_sigil": "Fish Form Sigil",
+  "item.spellmaker.chicken_form_sigil": "Chicken Form Sigil",
+  "item.spellmaker.force_sigil": "Force Sigil",
 
 
   "spellform.spellmaker.caster_only": "Caster only",

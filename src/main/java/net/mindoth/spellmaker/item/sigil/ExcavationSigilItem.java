@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.FakePlayer;
@@ -19,10 +20,20 @@ import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import java.util.List;
 import java.util.UUID;
 
-public class ExcavationSigilItem extends SigilItem {
+public class ExcavationSigilItem extends AbstractSigilItem {
 
     public ExcavationSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier);
+    }
+
+    @Override
+    public boolean canAffectEntity(Entity target) {
+        return false;
+    }
+
+    @Override
+    public boolean canAffectBlock(Block block) {
+        return !(block instanceof AirBlock);
     }
 
     @Override

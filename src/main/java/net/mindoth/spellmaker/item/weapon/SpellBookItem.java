@@ -90,6 +90,7 @@ public class SpellBookItem extends Item implements ModDyeableItem {
     }
 
     public static void handleSignature(ServerPlayer serverPlayer, ItemStack stack) {
+        if ( !(stack.getItem() instanceof SpellBookItem) ) return;
         CompoundTag tag = ModData.getOrCreateLegacyTag(stack);
         if ( !tag.contains(NBT_KEY_BOOK_SLOT) ) tag.putInt(NBT_KEY_BOOK_SLOT, -1);
         if ( !tag.contains(NBT_KEY_OWNER_UUID) ){

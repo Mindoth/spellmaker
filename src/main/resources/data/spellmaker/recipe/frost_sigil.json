@@ -3,13 +3,13 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "spellmaker:rune_essence"
+      "item": "spellmaker:sigil_essence"
     },
     {
       "item": "spellmaker:destruction_dust"
     },
     {
-      "item": "minecraft:snowball"
+      "item": "minecraft:powder_snow_bucket"
     }
   ],
   "result": {

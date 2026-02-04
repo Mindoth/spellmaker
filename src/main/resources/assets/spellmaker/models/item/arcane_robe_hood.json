@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "spellmaker:item/arcane_robe_hood",
+    "layer1": "spellmaker:item/arcane_robe_hood_overlay"
+  }
+}

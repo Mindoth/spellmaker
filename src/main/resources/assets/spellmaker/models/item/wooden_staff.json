@@ -1,7 +1,18 @@
 {
-  "parent": "item/handheld",
-  "textures": {
-    "layer0": "spellmaker:item/wooden_staff",
-    "layer1": "spellmaker:item/wooden_staff_overlay"
+  "parent": "minecraft:item/handheld",
+  "loader": "neoforge:separate_transforms",
+  "base": {
+    "parent": "spellmaker:item/wooden_staff_in_hand"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "spellmaker:item/wooden_staff_in_gui"
+    },
+    "ground": {
+      "parent": "spellmaker:item/wooden_staff_in_gui"
+    },
+    "fixed": {
+      "parent": "spellmaker:item/wooden_staff_in_gui"
+    }
   }
 }

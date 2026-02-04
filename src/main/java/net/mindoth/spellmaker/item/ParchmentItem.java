@@ -1,6 +1,6 @@
 package net.mindoth.spellmaker.item;
 
-import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.registries.ModData;
 import net.mindoth.spellmaker.registries.ModSpellForms;
 import net.mindoth.spellmaker.util.DataHelper;
@@ -51,8 +51,8 @@ public class ParchmentItem extends Item {
                         .append(Component.literal("" + cost)).withStyle(ChatFormatting.GRAY));
                 tooltip.add(Component.translatable("spellform.spellmaker." + form.getName()).withStyle(ChatFormatting.GRAY));
                 if ( tag.contains(NBT_KEY_SPELL_SIGILS) ) {
-                    List<SigilItem> list = DataHelper.getSigilListFromString(tag.getString(NBT_KEY_SPELL_SIGILS));
-                    for ( SigilItem sigil : list ) {
+                    List<AbstractSigilItem> list = DataHelper.getSigilListFromString(tag.getString(NBT_KEY_SPELL_SIGILS));
+                    for ( AbstractSigilItem sigil : list ) {
                         String name = new ItemStack(sigil).getHoverName().getString();
                         tooltip.add(Component.literal(" ").append(Component.literal(name).withStyle(ChatFormatting.GRAY)));
                     }
@@ -62,9 +62,9 @@ public class ParchmentItem extends Item {
         super.appendHoverText(stack, context, tooltip, flagIn);
     }
 
-    public static int calculateSpellCost(AbstractSpellForm form, LinkedHashMap<SigilItem, List<Integer>> map) {
+    public static int calculateSpellCost(AbstractSpellForm form, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
         int totalCost = 0;
-        for ( SigilItem sigil : map.keySet() ) {
+        for ( AbstractSigilItem sigil : map.keySet() ) {
             int cost = sigil.getCost();
             List<Integer> stats = map.get(sigil);
             if ( sigil.canModifyMagnitude() ) cost += Math.abs(stats.get(0)) * sigil.getMagnitudeMultiplier();

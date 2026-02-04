@@ -1,10 +1,11 @@
 package net.mindoth.spellmaker.item.weapon;
 
+import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.ModCapabilities;
-import net.mindoth.spellmaker.capability.playermagic.MagickData;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.item.armor.ModArmorItem;
+import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
 import net.mindoth.spellmaker.registries.ModData;
 import net.mindoth.spellmaker.util.DataHelper;
@@ -33,6 +34,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -50,15 +52,12 @@ public class StaffItem extends Item {
     @Override
     @Nonnull
     public InteractionResultHolder<ItemStack> use(Level level, Player player, @Nonnull InteractionHand hand) {
-        InteractionResultHolder<ItemStack> result = InteractionResultHolder.fail(player.getItemInHand(hand));
-        if ( !level.isClientSide ) {
-            ItemStack staff = player.getItemInHand(hand);
-            if ( !player.getCooldowns().isOnCooldown(staff.getItem()) ) {
-                startCasting(player, staff);
-                result = InteractionResultHolder.success(player.getItemInHand(hand));
-            }
+        ItemStack staff = player.getItemInHand(hand);
+        if ( !player.getCooldowns().isOnCooldown(staff.getItem()) ) {
+            if ( player instanceof ServerPlayer serverPlayer ) startCasting(serverPlayer, staff);
+            return InteractionResultHolder.success(player.getItemInHand(hand));
         }
-        return result;
+        return InteractionResultHolder.fail(player.getItemInHand(hand));
     }
 
     private static void startCasting(Player player, ItemStack staff) {
@@ -70,21 +69,25 @@ public class StaffItem extends Item {
             if ( scroll != null && ModData.getLegacyTag(scroll) != null ) {
                 CompoundTag scrollTag = ModData.getLegacyTag(scroll);
                 AbstractSpellForm form = DataHelper.getFormFromNbt(scrollTag);
-                LinkedHashMap<SigilItem, List<Integer>> map = DataHelper.createMapFromTag(scrollTag);
+                LinkedHashMap<AbstractSigilItem, List<Integer>> map = DataHelper.createMapFromTag(scrollTag);
                 double baseCost = ParchmentItem.calculateSpellCost(form, map);
                 double discount = player.getAttributeValue(ModAttributes.MANA_COST_MULTIPLIER) - ModAttributes.MANA_COST_MULTIPLIER.get().getDefaultValue();
                 int cost = Mth.ceil(baseCost * (1.0D - discount));
-                MagickData magick = MagickData.getPlayerMagickData(player);
-                if ( cost <= magick.getCurrentMana() || player.isCreative() ) {
-                    form.castMagick(player, player, map);
-                    handleCooldowns(player, staff, 20);
-                    if ( !player.isCreative() ) {
-                        addItemDamage(staff, 1, player);
-                        ModCapabilities.changeMana(player, -cost);
+                if ( cost <= player.getData(ModCapabilities.MAGICK_DATA) || player.isCreative() ) {
+                    if ( form.castMagick(player, player, map) ) {
+                        handleCooldowns(player, staff, 20);
+                        if ( !player.isCreative() ) {
+                            addItemDamage(staff, 1, player);
+                            ModCapabilities.changeMana(player, -cost, player.getAttributeValue(ModAttributes.MANA_MAX));
+                        }
+                        playCastingSound(player);
                     }
-                    playCastingSound(player);
+                    else {
+                        handleCooldowns(player, staff, 20);
+                        whiffSpell(player);
+                    }
                 }
-                else if ( !player.isCreative() ) {
+                else {
                     handleCooldowns(player, staff, 20);
                     whiffSpell(player);
                 }
@@ -98,7 +101,7 @@ public class StaffItem extends Item {
 
     private static void handleCooldowns(LivingEntity caster, ItemStack staff, int cooldown) {
         caster.stopUsingItem();
-        addCastingCooldown(caster, staff.getItem(), cooldown);
+        addCastingCooldown(caster, staff, cooldown);
     }
 
     private static void addItemDamage(ItemStack castingItem, int amount, LivingEntity living) {
@@ -115,7 +118,7 @@ public class StaffItem extends Item {
     }
 
     private static void addWhiffParticles(Entity caster) {
-        if ( !caster.level().isClientSide && caster.level() instanceof ServerLevel level ) {
+        if ( !caster.level().isClientSide() && caster.level() instanceof ServerLevel level ) {
             Vec3 start = caster.getEyePosition().add(caster.getLookAngle().multiply(1.0D, 1.0D, 1.0D));
             Vec3 dir = caster.getLookAngle();
             for ( int i = 0; i < 6; i++ ) {
@@ -126,14 +129,14 @@ public class StaffItem extends Item {
     }
 
     private static void playWhiffSound(Entity caster) {
-        if ( caster instanceof Player player && !player.level().isClientSide && player.level() instanceof ServerLevel level ) {
+        if ( caster instanceof Player player && !player.level().isClientSide() && player.level() instanceof ServerLevel level ) {
             player.playNotifySound(SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
             level.playSound(player, player.getOnPos(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
         }
     }
 
     private static void playCastingSound(Entity caster) {
-        if ( caster instanceof Player player && !player.level().isClientSide && player.level() instanceof ServerLevel level ) {
+        if ( caster instanceof Player player && !player.level().isClientSide() && player.level() instanceof ServerLevel level ) {
             player.playNotifySound(SoundEvents.ENDER_PEARL_THROW, SoundSource.PLAYERS, 0.5F, 1.0F);
             level.playSound(player, player.getOnPos(), SoundEvents.ENDER_PEARL_THROW, SoundSource.PLAYERS, 0.5F, 1.0F);
             player.playNotifySound(SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.5F, 2.0F);
@@ -141,8 +144,8 @@ public class StaffItem extends Item {
         }
     }
 
-    private static void addCastingCooldown(Entity entity, Item item, int cooldown) {
-        if ( entity instanceof Player player ) player.getCooldowns().addCooldown(item, cooldown);
+    private static void addCastingCooldown(Entity entity, ItemStack staff, int cooldown) {
+        if ( entity instanceof Player player ) player.getCooldowns().addCooldown(staff.getItem(), cooldown);
     }
 
     public static boolean isValidCastingItem(ItemStack staff) {
@@ -155,12 +158,33 @@ public class StaffItem extends Item {
     }
 
     @Override
-    public boolean isEnchantable(@Nonnull ItemStack stack) {
-        return false;
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return slotChanged;
     }
 
     @Override
-    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return slotChanged;
+    public void inventoryTick(ItemStack stack, Level lvl, Entity entity, int slotId, boolean isSelected) {
+        if ( entity.tickCount % 20 != 0 || !(entity instanceof Player player) || !(lvl instanceof ServerLevel level) ) return;
+        EquipmentSlot slot = player.getSlot(slotId).get().getEquipmentSlot();
+        if ( !player.getAttributes().hasAttribute(ModAttributes.MANA_MAX) || !player.getAttributes().hasAttribute(ModAttributes.MANA_REGENERATION) ) return;
+        if ( player.getData(ModCapabilities.MAGICK_DATA) < player.getAttribute(ModAttributes.MANA_MAX).getValue() ) return;
+        List<EquipmentSlot> list = getSlotList(player);
+        if ( list.isEmpty() ) return;
+        int index = player.getRandom().nextInt(0, list.size());
+        if ( list.get(index) != slot ) return;
+        if ( !(stack.getItem() instanceof StaffItem) ) return;
+        stack.hurtAndBreak(-(int)player.getAttribute(ModAttributes.MANA_REGENERATION).getValue(), level, player,
+                (holder) -> player.onEquippedItemBroken(stack.getItem(), slot));
+    }
+
+    private List<EquipmentSlot> getSlotList(Player player) {
+        List<EquipmentSlot> list = Lists.newArrayList();
+        if ( player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof ModArmorItem && player.getItemBySlot(EquipmentSlot.HEAD).isDamaged() ) list.add(EquipmentSlot.HEAD);
+        if ( player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof ModArmorItem && player.getItemBySlot(EquipmentSlot.CHEST).isDamaged() ) list.add(EquipmentSlot.CHEST);
+        if ( player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof ModArmorItem && player.getItemBySlot(EquipmentSlot.LEGS).isDamaged() ) list.add(EquipmentSlot.LEGS);
+        if ( player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof ModArmorItem && player.getItemBySlot(EquipmentSlot.FEET).isDamaged() ) list.add(EquipmentSlot.FEET);
+        if ( player.getItemBySlot(EquipmentSlot.MAINHAND).getItem() instanceof StaffItem && player.getItemBySlot(EquipmentSlot.MAINHAND).isDamaged() ) list.add(EquipmentSlot.MAINHAND);
+        if ( player.getItemBySlot(EquipmentSlot.OFFHAND).getItem() instanceof StaffItem && player.getItemBySlot(EquipmentSlot.OFFHAND).isDamaged() ) list.add(EquipmentSlot.OFFHAND);
+        return list;
     }
 }

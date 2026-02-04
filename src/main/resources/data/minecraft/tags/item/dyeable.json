@@ -3,9 +3,10 @@
   "values": [
     "spellmaker:spell_book",
     "spellmaker:wooden_staff",
-    "spellmaker:simple_robe_hood",
-    "spellmaker:simple_robe_top",
-    "spellmaker:simple_robe_bottom",
-    "spellmaker:simple_robe_boots"
+    "spellmaker:golden_staff",
+    "spellmaker:wool_robe_hood",
+    "spellmaker:wool_robe_top",
+    "spellmaker:wool_robe_bottom",
+    "spellmaker:wool_robe_boots"
   ]
 }

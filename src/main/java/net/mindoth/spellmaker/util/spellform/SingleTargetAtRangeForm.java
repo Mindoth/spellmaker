@@ -2,7 +2,7 @@ package net.mindoth.spellmaker.util.spellform;
 
 import net.mindoth.spellmaker.entity.AbstractSpellEntity;
 import net.mindoth.spellmaker.entity.ProjectileSpellSingleEntity;
-import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -17,7 +17,7 @@ public class SingleTargetAtRangeForm extends AbstractSpellForm {
     }
 
     @Override
-    public void castMagick(Entity source, Entity directSource, LinkedHashMap<SigilItem, List<Integer>> map) {
+    public boolean castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
         Level level = source.level();
         ProjectileSpellSingleEntity projectile = new ProjectileSpellSingleEntity(level);
         projectile.setOwner(source);
@@ -28,7 +28,7 @@ public class SingleTargetAtRangeForm extends AbstractSpellForm {
         projectile.getEntityData().set(AbstractSpellEntity.SIGIL_LIST, DataHelper.getStringFromSigilList(map.keySet().stream().toList()));
         List<Integer> magnitudes = Lists.newArrayList();
         List<Integer> durations = Lists.newArrayList();
-        for ( SigilItem sigil : map.keySet() ) {
+        for ( AbstractSigilItem sigil : map.keySet() ) {
             magnitudes.add(map.get(sigil).get(0));
             durations.add(map.get(sigil).get(1));
         }
@@ -37,6 +37,7 @@ public class SingleTargetAtRangeForm extends AbstractSpellForm {
         projectile.setNoGravity(true);
         projectile.setPos(source.getEyePosition());
         projectile.shoot(source.getLookAngle().x, source.getLookAngle().y, source.getLookAngle().z, projectile.getSpeed(), 0.0F);
-        level.addFreshEntity(projectile);
+
+        return level.addFreshEntity(projectile);
     }
 }

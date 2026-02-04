@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.client.gui.menu.SpellMakingMenu;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.registries.ModData;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.SpellColor;
@@ -315,7 +315,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         boolean showMag = false;
         boolean showDur = false;
         for ( int i = 0; i < this.menu.slots.size(); i++ ) {
-            if ( this.menu.slots.get(i) instanceof SpellMakingMenu.SigilSlot sigilSlot && sigilSlot.getItem().getItem() instanceof SigilItem sigil ) {
+            if ( this.menu.slots.get(i) instanceof SpellMakingMenu.SigilSlot sigilSlot && sigilSlot.getItem().getItem() instanceof AbstractSigilItem sigil ) {
                 if ( !showMag && sigil.canModifyMagnitude() ) showMag = true;
                 if ( !showDur && sigil.canModifyDuration() ) showDur = true;
             }
@@ -330,13 +330,13 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         }
         for ( int i = 0; i < this.maxSlots; i++ ) {
             //Magnitude plates
-            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil && sigil.canModifyMagnitude() ) {
+            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof AbstractSigilItem sigil && sigil.canModifyMagnitude() ) {
                 int magX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 53;
                 int magY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
                 graphics.blit(TEXTURE, magX, magY + 18 * i, 176, 70, 18, 18, 256, 256);
             }
             //Duration plates
-            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil && sigil.canModifyDuration() ) {
+            if ( this.menu.isReadyToMake() && this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof AbstractSigilItem sigil && sigil.canModifyDuration() ) {
                 int durX = x + LEFT_SPELL_FORM_BUTTON_OFFSET_X + 107;
                 int durY = y + SPELL_FORM_BUTTON_OFFSET_Y + 15;
                 graphics.blit(TEXTURE, durX, durY + 18 * i, 176, 70, 18, 18, 256, 256);
@@ -355,7 +355,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             }
 
             for ( int i = 0; i < this.menu.howManySigilSlotsOpen(); i++ ) {
-                if ( this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof SigilItem sigil ) {
+                if ( this.menu.getCraftSlots().getItem(i + 1).getItem() instanceof AbstractSigilItem sigil ) {
                     int numOffY = 18 * i;
                     if ( sigil.canModifyMagnitude() ) {
                         graphics.drawCenteredString(this.font, String.valueOf(this.menu.getMagnitude().get(i)),
@@ -464,7 +464,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
 
     private boolean canEditStat(byte flag, int index, boolean isIncrease, int stat) {
         if ( !this.menu.isReadyToMake() || this.menu.getCraftSlots().getItem(index + 1).isEmpty() ) return false;
-        if ( !(this.menu.getCraftSlots().getItem(index + 1).getItem() instanceof SigilItem sigil) ) return false;
+        if ( !(this.menu.getCraftSlots().getItem(index + 1).getItem() instanceof AbstractSigilItem sigil) ) return false;
         if ( flag == 0 ) {
             if ( isIncrease ) return stat < sigil.getMaxMagnitude();
             else return stat > sigil.getMinMagnitude();

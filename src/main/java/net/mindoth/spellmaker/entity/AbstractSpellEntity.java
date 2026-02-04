@@ -1,11 +1,9 @@
 package net.mindoth.spellmaker.entity;
 
-import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -17,11 +15,6 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.NetherPortalBlock;
-import net.minecraft.world.level.block.Portal;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.event.EventHooks;
@@ -162,8 +155,8 @@ public abstract class AbstractSpellEntity extends Projectile {
         return map;
     }
 
-    public LinkedHashMap<SigilItem, List<Integer>> getMap() {
-        List<SigilItem> sigilList = DataHelper.getSigilListFromString(this.entityData.get(SIGIL_LIST));
+    public LinkedHashMap<AbstractSigilItem, List<Integer>> getMap() {
+        List<AbstractSigilItem> sigilList = DataHelper.getSigilListFromString(this.entityData.get(SIGIL_LIST));
         List<Integer> magnitudes = DataHelper.getStatsFromString(this.entityData.get(MAGNITUDES));
         List<Integer> durations = DataHelper.getStatsFromString(this.entityData.get(DURATIONS));
         return DataHelper.createMapFromLists(sigilList, magnitudes, durations);
@@ -228,9 +221,4 @@ public abstract class AbstractSpellEntity extends Projectile {
         builder.define(MAGNITUDES, "");
         builder.define(DURATIONS, "");
     }
-
-    /*@Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }*/
 }

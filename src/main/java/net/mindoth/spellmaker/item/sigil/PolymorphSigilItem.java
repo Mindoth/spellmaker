@@ -4,13 +4,13 @@ import com.google.common.collect.Lists;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
-import net.mindoth.spellmaker.network.SyncSizeForTrackersPacket;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.registries.ModItems;
 import net.mindoth.spellmaker.util.SpellColor;
-import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -20,23 +20,20 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.EntityEvent;
 import net.neoforged.neoforge.event.entity.living.LivingBreatheEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 @EventBusSubscriber(modid = SpellMaker.MOD_ID)
-public abstract class PolymorphSigilItem extends SigilItem {
+public abstract class PolymorphSigilItem extends AbstractSigilItem {
 
     private final ResourceLocation id;
     public ResourceLocation getUUID() {
@@ -51,6 +48,11 @@ public abstract class PolymorphSigilItem extends SigilItem {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier);
         this.id = id;
         this.entityType = entityType;
+    }
+
+    @Override
+    public boolean canAffectBlock(Block block) {
+        return false;
     }
 
     @Override
@@ -124,20 +126,6 @@ public abstract class PolymorphSigilItem extends SigilItem {
         if ( !nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_CLIENT.id()) ) nameTagDistance.addPermanentModifier(SYNC_POLYMORPH_SIZE_CLIENT);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void syncPolymorphSizeClient(ClientTickEvent.Pre event) {
-        Player player = Minecraft.getInstance().player;
-        if ( player == null ) return;
-        AttributeInstance nameTagDistance = player.getAttribute(NeoForgeMod.NAMETAG_DISTANCE);
-        if ( nameTagDistance == null ) return;
-        if ( nameTagDistance.hasModifier(SYNC_POLYMORPH_SIZE_CLIENT.id()) ) {
-            nameTagDistance.removeModifier(SYNC_POLYMORPH_SIZE_CLIENT);
-            //player.refreshDimensions();
-            PacketDistributor.sendToServer(new SyncSizeForTrackersPacket(player.getId()));
-        }
-    }
-
     @SubscribeEvent
     public static void refreshPolymorphSize(EntityEvent.Size event) {
         Entity entity = event.getEntity();
@@ -151,9 +139,27 @@ public abstract class PolymorphSigilItem extends SigilItem {
         event.setNewSize(dimensions);
     }
 
+    protected boolean canSprint(LivingEntity living) {
+        return false;
+    }
+
+    public static boolean isSprintPrevented(LivingEntity living) {
+        PolymorphSigilItem sigil = PolymorphEffect.getFormSigil(living);
+        if ( sigil != null ) return !sigil.canSprint(living);
+        return false;
+    }
+
+    public List<Holder<MobEffect>> polymorphEffects(LivingEntity living) {
+        return Lists.newArrayList();
+    }
+
+    public void extraSync(LivingEntity living, Player player, float partialTick) {
+    }
+
+    //Because of NeoForge, these methods have to be here instead of in their respective Sigil Classes.
     public static boolean isFish(LivingEntity living) {
         if ( !(living instanceof Player player) ) return false;
-        return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getTransformationSigil(player) == ModItems.FISH_FORM_SIGIL.get();
+        return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getFormSigil(player) == ModItems.FISH_FORM_SIGIL.get();
     }
 
     @SubscribeEvent

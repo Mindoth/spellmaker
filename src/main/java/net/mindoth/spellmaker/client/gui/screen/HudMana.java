@@ -1,7 +1,7 @@
 package net.mindoth.spellmaker.client.gui.screen;
 
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.capability.playermagic.ClientMagickData;
+import net.mindoth.spellmaker.capability.ClientMagickData;
 import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.item.armor.ModArmorItem;
 import net.mindoth.spellmaker.item.sigil.FishFormSigilItem;

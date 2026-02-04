@@ -1,0 +1,18 @@
+{
+  "parent": "minecraft:item/handheld",
+  "loader": "neoforge:separate_transforms",
+  "base": {
+    "parent": "spellmaker:item/golden_staff_in_hand"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "spellmaker:item/golden_staff_in_gui"
+    },
+    "ground": {
+      "parent": "spellmaker:item/golden_staff_in_gui"
+    },
+    "fixed": {
+      "parent": "spellmaker:item/golden_staff_in_gui"
+    }
+  }
+}

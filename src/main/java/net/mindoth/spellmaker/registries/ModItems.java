@@ -1,6 +1,7 @@
 package net.mindoth.spellmaker.registries;
 
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.consumable.ModFood;
 import net.mindoth.spellmaker.item.ModDyeableItem;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.armor.ColorableArmorItem;
@@ -22,10 +23,16 @@ public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(SpellMaker.MOD_ID);
 
     //Materials
-    public static final DeferredItem<Item> RUNE_ESSENCE = ITEMS.register("rune_essence",
+    public static final DeferredItem<Item> SIGIL_ESSENCE = ITEMS.register("sigil_essence",
             () -> new Item(new Item.Properties()));
 
     public static final DeferredItem<Item> WOOL_CLOTH = ITEMS.register("wool_cloth",
+            () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<Item> ARCANE_CLOTH = ITEMS.register("arcane_cloth",
+            () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<Item> ARCANE_GEM = ITEMS.register("arcane_gem",
             () -> new Item(new Item.Properties()));
 
     public static final DeferredItem<Item> PARCHMENT = ITEMS.register("parchment",
@@ -43,34 +50,55 @@ public class ModItems {
     public static final DeferredItem<Item> RESTORATION_DUST = ITEMS.register("restoration_dust",
             () -> new Item(new Item.Properties()));
 
+    public static final DeferredItem<Item> CONJURATION_DUST = ITEMS.register("conjuration_dust",
+            () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<Item> ILLUSION_DUST = ITEMS.register("illusion_dust",
+            () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<Item> ARCANE_DUST = ITEMS.register("arcane_dust",
+            () -> new Item(new Item.Properties()));
+
+    //Consumables
+    public static final DeferredItem<Item> GOLDEN_BREAD = ITEMS.registerItem("golden_bread",
+            (properties) -> new Item(properties.food(ModFood.GOLDEN_BREAD)));
+
     //Equipment
     public static final DeferredItem<Item> SPELL_BOOK = ITEMS.register("spell_book",
             () -> new ColorableSpellBookItem(new Item.Properties(),
                     ModDyeableItem.BLUE));
 
     public static final DeferredItem<Item> WOODEN_STAFF = ITEMS.register("wooden_staff",
-            () -> new ColorableStaffItem(new Item.Properties().durability(512),
+            () -> new ColorableStaffItem(new Item.Properties().durability(128),
                     ModDyeableItem.GRAY));
 
-    public static final DeferredItem<Item> SIMPLE_ROBE_HOOD = ITEMS.register("simple_robe_hood",
+    public static final DeferredItem<Item> GOLDEN_STAFF = ITEMS.register("golden_staff",
+            () -> new ColorableStaffItem(new Item.Properties().durability(128),
+                    ModDyeableItem.GRAY));
+
+    public static final DeferredItem<Item> NETHERITE_STAFF = ITEMS.register("netherite_staff",
+            () -> new ColorableStaffItem(new Item.Properties().durability(128),
+                    ModDyeableItem.GRAY));
+
+    public static final DeferredItem<Item> WOOL_ROBE_HOOD = ITEMS.register("wool_robe_hood",
             () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.HELMET,
                     new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(11)),
-                    ModDyeableItem.GRAY, withMagickAttributes(25, 0.05D)));
+                    ModDyeableItem.GRAY, withMagickAttributes(15, 0.05D)));
 
-    public static final DeferredItem<Item> SIMPLE_ROBE_TOP = ITEMS.register("simple_robe_top",
+    public static final DeferredItem<Item> WOOL_ROBE_TOP = ITEMS.register("wool_robe_top",
             () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.CHESTPLATE,
                     new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(16)),
-                    ModDyeableItem.GRAY, withMagickAttributes(25, 0.05D)));
+                    ModDyeableItem.GRAY, withMagickAttributes(40, 0.05D)));
 
-    public static final DeferredItem<Item> SIMPLE_ROBE_BOTTOM = ITEMS.register("simple_robe_bottom",
+    public static final DeferredItem<Item> WOOL_ROBE_BOTTOM = ITEMS.register("wool_robe_bottom",
             () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.LEGGINGS,
                     new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(16)),
-                    ModDyeableItem.GRAY, withMagickAttributes(25, 0.05D)));
+                    ModDyeableItem.GRAY, withMagickAttributes(30, 0.05D)));
 
-    public static final DeferredItem<Item> SIMPLE_ROBE_BOOTS = ITEMS.register("simple_robe_boots",
+    public static final DeferredItem<Item> WOOL_ROBE_BOOTS = ITEMS.register("wool_robe_boots",
             () -> new ColorableArmorItem(ModArmorMaterials.SIMPLE_ROBE, ArmorItem.Type.BOOTS,
                     new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(13)),
-                    ModDyeableItem.GRAY, withMagickAttributes(25, 0.05D)));
+                    ModDyeableItem.GRAY, withMagickAttributes(15, 0.05D)));
 
     //Runes
     public static final DeferredItem<Item> EXCAVATION_SIGIL = ITEMS.register("excavation_sigil",

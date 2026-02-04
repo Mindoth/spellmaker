@@ -1,7 +1,7 @@
 package net.mindoth.spellmaker.util;
 
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.item.sigil.SigilItem;
+import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -51,7 +51,7 @@ public enum SpellColor {
     public static ResourceLocation getSpellIcon(AbstractSpellForm form, List<ItemStack> sigilList, List<Integer> magnitudeList, List<Integer> durationList) {
         ResourceLocation icon = SpellColor.getSpellIconPath(form, SpellColor.MIX);
         if ( !sigilList.isEmpty() ) {
-            SigilItem highestCostSigil = AbstractSpellForm.getHighestCostSigil(DataHelper.createMapFromStackLists(sigilList, magnitudeList, durationList));
+            AbstractSigilItem highestCostSigil = AbstractSpellForm.getHighestCostSigil(DataHelper.createMapFromStackLists(sigilList, magnitudeList, durationList));
             if ( highestCostSigil != null ) icon = SpellColor.getSpellIconPath(form, highestCostSigil.getColor());
         }
         return icon;
