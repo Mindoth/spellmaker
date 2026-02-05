@@ -1,12 +1,12 @@
 package net.mindoth.spellmaker.util.spellform;
 
+import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.entity.AbstractSpellEntity;
 import net.mindoth.spellmaker.entity.ProjectileSpellSingleEntity;
 import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import org.apache.commons.compress.utils.Lists;
 
 import java.util.LinkedHashMap;
 import java.util.List;

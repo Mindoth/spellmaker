@@ -32,7 +32,7 @@ public class OpenSpellBookPacket implements CustomPacketPayload {
     }
 
     public OpenSpellBookPacket(FriendlyByteBuf buf) {
-        this.book = ModNetwork.readItem(buf);
+        this.book = ModNetwork.readItemStack(buf);
         this.page = buf.readInt();
     }
 

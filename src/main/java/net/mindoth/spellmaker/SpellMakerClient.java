@@ -22,6 +22,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -77,11 +78,19 @@ public class SpellMakerClient {
             onInput(mc, event.getKey(), event.getAction());
         }
 
-        private static void onInput(Minecraft mc, int key, int keyAction) {
-            Player player = mc.player;
-            if ( mc.screen == null && keyAction == 0 && key == OPEN_SPELL_BOOK.getKey().getValue() ) {
-                if ( !SpellBookItem.getTaggedSpellBookSlot(player).isEmpty() ) PacketDistributor.sendToServer(new AskToOpenSpellBookPacket(true));
-                else if ( !SpellBookItem.getSpellBookSlot(player).isEmpty() ) PacketDistributor.sendToServer(new AskToOpenSpellBookPacket(false));
+        private static void onInput(Minecraft instance, int key, int keyAction) {
+            Player player = instance.player;
+            if ( instance.screen == null ) {
+                if ( key == OPEN_SPELL_BOOK.getKey().getValue() ) {
+                    if ( keyAction == 1 && !SpellBookItem.getSpellBookSlot(player).isEmpty() ) {
+                        if ( !SpellBookItem.getTaggedSpellBookSlot(player).isEmpty() ) {
+                            ItemStack book = SpellBookItem.getSpellBookSlot(player);
+                            SpellBookItem.handleSignature(player, book);
+                            PacketDistributor.sendToServer(new AskToOpenSpellBookPacket(book));
+                        }
+                        else PacketDistributor.sendToServer(new AskToOpenSpellBookPacket(SpellBookItem.getTaggedSpellBookSlot(player)));
+                    }
+                }
             }
         }
     }

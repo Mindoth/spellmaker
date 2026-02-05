@@ -151,7 +151,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         List<AbstractSpellForm> list = this.menu.getFormList();
         AbstractSpellForm form = this.menu.getSpellForm();
         AbstractSpellForm newForm;
-        if ( form == list.get(0) ) newForm = list.get(list.size() - 1);
+        if ( form == list.getFirst() ) newForm = list.getLast();
         else newForm = list.get(list.indexOf(form) - 1);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(newForm));
         this.menu.editSpellForm(tag);
@@ -163,10 +163,14 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         List<AbstractSpellForm> list = this.menu.getFormList();
         AbstractSpellForm form = this.menu.getSpellForm();
         AbstractSpellForm newForm;
-        if ( form == list.get(list.size() - 1) ) newForm = list.get(0);
+        if ( form == list.getLast() ) newForm = list.getFirst();
         else newForm = list.get(list.indexOf(form) + 1);
         tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(newForm));
         this.menu.editSpellForm(tag);
+    }
+
+    private AbstractSigilItem getSigil(int index) {
+        return (AbstractSigilItem)this.menu.getCraftSlots().getItem(index + 1).getItem();
     }
 
     private void handleLeftMagnitudeButton(Button button) {
@@ -174,7 +178,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         int magnitude = this.menu.getMagnitude().get(index);
         if ( !canEditStat((byte)0, index, false, magnitude) ) return;
         List<Integer> newList = new ArrayList<>(this.menu.getMagnitude());
-        newList.set(index, magnitude - 1);
+        int reduction = magnitude - 1;
+        if ( hasShiftDown() ) reduction = Math.max(getSigil(index).getMinMagnitude(), magnitude - 10);
+        newList.set(index, reduction);
         this.menu.editSpellStats((byte)0, newList);
     }
 
@@ -183,7 +189,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         int magnitude = this.menu.getMagnitude().get(index);
         if ( !canEditStat((byte)0, index, true, magnitude) ) return;
         List<Integer> newList = new ArrayList<>(this.menu.getMagnitude());
-        newList.set(index, magnitude + 1);
+        int addition = magnitude + 1;
+        if ( hasShiftDown() ) addition = Math.min(getSigil(index).getMaxMagnitude(), magnitude + 10);
+        newList.set(index, addition);
         this.menu.editSpellStats((byte)0, newList);
     }
 
@@ -192,7 +200,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         int duration = this.menu.getDuration().get(index);
         if ( !canEditStat((byte)1, index, false, duration) ) return;
         List<Integer> newList = new ArrayList<>(this.menu.getDuration());
-        newList.set(index, duration - 1);
+        int reduction = duration - 1;
+        if ( hasShiftDown() ) reduction = Math.max(getSigil(index).getMinDuration(), duration - 10);
+        newList.set(index, reduction);
         this.menu.editSpellStats((byte)1, newList);
     }
 
@@ -201,7 +211,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
         int duration = this.menu.getDuration().get(index);
         if ( !canEditStat((byte)1, index, true, duration) ) return;
         List<Integer> newList = new ArrayList<>(this.menu.getDuration());
-        newList.set(index, duration + 1);
+        int addition = duration + 1;
+        if ( hasShiftDown() ) addition = Math.min(getSigil(index).getMaxDuration(), duration + 10);
+        newList.set(index, addition);
         this.menu.editSpellStats((byte)1, newList);
     }
 

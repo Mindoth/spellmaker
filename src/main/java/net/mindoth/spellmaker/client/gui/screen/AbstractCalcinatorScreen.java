@@ -1,38 +1,71 @@
 package net.mindoth.spellmaker.client.gui.screen;
 
-import net.mindoth.spellmaker.SpellMaker;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.recipebook.AbstractFurnaceRecipeBookComponent;
+import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
+import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.RecipeBookMenu;
+import net.minecraft.world.inventory.Slot;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
-public class AbstractCalcinatorScreen<T extends AbstractFurnaceMenu> extends AbstractContainerScreen<T> {
+@OnlyIn(Dist.CLIENT)
+public abstract class AbstractCalcinatorScreen<T extends AbstractFurnaceMenu> extends AbstractContainerScreen<T> implements RecipeUpdateListener {
+    public final AbstractFurnaceRecipeBookComponent recipeBookComponent;
+    private boolean widthTooNarrow;
+    private final ResourceLocation texture;
+    private final ResourceLocation litProgressSprite;
+    private final ResourceLocation burnProgressSprite;
 
-    private final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/calcinator_screen.png");
-    private final ResourceLocation litProgressSprite = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/calcinator_lit_progress.png");
-    private final ResourceLocation burnProgressSprite = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/calcinator_burn_progress.png");
-
-    public AbstractCalcinatorScreen(T pMenu, Inventory pPlayerInventory, Component pTitle) {
-        super(pMenu, pPlayerInventory, pTitle);
+    public AbstractCalcinatorScreen(T menu, AbstractFurnaceRecipeBookComponent recipeBookComponent, Inventory playerInventory, Component title, ResourceLocation texture, ResourceLocation listProgressSprite, ResourceLocation burnProgressSprite) {
+        super(menu, playerInventory, title);
+        this.recipeBookComponent = recipeBookComponent;
+        this.texture = texture;
+        this.litProgressSprite = listProgressSprite;
+        this.burnProgressSprite = burnProgressSprite;
     }
 
     @Override
     public void init() {
         super.init();
+        this.widthTooNarrow = this.width < 379;
+        this.recipeBookComponent.init(this.width, this.height, this.minecraft, this.widthTooNarrow, (RecipeBookMenu)this.menu);
+        this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
+        this.addRenderableWidget(new ImageButton(this.leftPos + 20, this.height / 2 - 49, 20, 18, RecipeBookComponent.RECIPE_BUTTON_SPRITES, (p_313431_) -> {
+            this.recipeBookComponent.toggleVisibility();
+            this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
+            p_313431_.setPosition(this.leftPos + 20, this.height / 2 - 49);
+        }));
         this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
     }
 
     @Override
     public void containerTick() {
         super.containerTick();
+        this.recipeBookComponent.tick();
     }
 
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-        renderTooltip(pGuiGraphics, pMouseX, pMouseY);
+    @Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        if (this.recipeBookComponent.isVisible() && this.widthTooNarrow) {
+            this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+            this.recipeBookComponent.render(guiGraphics, mouseX, mouseY, partialTick);
+        } else {
+            super.render(guiGraphics, mouseX, mouseY, partialTick);
+            this.recipeBookComponent.render(guiGraphics, mouseX, mouseY, partialTick);
+            this.recipeBookComponent.renderGhostRecipe(guiGraphics, this.leftPos, this.topPos, true, partialTick);
+        }
+
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
+        this.recipeBookComponent.renderTooltip(guiGraphics, this.leftPos, this.topPos, mouseX, mouseY);
     }
 
     @Override
@@ -50,5 +83,46 @@ public class AbstractCalcinatorScreen<T extends AbstractFurnaceMenu> extends Abs
         i1 = true;
         j1 = Mth.ceil(this.menu.getBurnProgress() * 24.0F);
         guiGraphics.blit(this.burnProgressSprite, i + 79, j + 34, j1, 0, 0, j1, 16, 24, 16);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.recipeBookComponent.mouseClicked(mouseX, mouseY, button)) {
+            return true;
+        } else {
+            return this.widthTooNarrow && this.recipeBookComponent.isVisible() ? true : super.mouseClicked(mouseX, mouseY, button);
+        }
+    }
+
+    @Override
+    protected void slotClicked(Slot slot, int slotId, int mouseButton, ClickType type) {
+        super.slotClicked(slot, slotId, mouseButton, type);
+        this.recipeBookComponent.slotClicked(slot);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        return this.recipeBookComponent.keyPressed(keyCode, scanCode, modifiers) ? true : super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    protected boolean hasClickedOutside(double mouseX, double mouseY, int guiLeft, int guiTop, int mouseButton) {
+        boolean flag = mouseX < (double)guiLeft || mouseY < (double)guiTop || mouseX >= (double)(guiLeft + this.imageWidth) || mouseY >= (double)(guiTop + this.imageHeight);
+        return this.recipeBookComponent.hasClickedOutside(mouseX, mouseY, this.leftPos, this.topPos, this.imageWidth, this.imageHeight, mouseButton) && flag;
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        return this.recipeBookComponent.charTyped(codePoint, modifiers) ? true : super.charTyped(codePoint, modifiers);
+    }
+
+    @Override
+    public void recipesUpdated() {
+        this.recipeBookComponent.recipesUpdated();
+    }
+
+    @Override
+    public RecipeBookComponent getRecipeBookComponent() {
+        return this.recipeBookComponent;
     }
 }

@@ -24,26 +24,38 @@ public class AskToOpenSpellBookPacket implements CustomPacketPayload {
         return TYPE;
     }
 
-    public boolean tagged;
+    public ItemStack book;
 
-    public AskToOpenSpellBookPacket(boolean tagged) {
-        this.tagged = tagged;
+    public AskToOpenSpellBookPacket(ItemStack book) {
+        this.book = book;
     }
 
     public AskToOpenSpellBookPacket(FriendlyByteBuf buf) {
-        this.tagged = buf.readBoolean();
+        this.book = ModNetwork.readItemStack(buf);
     }
 
     public void encode(FriendlyByteBuf buf) {
-        buf.writeBoolean(this.tagged);
+        ModNetwork.writeItemStack(buf, this.book);
     }
 
     public static void handle(AskToOpenSpellBookPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             if ( context.player() instanceof ServerPlayer player ) {
-                player.stopUsingItem();
-                ItemStack book = packet.tagged ? SpellBookItem.getTaggedSpellBookSlot(player) : SpellBookItem.getSpellBookSlot(player);
-                SpellBookItem.openSpellBook(player, book);
+                ItemStack book = null;
+                if ( player.getInventory().contains(packet.book) ) {
+                    if ( ItemStack.isSameItemSameComponents(player.getOffhandItem(), packet.book) && !(player.getMainHandItem().getItem() instanceof SpellBookItem) ) {
+                        book = player.getOffhandItem();
+                    }
+                    else book = player.getInventory().getItem(player.getInventory().findSlotMatchingItem(packet.book));
+                }
+                else if ( !SpellBookItem.getSpellBookSlot(player).isEmpty() ) {
+                    book = SpellBookItem.getSpellBookSlot(player);
+                    SpellBookItem.handleSignature(player, book);
+                }
+                if ( book != null ) {
+                    player.stopUsingItem();
+                    SpellBookItem.openSpellBook(player, book);
+                }
             }
         });
     }

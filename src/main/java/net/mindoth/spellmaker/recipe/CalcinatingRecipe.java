@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.registries.ModBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -12,16 +13,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 
 public class CalcinatingRecipe extends AbstractCookingRecipe {
 
     private final Ingredient input;
     private final ItemStack output;
 
-    public CalcinatingRecipe(String pGroup, CookingBookCategory pCategory, Ingredient pIngredient, ItemStack pResult, float pExperience, int pCookingTime) {
-        super(Type.CALCINATING, pGroup, pCategory, pIngredient, pResult, pExperience, pCookingTime);
-        this.input = pIngredient;
-        this.output = pResult;
+    public CalcinatingRecipe(String group, CookingBookCategory category, Ingredient ingredient, ItemStack result, float experience, int cookingTime) {
+        super(Type.CALCINATING, group, category, ingredient, result, experience, cookingTime);
+        this.input = ingredient;
+        this.output = result;
     }
 
     @Override
@@ -50,6 +52,11 @@ public class CalcinatingRecipe extends AbstractCookingRecipe {
     @Override
     public ItemStack getResultItem(HolderLookup.Provider pRegistries) {
         return this.output.copy();
+    }
+
+    @Override
+    public ItemStack getToastSymbol() {
+        return new ItemStack(ModBlocks.CALCINATOR.get());
     }
 
     @Override
