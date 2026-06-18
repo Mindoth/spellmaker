@@ -2,7 +2,7 @@ package net.mindoth.spellmaker;
 
 import net.mindoth.spellmaker.capability.ModCapabilities;
 import net.mindoth.spellmaker.item.ModCreativeTab;
-import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
+import net.mindoth.spellmaker.recipe.ModRecipes;
 import net.mindoth.spellmaker.registries.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;

@@ -1,12 +1,9 @@
-package net.mindoth.spellmaker.registries;
+package net.mindoth.spellmaker.recipe;
 
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.recipe.CalcinatingRecipe;
-import net.mindoth.spellmaker.recipe.SpellBookAddRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipePropertySet;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -24,11 +21,12 @@ public class ModRecipes {
             SERIALIZERS.register("calcinating", () -> CalcinatingRecipe.SERIALIZER);
 
 
-    public static final ResourceKey<RecipePropertySet> CALCINATOR_INPUT = register("calcinator_input");
 
     private static ResourceKey<RecipePropertySet> register(String name) {
         return ResourceKey.create(RecipePropertySet.TYPE_KEY, Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, name));
     }
+
+    public static final ResourceKey<RecipePropertySet> CALCINATOR_INPUT = register("calcinator_input");
 
 
 

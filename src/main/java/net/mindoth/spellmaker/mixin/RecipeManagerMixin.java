@@ -1,7 +1,7 @@
 package net.mindoth.spellmaker.mixin;
 
 import net.mindoth.spellmaker.recipe.CalcinatingRecipe;
-import net.mindoth.spellmaker.registries.ModRecipes;
+import net.mindoth.spellmaker.recipe.ModRecipes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipePropertySet;

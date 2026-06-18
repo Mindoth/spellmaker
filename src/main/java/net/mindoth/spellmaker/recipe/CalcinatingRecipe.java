@@ -2,7 +2,6 @@ package net.mindoth.spellmaker.recipe;
 
 import com.mojang.serialization.MapCodec;
 import net.mindoth.spellmaker.registries.ModBlocks;
-import net.mindoth.spellmaker.registries.ModRecipes;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.Item;
@@ -60,5 +59,10 @@ public class CalcinatingRecipe extends AbstractCookingRecipe {
     @Override
     protected Item furnaceIcon() {
         return ModBlocks.CALCINATOR.asItem();
+    }
+
+    @Override
+    public String group() {
+        return this.bookInfo.group();
     }
 }
