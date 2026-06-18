@@ -9,13 +9,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class UpdateBookDataClientPacket implements CustomPacketPayload {
 
     public static final Type<UpdateBookDataClientPacket> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "update_book_data_client"));
+            new Type<>(Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "update_book_data_client"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, UpdateBookDataClientPacket> STREAM_CODEC =
             CustomPacketPayload.codec(UpdateBookDataClientPacket::encode, UpdateBookDataClientPacket::new);

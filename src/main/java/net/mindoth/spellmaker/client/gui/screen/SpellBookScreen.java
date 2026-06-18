@@ -12,7 +12,7 @@ import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
@@ -23,7 +23,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Player;
@@ -36,7 +36,7 @@ import java.util.List;
 
 public class SpellBookScreen extends AbstractModScreen {
 
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/spell_book_screen.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/spell_book_screen.png");
 
     public final ItemStack book;
     public int getSelectedSlot() {
@@ -292,8 +292,8 @@ public class SpellBookScreen extends AbstractModScreen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
         int x = minecraft.getWindow().getGuiScaledWidth() / 2;
         int y = minecraft.getWindow().getGuiScaledHeight() / 2;
@@ -316,13 +316,13 @@ public class SpellBookScreen extends AbstractModScreen {
             int textX = x - (this.font.width(pageNumTxt) / 2);
             int pageNumXOff = 67;
             int pageNumX = pageNum % 2 == 0 ? textX + pageNumXOff : textX - pageNumXOff;
-            graphics.drawString(this.font, pageNumTxt, pageNumX, y + this.arrowOffsetY, ARGB.opaque(0), false);
+            graphics.text(this.font, pageNumTxt, pageNumX, y + this.arrowOffsetY, ARGB.opaque(0), false);
         }
 
         iterateSpellListOver(graphics, mouseX, mouseY);
     }
 
-    private void iterateSpellListOver(GuiGraphics graphics, int mouseX, int mouseY) {
+    private void iterateSpellListOver(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         for ( List<ItemStack> page : this.pageList ) {
             if ( this.spreadNumber == this.pageList.indexOf(page) ) {
                 boolean isRightPage = false;
@@ -347,7 +347,7 @@ public class SpellBookScreen extends AbstractModScreen {
                             for ( Component component : components ) {
                                 clientComponents.add(ClientTooltipComponent.create(component.getVisualOrderText()));
                             }
-                            graphics.renderTooltip(this.font, clientComponents, mouseX, mouseY,
+                            graphics.tooltip(this.font, clientComponents, mouseX, mouseY,
                                     DefaultTooltipPositioner.INSTANCE, stack.get(DataComponents.TOOLTIP_STYLE));
                         }
                     }
@@ -357,7 +357,7 @@ public class SpellBookScreen extends AbstractModScreen {
         }
     }
 
-    private void iterateSpellList(GuiGraphics graphics, int x, int y) {
+    private void iterateSpellList(GuiGraphicsExtractor graphics, int x, int y) {
         boolean spellSelected = false;
         for ( List<ItemStack> page : this.pageList ) {
             if ( this.spreadNumber == this.pageList.indexOf(page) ) {
@@ -402,7 +402,7 @@ public class SpellBookScreen extends AbstractModScreen {
                             graphics.fill(RenderPipelines.GUI, xPos, yPos, xPos + 16, yPos + 16, Integer.MIN_VALUE);
                         }
                         else {
-                            ResourceLocation icon = getSpellIcon(stack);
+                            Identifier icon = getSpellIcon(stack);
                             graphics.blit(RenderPipelines.GUI_TEXTURED, icon, xPos, yPos, 0, 0, 16, 16, 16, 16);
                         }
                     }
@@ -423,7 +423,7 @@ public class SpellBookScreen extends AbstractModScreen {
         }
     }
 
-    private ResourceLocation getSpellIcon(ItemStack scroll) {
+    private Identifier getSpellIcon(ItemStack scroll) {
         CompoundTag tag = ModData.getLegacyTag(scroll);
         AbstractSpellForm form = DataHelper.getFormFromNbt(tag);
         List<ItemStack> sigilList = DataHelper.getSpellStackFromTag(tag);
@@ -432,7 +432,7 @@ public class SpellBookScreen extends AbstractModScreen {
         return SpellColor.getSpellIcon(form, sigilList, magnitudeList, durationList);
     }
 
-    private void renderSpellName(GuiGraphics graphics, Component spellTitle, int titleX, int titleY) {
+    private void renderSpellName(GuiGraphicsExtractor graphics, Component spellTitle, int titleX, int titleY) {
         String name = spellTitle.getString();
         List<Component> nameLineList = Lists.newArrayList();
         int length = this.font.width(spellTitle);
@@ -445,7 +445,7 @@ public class SpellBookScreen extends AbstractModScreen {
         for ( int i = 0; i < nameLineList.size(); i++ ) {
             Component component = nameLineList.get(i);
             int height = titleY - (nameLineList.size() - 1) * 4;
-            graphics.drawString(this.font, component, titleX - this.font.width(component) / 2, height + this.font.lineHeight * (i + 1), ARGB.opaque(0), false);
+            graphics.text(this.font, component, titleX - this.font.width(component) / 2, height + this.font.lineHeight * (i + 1), ARGB.opaque(0), false);
         }
     }
 

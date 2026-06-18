@@ -40,6 +40,7 @@ import java.util.List;
 
 @EventBusSubscriber(modid = SpellMaker.MOD_ID)
 public class StaffItem extends Item {
+
     public StaffItem(Properties pProperties) {
         super(pProperties);
     }
@@ -130,17 +131,26 @@ public class StaffItem extends Item {
 
     private static void playWhiffSound(Entity caster) {
         if ( caster instanceof Player player && !player.level().isClientSide() && player.level() instanceof ServerLevel level ) {
+            /*
             player.playNotifySound(SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
             level.playSound(player, player.getOnPos(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
+            */
+            level.playSound(null, player.getOnPos(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
         }
     }
 
     private static void playCastingSound(Entity caster) {
         if ( caster instanceof Player player && !player.level().isClientSide() && player.level() instanceof ServerLevel level ) {
+            /*
             player.playNotifySound(SoundEvents.ENDER_PEARL_THROW, SoundSource.PLAYERS, 0.5F, 1.0F);
             level.playSound(player, player.getOnPos(), SoundEvents.ENDER_PEARL_THROW, SoundSource.PLAYERS, 0.5F, 1.0F);
+            */
+            level.playSound(null, player.getOnPos(), SoundEvents.ENDER_PEARL_THROW, SoundSource.PLAYERS, 0.5F, 1.0F);
+            /*
             player.playNotifySound(SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.5F, 2.0F);
             level.playSound(player, player.getOnPos(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.5F, 2.0F);
+            */
+            level.playSound(null, player.getOnPos(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.5F, 2.0F);
         }
     }
 

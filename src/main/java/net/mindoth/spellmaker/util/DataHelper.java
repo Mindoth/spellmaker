@@ -7,7 +7,7 @@ import net.mindoth.spellmaker.registries.ModSpellForms;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -22,7 +22,7 @@ public abstract class DataHelper {
     }
 
     public static AbstractSpellForm getFormFromNbt(CompoundTag tag) {
-        ResourceLocation key = ResourceLocation.parse(tag.getString(ParchmentItem.NBT_KEY_SPELL_FORM).get());
+        Identifier key = Identifier.parse(tag.getString(ParchmentItem.NBT_KEY_SPELL_FORM).get());
         return ModSpellForms.SPELL_FORM_REGISTRY.getValue(key);
     }
 
@@ -40,7 +40,7 @@ public abstract class DataHelper {
         String stringList = tag.getString(ParchmentItem.NBT_KEY_SPELL_SIGILS).get();
         List<ItemStack> list = Lists.newArrayList();
         for ( String string : List.of(stringList.split(",")) ) {
-            Item item = BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(string));
+            Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(string));
             ItemStack stack = new ItemStack(item);
             if ( stack.getItem() instanceof AbstractSigilItem || stack.isEmpty() ) list.add(stack);
         }
@@ -79,7 +79,7 @@ public abstract class DataHelper {
     public static List<AbstractSigilItem> getSigilListFromString(String stringList) {
         List<AbstractSigilItem> list = Lists.newArrayList();
         for ( String string : List.of(stringList.split(",")) ) {
-            if ( BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(string)) instanceof AbstractSigilItem sigil ) list.add(sigil);
+            if ( BuiltInRegistries.ITEM.getValue(Identifier.parse(string)) instanceof AbstractSigilItem sigil ) list.add(sigil);
         }
         return list;
     }

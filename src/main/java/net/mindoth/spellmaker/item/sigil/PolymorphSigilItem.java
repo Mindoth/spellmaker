@@ -7,10 +7,8 @@ import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.registries.ModItems;
 import net.mindoth.spellmaker.util.SpellColor;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -34,8 +32,8 @@ import java.util.Objects;
 @EventBusSubscriber(modid = SpellMaker.MOD_ID)
 public abstract class PolymorphSigilItem extends AbstractSigilItem {
 
-    private final ResourceLocation id;
-    public ResourceLocation getUUID() {
+    private final Identifier id;
+    public Identifier getUUID() {
         return this.id;
     }
     private final EntityType entityType;
@@ -43,7 +41,7 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
         return this.entityType;
     }
 
-    public PolymorphSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier, ResourceLocation id, EntityType entityType) {
+    public PolymorphSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier, Identifier id, EntityType entityType) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier);
         this.id = id;
         this.entityType = entityType;
@@ -72,7 +70,7 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
         addSwimSpeedModifier(living);
     }
 
-    public static final ResourceLocation POLYMORPH_SPEED_MODIFIER_UUID = ResourceLocation.parse("0ca369c9-8322-4247-a63d-15a464e0f889");
+    public static final Identifier POLYMORPH_SPEED_MODIFIER_UUID = Identifier.parse("0ca369c9-8322-4247-a63d-15a464e0f889");
     protected AttributeModifier getSpeedModifier() {
         return new AttributeModifier(POLYMORPH_SPEED_MODIFIER_UUID, 0.0D, AttributeModifier.Operation.ADD_VALUE);
     }
@@ -114,7 +112,7 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
         }
     }
 
-    public static final AttributeModifier SYNC_POLYMORPH_SIZE_CLIENT = new AttributeModifier(ResourceLocation.parse("9eb86aa6-343f-430c-8296-1a5fe6b400fa"),
+    public static final AttributeModifier SYNC_POLYMORPH_SIZE_CLIENT = new AttributeModifier(Identifier.parse("9eb86aa6-343f-430c-8296-1a5fe6b400fa"),
             0.0D, AttributeModifier.Operation.ADD_VALUE);
 
     public static void syncDimensions(LivingEntity living) {

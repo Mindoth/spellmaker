@@ -7,7 +7,7 @@ import net.mindoth.spellmaker.item.sigil.PolymorphSigilItem;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.effect.MobEffect;
@@ -119,16 +119,16 @@ public class PolymorphEffect extends MobEffect implements SyncedMobEffect {
         }
     }
 
-    public static EntityType getTypeFromUUID(ResourceLocation id) {
-        for ( ResourceLocation key : BuiltInRegistries.ITEM.keySet() ) {
+    public static EntityType getTypeFromUUID(Identifier id) {
+        for ( Identifier key : BuiltInRegistries.ITEM.keySet() ) {
             Item item = BuiltInRegistries.ITEM.getValue(key);
             if ( item instanceof PolymorphSigilItem rune && Objects.equals(rune.getUUID().toString(), id.toString()) ) return rune.getEntityType();
         }
         return null;
     }
 
-    public static PolymorphSigilItem getSigilFromUUID(ResourceLocation id) {
-        for ( ResourceLocation key : BuiltInRegistries.ITEM.keySet() ) {
+    public static PolymorphSigilItem getSigilFromUUID(Identifier id) {
+        for ( Identifier key : BuiltInRegistries.ITEM.keySet() ) {
             Item item = BuiltInRegistries.ITEM.getValue(key);
             if ( item instanceof PolymorphSigilItem rune && Objects.equals(rune.getUUID().toString(), id.toString()) ) return rune;
         }

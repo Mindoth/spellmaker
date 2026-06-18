@@ -9,7 +9,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -20,7 +20,7 @@ import java.util.List;
 public class UpdateBookDataPacket implements CustomPacketPayload {
 
     public static final Type<UpdateBookDataPacket> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "update_book_data"));
+            new Type<>(Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "update_book_data"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, UpdateBookDataPacket> STREAM_CODEC =
             CustomPacketPayload.codec(UpdateBookDataPacket::encode, UpdateBookDataPacket::new);

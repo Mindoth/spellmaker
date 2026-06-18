@@ -6,7 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public class AskToOpenSpellBookPacket implements CustomPacketPayload {
 
     public static final Type<AskToOpenSpellBookPacket> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "ask_to_open_spell_book"));
+            new Type<>(Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "ask_to_open_spell_book"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AskToOpenSpellBookPacket> STREAM_CODEC =
             CustomPacketPayload.codec(AskToOpenSpellBookPacket::encode, AskToOpenSpellBookPacket::new);

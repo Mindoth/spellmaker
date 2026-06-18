@@ -2,10 +2,10 @@ package net.mindoth.spellmaker.item.armor;
 
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.util.ModTags;
-import net.minecraft.Util;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.EquipmentAssets;
@@ -23,7 +23,7 @@ public class ModArmorMaterials {
                 attribute.put(ArmorType.BODY, 0);
             }), 15, SoundEvents.ARMOR_EQUIP_LEATHER,
             0, 0, ModTags.Items.WOOL_CLOTH_REPAIRABLE,
-            ResourceKey.create(EquipmentAssets.ROOT_ID, ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "wool_robe")));
+            ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "wool_robe")));
 
     public static final ArmorMaterial ARCANE_ROBE_MATERIAL = new ArmorMaterial(6,
             Util.make(new EnumMap<>(ArmorType.class), attribute -> {
@@ -34,5 +34,5 @@ public class ModArmorMaterials {
                 attribute.put(ArmorType.BODY, 0);
             }), 20, SoundEvents.ARMOR_EQUIP_LEATHER,
             0, 0, ModTags.Items.ARCANE_CLOTH_REPAIRABLE,
-            ResourceKey.create(EquipmentAssets.ROOT_ID, ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "arcane_robe")));
+            ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "arcane_robe")));
 }

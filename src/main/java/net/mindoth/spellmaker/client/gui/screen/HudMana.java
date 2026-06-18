@@ -9,9 +9,9 @@ import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,17 +19,15 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.gui.GuiLayer;
 
-import javax.management.Attribute;
-
 public class HudMana implements GuiLayer {
 
     private static final Minecraft MINECRAFT = Minecraft.getInstance();
 
-    private static final ResourceLocation MANA_EMPTY_BAR = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/mana_empty_gem.png");
-    private static final ResourceLocation MANA_FULL_BAR = ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/mana_full_gem.png");
+    private static final Identifier MANA_EMPTY_BAR = Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/mana_empty_gem.png");
+    private static final Identifier MANA_FULL_BAR = Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "textures/gui/mana_full_gem.png");
 
     @Override
-    public void render(GuiGraphics graphics, DeltaTracker pDeltaTracker) {
+    public void render(GuiGraphicsExtractor graphics, DeltaTracker pDeltaTracker) {
         Player player = MINECRAFT.player;
         if ( player == null ) return;
         if ( !shouldDisplayMana() ) return;
@@ -52,7 +50,7 @@ public class HudMana implements GuiLayer {
         int barWidth = Math.max(0, Math.min(barPercentage, 79));
         graphics.blit(RenderPipelines.GUI_TEXTURED, MANA_EMPTY_BAR, posX, posY, 0, 0, 81, 9, 81, 9);
         graphics.blit(RenderPipelines.GUI_TEXTURED, MANA_FULL_BAR, posX + 1, posY + 1, 0, 0, barWidth, 7, 79, 7);
-        if ( ModClientConfig.SHOW_MAGICK_NUMBER_VALUE.get() ) graphics.drawString(MINECRAFT.font, mana, posX + 20, posY - 9, 8370139);
+        if ( ModClientConfig.SHOW_MAGICK_NUMBER_VALUE.get() ) graphics.text(MINECRAFT.font, mana, posX + 20, posY - 9, 8370139);
     }
 
     private static boolean shouldDisplayMana() {

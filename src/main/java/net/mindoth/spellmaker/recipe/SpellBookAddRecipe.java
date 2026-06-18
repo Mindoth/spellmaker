@@ -1,12 +1,15 @@
 package net.mindoth.spellmaker.recipe;
 
 import com.google.common.collect.Lists;
+import com.mojang.serialization.MapCodec;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.registries.ModData;
 import net.mindoth.spellmaker.registries.ModRecipes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -17,10 +20,6 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class SpellBookAddRecipe extends CustomRecipe {
-
-    public SpellBookAddRecipe(CraftingBookCategory category) {
-        super(category);
-    }
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
@@ -41,7 +40,7 @@ public class SpellBookAddRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider regAcc) {
+    public ItemStack assemble(CraftingInput input) {
         List<ItemStack> bookList = Lists.newArrayList();
         List<ItemStack> paperList = Lists.newArrayList();
         List<ItemStack> restList = Lists.newArrayList();
@@ -67,7 +66,17 @@ public class SpellBookAddRecipe extends CustomRecipe {
     }
 
     @Override
+    public boolean isSpecial() {
+        return true;
+    }
+
+    public static final SpellBookAddRecipe INSTANCE = new SpellBookAddRecipe();
+    public static final MapCodec<SpellBookAddRecipe> MAP_CODEC = MapCodec.unit(INSTANCE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, SpellBookAddRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+    public static final RecipeSerializer<SpellBookAddRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+
+    @Override
     public RecipeSerializer<? extends CustomRecipe> getSerializer() {
-        return ModRecipes.SPELL_BOOK_ADD_RECIPE.get();
+        return SERIALIZER;
     }
 }

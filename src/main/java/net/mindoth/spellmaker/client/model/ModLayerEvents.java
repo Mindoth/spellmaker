@@ -12,7 +12,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.ArmorModelSet;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -81,6 +81,6 @@ public class ModLayerEvents {
     }
 
     public static ModelLayerLocation registerModel(String path, String model) {
-        return new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, path), model);
+        return new ModelLayerLocation(Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, path), model);
     }
 }

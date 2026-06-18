@@ -13,7 +13,7 @@ import net.mindoth.spellmaker.registries.ModEntities;
 import net.mindoth.spellmaker.registries.ModMenus;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -67,7 +67,7 @@ public class SpellMakerClient {
         }
     }
 
-    public static final KeyMapping.Category KEY_CATEGORY_SPELLMAKER = new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "spellmaker"));
+    public static final KeyMapping.Category KEY_CATEGORY_SPELLMAKER = new KeyMapping.Category(Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "spellmaker"));
 
     public static final KeyMapping OPEN_SPELL_BOOK = new KeyMapping("key.spellmaker.open_spell_book", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_B, KEY_CATEGORY_SPELLMAKER);
@@ -82,7 +82,7 @@ public class SpellMakerClient {
 
         @SubscribeEvent
         public static void onRegisterOverlays(RegisterGuiLayersEvent event) {
-            event.registerBelow(VanillaGuiLayers.AIR_LEVEL, ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "mana_hud"), new HudMana());
+            event.registerBelow(VanillaGuiLayers.AIR_LEVEL, Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "mana_hud"), new HudMana());
         }
 
         @SubscribeEvent

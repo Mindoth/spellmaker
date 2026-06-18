@@ -1,13 +1,13 @@
 package net.mindoth.spellmaker.client.gui.screen;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.gui.screens.recipebook.FurnaceRecipeBookComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
@@ -16,11 +16,11 @@ import java.util.List;
 
 public class AbstractCalcinatorScreen<T extends AbstractFurnaceMenu> extends AbstractRecipeBookScreen<T> {
 
-    private final ResourceLocation texture;
-    private final ResourceLocation litProgressSprite;
-    private final ResourceLocation burnProgressSprite;
+    private final Identifier texture;
+    private final Identifier litProgressSprite;
+    private final Identifier burnProgressSprite;
 
-    public AbstractCalcinatorScreen(T menu, Inventory playerInventory, Component title, Component recipeFilterName, ResourceLocation texture, ResourceLocation litProgressSprite, ResourceLocation burnProgressSprite, List<RecipeBookComponent.TabInfo> tabInfos) {
+    public AbstractCalcinatorScreen(T menu, Inventory playerInventory, Component title, Component recipeFilterName, Identifier texture, Identifier litProgressSprite, Identifier burnProgressSprite, List<RecipeBookComponent.TabInfo> tabInfos) {
         super(menu, new FurnaceRecipeBookComponent(menu, recipeFilterName, tabInfos), playerInventory, title);
         this.texture = texture;
         this.litProgressSprite = litProgressSprite;
@@ -43,13 +43,8 @@ public class AbstractCalcinatorScreen<T extends AbstractFurnaceMenu> extends Abs
         super.containerTick();
     }
 
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-        renderTooltip(pGuiGraphics, pMouseX, pMouseY);
-    }
-
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         int i = this.leftPos;
         int j = this.topPos;
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, this.texture, i, j, 0, 0, this.imageWidth, this.imageHeight, 256, 256);

@@ -6,14 +6,14 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class DumpSpellPacket implements CustomPacketPayload {
 
     public static final Type<DumpSpellPacket> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "dump_spell"));
+            new Type<>(Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "dump_spell"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DumpSpellPacket> STREAM_CODEC =
             CustomPacketPayload.codec(DumpSpellPacket::encode, DumpSpellPacket::new);

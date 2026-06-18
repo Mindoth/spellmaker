@@ -9,7 +9,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -138,7 +138,7 @@ public class SpellBookItem extends Item {
 
         for ( int i = 0; i < sigilList.size(); i++ ) {
             ItemStack stack = constructSpellScroll(formList.get(i), sigilList.get(i), magList.get(i), durList.get(i), nameList.get(i),
-                    BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(itemList.get(i))));
+                    BuiltInRegistries.ITEM.getValue(Identifier.parse(itemList.get(i))));
             scrollList.add(stack);
         }
         return scrollList;

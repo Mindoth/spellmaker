@@ -7,7 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -15,7 +15,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public class SyncSizePacket implements CustomPacketPayload {
 
     public static final Type<SyncSizePacket> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "sync_size"));
+            new Type<>(Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "sync_size"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncSizePacket> STREAM_CODEC =
             CustomPacketPayload.codec(SyncSizePacket::encode, SyncSizePacket::new);

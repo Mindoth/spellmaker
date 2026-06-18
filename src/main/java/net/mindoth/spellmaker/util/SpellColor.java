@@ -3,7 +3,7 @@ package net.mindoth.spellmaker.util;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -48,8 +48,8 @@ public enum SpellColor {
         this.string = string;
     }
 
-    public static ResourceLocation getSpellIcon(AbstractSpellForm form, List<ItemStack> sigilList, List<Integer> magnitudeList, List<Integer> durationList) {
-        ResourceLocation icon = SpellColor.getSpellIconPath(form, SpellColor.MIX);
+    public static Identifier getSpellIcon(AbstractSpellForm form, List<ItemStack> sigilList, List<Integer> magnitudeList, List<Integer> durationList) {
+        Identifier icon = SpellColor.getSpellIconPath(form, SpellColor.MIX);
         if ( !sigilList.isEmpty() ) {
             AbstractSigilItem highestCostSigil = AbstractSpellForm.getHighestCostSigil(DataHelper.createMapFromStackLists(sigilList, magnitudeList, durationList));
             if ( highestCostSigil != null ) icon = SpellColor.getSpellIconPath(form, highestCostSigil.getColor());
@@ -57,7 +57,7 @@ public enum SpellColor {
         return icon;
     }
 
-    private static ResourceLocation getSpellIconPath(AbstractSpellForm form, SpellColor color) {
+    private static Identifier getSpellIconPath(AbstractSpellForm form, SpellColor color) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("textures/gui/spellform/");
         stringBuilder.append(color.string + "/");
@@ -65,6 +65,6 @@ public enum SpellColor {
         stringBuilder.append("_");
         stringBuilder.append(color.string);
         stringBuilder.append(".png");
-        return ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, stringBuilder.toString());
+        return Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, stringBuilder.toString());
     }
 }

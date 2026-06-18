@@ -5,7 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public class SyncSizeForTrackersPacket implements CustomPacketPayload {
 
     public static final Type<SyncSizeForTrackersPacket> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(SpellMaker.MOD_ID, "sync_size_for_trackers"));
+            new Type<>(Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "sync_size_for_trackers"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncSizeForTrackersPacket> STREAM_CODEC =
             CustomPacketPayload.codec(SyncSizeForTrackersPacket::encode, SyncSizeForTrackersPacket::new);

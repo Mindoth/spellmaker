@@ -128,7 +128,7 @@ public abstract class ClientHelperMethods {
         EntityRenderer renderer = instance.getEntityRenderDispatcher().getRenderer(living);
         EntityRenderState state = renderer.createRenderState(living, event.getPartialTick());
         syncRenderState(state, event.getRenderState());
-        renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), instance.gameRenderer.getLevelRenderState().cameraRenderState);
+        renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), instance.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState);
     }
 
     private static void syncRenderState(EntityRenderState state0, AvatarRenderState state1) {

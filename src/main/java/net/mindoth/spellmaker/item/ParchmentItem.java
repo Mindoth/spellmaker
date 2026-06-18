@@ -8,7 +8,7 @@ import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -43,7 +43,7 @@ public class ParchmentItem extends Item {
         if ( ModData.getLegacyTag(stack) != null ) {
             CompoundTag tag = ModData.getLegacyTag(stack);
             if ( tag.contains(NBT_KEY_SPELL_FORM) ) {
-                AbstractSpellForm form = ModSpellForms.SPELL_FORM_REGISTRY.getValue(ResourceLocation.parse(tag.getString(NBT_KEY_SPELL_FORM).get()));
+                AbstractSpellForm form = ModSpellForms.SPELL_FORM_REGISTRY.getValue(Identifier.parse(tag.getString(NBT_KEY_SPELL_FORM).get()));
                 int cost = calculateSpellCost(form, DataHelper.createMapFromTag(tag));
                 components.accept(Component.literal(""));
                 components.accept(Component.translatable("tooltip.spellmaker.cost")

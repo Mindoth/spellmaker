@@ -205,9 +205,4 @@ public abstract class AbstractSpellEntity extends Projectile {
         builder.define(MAGNITUDES, "");
         builder.define(DURATIONS, "");
     }
-
-    /*@Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }*/
 }
