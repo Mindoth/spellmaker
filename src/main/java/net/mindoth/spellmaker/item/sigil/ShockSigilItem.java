@@ -30,7 +30,7 @@ public class ShockSigilItem extends AbstractSigilItem {
         int duration = stats.get(1);
         int paralysisTicks = duration * 20;
         if ( target instanceof LivingEntity living && living.isInWaterOrRain() ) {
-            living.addEffect(new MobEffectInstance(ModEffects.PARALYSIS, paralysisTicks, 0, false, false));
+            living.addEffect(new MobEffectInstance(ModEffects.PARALYSIS, paralysisTicks, 0, false, false, true));
         }
     }
 }
