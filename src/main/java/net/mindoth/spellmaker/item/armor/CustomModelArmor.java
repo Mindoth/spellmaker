@@ -1,9 +1,8 @@
 package net.mindoth.spellmaker.item.armor;
 
-import net.minecraft.client.model.HumanoidModel;
-
 public interface CustomModelArmor {
-    default HumanoidModel<?> getCustomArmorModel() {
+
+    default ModArmorItem hoodItem() {
         return null;
     }
 }

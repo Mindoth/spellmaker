@@ -2,12 +2,13 @@ package net.mindoth.spellmaker.client.model;
 
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.item.armor.ArcaneRobeItem;
 import net.mindoth.spellmaker.item.armor.CustomModelArmor;
+import net.mindoth.spellmaker.item.armor.WoolRobeItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.ArmorModelSet;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -45,19 +46,31 @@ public class ModLayerEvents {
         event.registerLayerDefinition(ARCANE_ROBE.feet(), ArcaneRobeModel::createBootsLayer);
     }
 
+    private static HumanoidModel<?> getCustomArmorModel(CustomModelArmor item) {
+        if ( item instanceof WoolRobeItem armorItem ) {
+            return new WoolRobeModel<>(WoolRobeModel.createLayerByType(armorItem).bakeRoot());
+        }
+        if ( item instanceof ArcaneRobeItem armorItem ) {
+            return new ArcaneRobeModel<>(ArcaneRobeModel.createLayerByType(armorItem).bakeRoot());
+        }
+        return null;
+    }
+
     @SubscribeEvent
     public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
         IClientItemExtensions armor = new IClientItemExtensions() {
-            //Hope they add back entity parameter, so I can check for things like if the entity wearing armor is a baby
             @Override
             @NotNull
             public Model getHumanoidArmorModel(@NotNull ItemStack stack, @NotNull EquipmentClientInfo.LayerType type, @NotNull Model original) {
+                Model returnModel = original;
                 if ( original instanceof HumanoidModel<?> humanoid && stack.getItem() instanceof CustomModelArmor item ) {
-                    HumanoidModel<?> model = item.getCustomArmorModel();
-                    ClientHooks.copyModelProperties(humanoid, model);
-                    return model;
+                    HumanoidModel<?> customModel = getCustomArmorModel(item);
+                    if ( customModel != null ) {
+                        ClientHooks.copyModelProperties(humanoid, customModel);
+                        returnModel = customModel;
+                    }
                 }
-                else return original;
+                return returnModel;
             }
         };
         List<Item> items = Lists.newArrayList();
