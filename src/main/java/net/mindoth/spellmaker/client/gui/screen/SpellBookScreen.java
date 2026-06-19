@@ -78,7 +78,7 @@ public class SpellBookScreen extends AbstractModScreen {
 
     public static void open(ItemStack stack, int spreadNumber) {
         Minecraft instance = Minecraft.getInstance();
-        if ( !(instance.screen instanceof SpellBookScreen) ) instance.setScreen(new SpellBookScreen(stack, spreadNumber));
+        if ( !(instance.gui.screen() instanceof SpellBookScreen) ) instance.gui.setScreen(new SpellBookScreen(stack, spreadNumber));
     }
 
     private boolean isFirstPage() {

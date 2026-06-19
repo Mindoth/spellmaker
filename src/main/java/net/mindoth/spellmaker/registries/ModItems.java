@@ -11,7 +11,7 @@ import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -127,15 +127,15 @@ public class ModItems {
 
     public static final DeferredItem<Item> SHEEP_FORM_SIGIL = ITEMS.registerItem("sheep_form_sigil",
             (properties) -> new SheepFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
-                    Identifier.parse("84527dc5-d3e5-4550-98ed-c8186c5d3089"), EntityType.SHEEP));
+                    Identifier.parse("84527dc5-d3e5-4550-98ed-c8186c5d3089"), EntityTypes.SHEEP));
 
     public static final DeferredItem<Item> FISH_FORM_SIGIL = ITEMS.registerItem("fish_form_sigil",
             (properties) -> new FishFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
-                    Identifier.parse("b2bc1fd5-a121-42cf-b7cb-d29c61e3211c"), EntityType.COD));
+                    Identifier.parse("b2bc1fd5-a121-42cf-b7cb-d29c61e3211c"), EntityTypes.COD));
 
     public static final DeferredItem<Item> CHICKEN_FORM_SIGIL = ITEMS.registerItem("chicken_form_sigil",
             (properties) -> new ChickenFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
-                    Identifier.parse("baa27f16-774d-4767-99e0-218112d9241f"), EntityType.CHICKEN));
+                    Identifier.parse("baa27f16-774d-4767-99e0-218112d9241f"), EntityTypes.CHICKEN));
 
     //Arcane
     public static final DeferredItem<Item> FORCE_SIGIL = ITEMS.registerItem("force_sigil",

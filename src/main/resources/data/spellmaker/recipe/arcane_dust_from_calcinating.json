@@ -1,6 +1,5 @@
 {
   "type": "spellmaker:calcinating",
-  "category": "calcinating",
   "cookingtime": 200,
   "experience": 0.0,
   "ingredient": "minecraft:amethyst_shard",

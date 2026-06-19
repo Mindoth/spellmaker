@@ -65,10 +65,10 @@ public abstract class ClientHelperMethods {
     }
 
     private static void renderPolymorphModel(LivingEntity living, Player player, RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
-        UUID livingUUID = living.getUUID();
         living.setUUID(player.getUUID());
+        living.setId(player.getId());
         syncEntityWithPlayer(living, player, event.getPartialTick());
-        living.setUUID(livingUUID);
+        living.setUUID(living.getUUID());
         render(living, event);
     }
 
@@ -128,7 +128,7 @@ public abstract class ClientHelperMethods {
         EntityRenderer renderer = instance.getEntityRenderDispatcher().getRenderer(living);
         EntityRenderState state = renderer.createRenderState(living, event.getPartialTick());
         syncRenderState(state, event.getRenderState());
-        renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), instance.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState);
+        renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), instance.gameRenderer.gameRenderState().levelRenderState.cameraRenderState);
     }
 
     private static void syncRenderState(EntityRenderState state0, AvatarRenderState state1) {

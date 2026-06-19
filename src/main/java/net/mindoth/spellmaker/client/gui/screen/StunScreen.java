@@ -30,7 +30,7 @@ public class StunScreen extends Screen {
         Minecraft instance = Minecraft.getInstance();
         if ( instance.player != null ) {
             if ( event.key() == 256 ) pauseGame(false);
-            else if ( event.key() == 84 ) instance.setScreen(new StunChatScreen("", false));
+            else if ( event.key() == 84 ) instance.gui.setScreen(new StunChatScreen("", false));
         }
         return true;
     }
@@ -39,11 +39,11 @@ public class StunScreen extends Screen {
         Minecraft instance = Minecraft.getInstance();
         boolean flag = instance.hasSingleplayerServer() && !instance.getSingleplayerServer().isPublished();
         if ( flag ) {
-            instance.setScreen(new PauseScreen(!pPauseOnly));
+            instance.gui.setScreen(new PauseScreen(!pPauseOnly));
             //Apparently this is no longer needed
             //instance.getSoundManager().pause();
         }
-        else instance.setScreen(new PauseScreen(true));
+        else instance.gui.setScreen(new PauseScreen(true));
     }
 
     @Override
@@ -56,11 +56,11 @@ public class StunScreen extends Screen {
         if ( instance.player != null ) {
             Player player = instance.player;
             if ( AbstractStunEffect.isStunned(player) ) {
-                if ( !(instance.screen instanceof StunScreen || instance.screen instanceof StunChatScreen) && (instance.screen == null || !instance.screen.isPauseScreen()) ) {
-                    instance.setScreen(new StunScreen(Component.literal("")));
+                if ( !(instance.gui.screen() instanceof StunScreen || instance.gui.screen() instanceof StunChatScreen) && (instance.gui.screen() == null || !instance.gui.screen().isPauseScreen()) ) {
+                    instance.gui.setScreen(new StunScreen(Component.literal("")));
                 }
             }
-            else if ( instance.screen instanceof StunScreen || instance.screen instanceof StunChatScreen ) player.closeContainer();
+            else if ( instance.gui.screen() instanceof StunScreen || instance.gui.screen() instanceof StunChatScreen ) player.closeContainer();
         }
     }
 

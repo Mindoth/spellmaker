@@ -27,7 +27,9 @@ sourceSets.main.resources {
 }
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+    maven {
+        url 'https://cursemaven.com'
+    }
 }
 
 base {
@@ -112,18 +114,8 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-repositories {
-    maven {
-        url 'https://cursemaven.com'
-    }
-    maven {
-        name = "Jared's maven"
-        url = "https://maven.blamejared.com/"
-    }
-}
-
 dependencies {
-    implementation "curse.maven:shadowizardlib-887125:8275044"
+    implementation "curse.maven:shadowizardlib-887125:8274098"
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

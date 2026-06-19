@@ -254,7 +254,6 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     @Override
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         this.extractContents(graphics, mouseX, mouseY, partialTicks);
-        this.extractSnapbackItem(graphics);
         this.name.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         extractTooltip(graphics, mouseX, mouseY);
         int x = (this.width - this.imageWidth) / 2;

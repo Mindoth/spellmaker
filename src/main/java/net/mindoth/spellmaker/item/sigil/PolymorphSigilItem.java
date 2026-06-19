@@ -126,7 +126,7 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
     @SubscribeEvent
     public static void refreshPolymorphSize(EntityEvent.Size event) {
         Entity entity = event.getEntity();
-        if ( !(entity instanceof Player player) || player.isRemoved() || player.getId() <= 0 || player.tickCount < 0 ) return;
+        if ( !(entity instanceof Player player) || player.isRemoved() || player.id == 0 || player.tickCount < 0 ) return;
         if ( !PolymorphEffect.isPolymorphed(player) || PolymorphEffect.getPolymorphType(player) == null ) return;
         EntityType type = PolymorphEffect.getPolymorphType(player);
         if ( type == null ) return;

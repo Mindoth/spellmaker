@@ -49,7 +49,7 @@ public class UpdateBookDataClientPacket implements CustomPacketPayload {
 
     public static void handle(UpdateBookDataClientPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if ( Minecraft.getInstance().screen instanceof SpellBookScreen screen ) {
+            if ( Minecraft.getInstance().gui.screen() instanceof SpellBookScreen screen ) {
                 if ( packet.isRemoval ) {
                     screen.scrollList.remove(packet.index);
                     int newSlot = SpellBookItem.getNewSlotFromScrollRemoval(packet.index, screen.getSelectedSlot());

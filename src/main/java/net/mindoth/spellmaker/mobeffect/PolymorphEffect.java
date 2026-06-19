@@ -106,7 +106,7 @@ public class PolymorphEffect extends MobEffect implements SyncedMobEffect {
         if ( tag.isEmpty() || !(living instanceof Mob disguisedMob) ) return;
         try ( ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(LogUtils.getLogger()) ) {
             ValueInput input = TagValueInput.create(reporter, disguisedMob.registryAccess(), tag);
-            EntityType.create(input, disguisedMob.level(), EntitySpawnReason.CONVERSION).map((entity -> {
+            EntityType.create(input, disguisedMob.level(), new EntitySpawnRequest(EntitySpawnReason.CONVERSION, false)).map((entity -> {
                 entity.snapTo(disguisedMob.position(), disguisedMob.getYRot(), disguisedMob.getXRot());
                 entity.setDeltaMovement(disguisedMob.getDeltaMovement());
                 if ( entity instanceof LivingEntity newLiving ) {

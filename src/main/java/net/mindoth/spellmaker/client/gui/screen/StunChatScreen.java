@@ -37,7 +37,7 @@ public class StunChatScreen extends ChatScreen {
     public boolean keyPressed(KeyEvent event) {
         Minecraft instance = Minecraft.getInstance();
         if ( instance.player != null ) {
-            if ( event.key() == 256 ) instance.setScreen(new StunScreen(Component.literal("")));
+            if ( event.key() == 256 ) instance.gui.setScreen(new StunScreen(Component.literal("")));
             else if ( event.key() != 335 ) return super.keyPressed(event);
         }
         return true;

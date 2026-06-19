@@ -52,7 +52,7 @@ public class SpellMakerClient {
         private static void onInput(Minecraft instance, int key, int keyAction) {
             Player player = instance.player;
             if ( player == null ) return;
-            if ( instance.screen == null ) {
+            if ( instance.gui.screen() == null ) {
                 if ( key == OPEN_SPELL_BOOK.getKey().getValue() ) {
                     if ( keyAction == 1 && !SpellBookItem.getSpellBookSlot(player).isEmpty() ) {
                         if ( SpellBookItem.getTaggedSpellBookSlot(player).isEmpty() ) {
