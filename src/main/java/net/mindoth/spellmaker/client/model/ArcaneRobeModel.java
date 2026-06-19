@@ -1,5 +1,6 @@
 package net.mindoth.spellmaker.client.model;
 
+import net.mindoth.spellmaker.item.armor.ArcaneRobeItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -23,7 +24,9 @@ public class ArcaneRobeModel<S extends HumanoidRenderState> extends HumanoidMode
     public static ArmorModelSet<LayerDefinition> ARCANE_ROBE_ARMOR_HAT_LAYER = ArcaneRobeModel.createArmorSet(false)
             .map(mesh -> LayerDefinition.create(mesh, 64, 64));
 
-    public static LayerDefinition createLayerByType(ArmorType type, boolean isHood) {
+    public static LayerDefinition createLayerByType(ArcaneRobeItem item) {
+        ArmorType type = item.type;
+        boolean isHood = item == item.hoodItem();
         if ( type == ArmorType.HELMET ) return createHeadLayer(isHood);
         if ( type == ArmorType.CHESTPLATE ) return createBodyLayer();
         if ( type == ArmorType.LEGGINGS ) return createLegsLayer();
