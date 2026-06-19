@@ -2,14 +2,12 @@ package net.mindoth.spellmaker.client.model;
 
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
-import net.mindoth.spellmaker.item.armor.ArcaneRobeItem;
-import net.mindoth.spellmaker.item.armor.ModArmorItem;
-import net.mindoth.spellmaker.item.armor.WoolRobeItem;
-import net.mindoth.spellmaker.registries.ModItems;
+import net.mindoth.spellmaker.item.armor.CustomModelArmor;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.ArmorModelSet;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -54,30 +52,25 @@ public class ModLayerEvents {
             @Override
             @NotNull
             public Model getHumanoidArmorModel(@NotNull ItemStack stack, @NotNull EquipmentClientInfo.LayerType type, @NotNull Model original) {
-                if ( original instanceof HumanoidModel humanoidModel ) {
-                    if ( stack.getItem() instanceof WoolRobeItem item ) {
-                        boolean isHood = item == ModItems.WOOL_ROBE_HOOD.get();
-                        WoolRobeModel model = new WoolRobeModel(WoolRobeModel.createLayerByType(item.type, isHood).bakeRoot());
-                        ClientHooks.copyModelProperties(humanoidModel, model);
-                        return model;
-                    }
-                    if ( stack.getItem() instanceof ArcaneRobeItem item ) {
-                        boolean isHood = item == ModItems.ARCANE_ROBE_HOOD.get();
-                        ArcaneRobeModel model = new ArcaneRobeModel(ArcaneRobeModel.createLayerByType(item.type, isHood).bakeRoot());
-                        ClientHooks.copyModelProperties(humanoidModel, model);
-                        return model;
-                    }
+                if ( original instanceof HumanoidModel<?> humanoid && stack.getItem() instanceof CustomModelArmor item ) {
+                    HumanoidModel<?> model = item.getCustomArmorModel();
+                    ClientHooks.copyModelProperties(humanoid, model);
+                    return model;
                 }
-                return original;
+                else return original;
             }
         };
         List<Item> items = Lists.newArrayList();
-        for ( Item item : BuiltInRegistries.ITEM ) if ( item instanceof ModArmorItem ) items.add(item);
+        for ( Item item : BuiltInRegistries.ITEM ) if ( item instanceof CustomModelArmor ) items.add(item);
         event.registerItem(armor, items.toArray(new Item[0]));
     }
 
     public static ArmorModelSet<ModelLayerLocation> registerArmorSet(String path) {
-        return new ArmorModelSet(registerModel(path, "helmet"), registerModel(path, "chestplate"), registerModel(path, "leggings"), registerModel(path, "boots"));
+        return new ArmorModelSet(
+                registerModel(path, "helmet"),
+                registerModel(path, "chestplate"),
+                registerModel(path, "leggings"),
+                registerModel(path, "boots"));
     }
 
     public static ModelLayerLocation registerModel(String path, String model) {
