@@ -20,6 +20,7 @@
   "item.spellmaker.arcane_cloth": "Arcane Cloth",
   "item.spellmaker.arcane_gem": "Arcane Gem",
   "item.spellmaker.parchment": "Parchment",
+  "item.spellmaker.plant_fiber": "Plant Fiber",
   "item.spellmaker.wood_ash": "Wood Ash",
   "item.spellmaker.destruction_dust": "Destruction Dust",
   "item.spellmaker.alteration_dust": "Alteration Dust",
@@ -29,6 +30,8 @@
   "item.spellmaker.arcane_dust": "Arcane Dust",
 
   "item.spellmaker.golden_bread": "Golden Bread",
+
+  "item.spellmaker.sickle": "Sickle",
 
   "item.spellmaker.wooden_staff": "Wooden Staff",
   "item.spellmaker.golden_staff": "Golden Staff",

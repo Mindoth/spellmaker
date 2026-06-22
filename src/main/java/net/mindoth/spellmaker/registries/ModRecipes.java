@@ -1,6 +1,8 @@
-package net.mindoth.spellmaker.recipe;
+package net.mindoth.spellmaker.registries;
 
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.recipe.CalcinatingRecipe;
+import net.mindoth.spellmaker.recipe.SpellBookAddRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;

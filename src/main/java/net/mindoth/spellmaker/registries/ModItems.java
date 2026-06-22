@@ -7,6 +7,7 @@ import net.mindoth.spellmaker.item.armor.ArcaneRobeItem;
 import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
 import net.mindoth.spellmaker.item.armor.WoolRobeItem;
 import net.mindoth.spellmaker.item.sigil.*;
+import net.mindoth.spellmaker.item.tool.SickleItem;
 import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.util.SpellColor;
@@ -38,6 +39,9 @@ public class ModItems {
     public static final DeferredItem<Item> PARCHMENT = ITEMS.registerItem("parchment",
             (properties) -> new ParchmentItem(properties, 3));
 
+    public static final DeferredItem<Item> PLANT_FIBER = ITEMS.registerItem("plant_fiber",
+            (properties) -> new Item(properties));
+
     public static final DeferredItem<Item> WOOD_ASH = ITEMS.registerItem("wood_ash",
             (properties) -> new Item(properties));
 
@@ -63,18 +67,22 @@ public class ModItems {
     public static final DeferredItem<Item> GOLDEN_BREAD = ITEMS.registerItem("golden_bread",
             (properties) -> new Item(properties.food(ModFood.GOLDEN_BREAD)));
 
+    //Tools
+    public static final DeferredItem<Item> SICKLE = ITEMS.registerItem("sickle",
+            (properties) -> new SickleItem(properties.durability(238)));
+
     //Equipment
     public static final DeferredItem<Item> SPELL_BOOK = ITEMS.registerItem("spell_book",
             (properties) -> new SpellBookItem(properties));
 
     public static final DeferredItem<Item> WOODEN_STAFF = ITEMS.registerItem("wooden_staff",
-            (properties) -> new StaffItem(properties.durability(128)));
+            (properties) -> new StaffItem(properties.durability(128), 0, 0));
 
     public static final DeferredItem<Item> GOLDEN_STAFF = ITEMS.registerItem("golden_staff",
-            (properties) -> new StaffItem(properties.durability(512)));
+            (properties) -> new StaffItem(properties.durability(512), 0, 0, withMagickAttributes(0, 0.05D)));
 
     public static final DeferredItem<Item> NETHERITE_STAFF = ITEMS.registerItem("netherite_staff",
-            (properties) -> new StaffItem(properties.durability(1024)));
+            (properties) -> new StaffItem(properties.durability(1024), 0, 0, withMagickAttributes(0, 0.1D)));
 
     public static final DeferredItem<Item> WOOL_ROBE_HOOD = ITEMS.registerItem("wool_robe_hood",
             (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 0.05D)));

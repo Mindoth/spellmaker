@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "#c:rods/wooden",
+    "I": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    " I ",
+    "  I",
+    " # "
+  ],
+  "result": {
+    "id": "spellmaker:sickle",
+    "count": 1
+  }
+}

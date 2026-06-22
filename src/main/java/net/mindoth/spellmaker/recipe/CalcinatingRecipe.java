@@ -2,6 +2,7 @@ package net.mindoth.spellmaker.recipe;
 
 import com.mojang.serialization.MapCodec;
 import net.mindoth.spellmaker.registries.ModBlocks;
+import net.mindoth.spellmaker.registries.ModRecipes;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.Item;

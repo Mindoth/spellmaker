@@ -2,7 +2,8 @@ package net.mindoth.spellmaker;
 
 import net.mindoth.spellmaker.capability.ModCapabilities;
 import net.mindoth.spellmaker.item.ModCreativeTab;
-import net.mindoth.spellmaker.recipe.ModRecipes;
+import net.mindoth.spellmaker.registries.ModLootModifiers;
+import net.mindoth.spellmaker.registries.ModRecipes;
 import net.mindoth.spellmaker.registries.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -34,6 +35,7 @@ public class SpellMaker {
         ModRecipes.RECIPE_BOOK_CATEGORIES.register(modBus);
         ModCapabilities.ATTACHMENT_TYPES.register(modBus);
         ModSpellForms.SPELL_FORMS.register(modBus);
+        ModLootModifiers.LOOT_MODIFIER_SERIALIZERS.register(modBus);
     }
 
     private void registerRegistries(NewRegistryEvent event) {

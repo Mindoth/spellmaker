@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.ModCapabilities;
 import net.mindoth.spellmaker.item.ParchmentItem;
+import net.mindoth.spellmaker.item.armor.AttributeContainer;
 import net.mindoth.spellmaker.item.armor.ModArmorItem;
 import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
@@ -24,7 +25,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -39,10 +39,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 @EventBusSubscriber(modid = SpellMaker.MOD_ID)
-public class StaffItem extends Item {
+public class StaffItem extends MagickWeapon {
 
-    public StaffItem(Properties pProperties) {
-        super(pProperties);
+    public StaffItem(Properties properties, float damage, float speed, AttributeContainer... extraAttributes) {
+        super(properties, damage, speed, extraAttributes);
     }
 
     @SubscribeEvent
@@ -73,7 +73,8 @@ public class StaffItem extends Item {
                 LinkedHashMap<AbstractSigilItem, List<Integer>> map = DataHelper.createMapFromTag(scrollTag);
                 double baseCost = ParchmentItem.calculateSpellCost(form, map);
                 double discount = player.getAttributeValue(ModAttributes.MANA_COST_MULTIPLIER) - ModAttributes.MANA_COST_MULTIPLIER.get().getDefaultValue();
-                int cost = Mth.ceil(baseCost * (1.0D - discount));
+                double finalDiscount = (1.0D - discount);
+                int cost = Mth.ceil(baseCost * finalDiscount);
                 if ( cost <= player.getData(ModCapabilities.MAGICK_DATA) || player.isCreative() ) {
                     if ( form.castMagick(player, player, map) ) {
                         handleCooldowns(player, staff, 20);

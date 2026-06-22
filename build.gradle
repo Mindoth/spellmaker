@@ -115,7 +115,7 @@ configurations {
 }
 
 dependencies {
-    implementation "curse.maven:shadowizardlib-887125:8274098"
+    implementation "curse.maven:shadowizardlib-887125:8297381"
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

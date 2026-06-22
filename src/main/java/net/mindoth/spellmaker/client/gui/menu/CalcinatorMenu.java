@@ -1,6 +1,6 @@
 package net.mindoth.spellmaker.client.gui.menu;
 
-import net.mindoth.spellmaker.recipe.ModRecipes;
+import net.mindoth.spellmaker.registries.ModRecipes;
 import net.mindoth.spellmaker.registries.ModMenus;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;

@@ -3,7 +3,7 @@ package net.mindoth.spellmaker.client.gui.screen;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.client.gui.menu.CalcinatorMenu;
 import net.mindoth.spellmaker.registries.ModItems;
-import net.mindoth.spellmaker.recipe.ModRecipes;
+import net.mindoth.spellmaker.registries.ModRecipes;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;

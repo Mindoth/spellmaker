@@ -3,7 +3,7 @@
   "key": {
     "#": "minecraft:gold_ingot",
     "W": "spellmaker:wool_cloth",
-    "G": "spellmaker:arcane_gem"
+    "G": "minecraft:glass"
   },
   "pattern": [
     " G ",
