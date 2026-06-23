@@ -33,6 +33,7 @@ public class ChickenFormSigilItem extends PolymorphSigilItem {
         return new AttributeModifier(getUUID(), 4.0D - currentMaxHealth, AttributeModifier.Operation.ADD_VALUE);
     }
 
+    //I want to do this better but damn is it dumb.
     @Override
     public void extraSync(LivingEntity living, Player player, float partialTick) {
         if ( living instanceof Chicken chicken ) {

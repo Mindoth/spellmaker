@@ -20,6 +20,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -114,6 +115,8 @@ public abstract class ClientHelperMethods {
         living.swingingArm = player.swingingArm;
         living.swingTime = player.swingTime;
 
+        living.tickCount = player.tickCount;
+
         Pose pose = living.getPose();
         living.setPose(player.getPose());
         if ( pose != living.getPose() || (living.getDimensions(living.getPose()) != player.getDimensions(player.getPose())) ) living.refreshDimensions();
@@ -129,11 +132,11 @@ public abstract class ClientHelperMethods {
         Minecraft instance = Minecraft.getInstance();
         EntityRenderer renderer = instance.getEntityRenderDispatcher().getRenderer(living);
         EntityRenderState state = renderer.createRenderState(living, event.getPartialTick());
-        syncRenderState(sigil, state, event.getRenderState());
+        syncRenderState(living, event.getPartialTick(), sigil, state, event.getRenderState());
         renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), instance.gameRenderer.gameRenderState().levelRenderState.cameraRenderState);
     }
 
-    private static void syncRenderState(PolymorphSigilItem sigil, EntityRenderState state0, AvatarRenderState state1) {
+    private static void syncRenderState(LivingEntity living, float partialTicks, PolymorphSigilItem sigil, EntityRenderState state0, AvatarRenderState state1) {
         state0.lightCoords = state1.lightCoords;
         state0.shadowRadius = state1.shadowRadius;
         state0.ageInTicks = state1.ageInTicks;
@@ -143,13 +146,13 @@ public abstract class ClientHelperMethods {
             livingState.xRot = state1.xRot;
             livingState.yRot = state1.yRot;
         }
-        extraRenderStateSync(sigil, state0);
+        extraRenderStateSync(living, partialTicks, sigil, state0);
     }
 
     //Ideally this would be done in each sigil's class.
     //I just don't know how to deal with the server-side/client-side issue since NeoForge doesn't have "sidedness" tags for methods anymore.
-    private static void extraRenderStateSync(PolymorphSigilItem sigil, EntityRenderState state) {
-        if ( sigil.getEntityType() == EntityTypes.WOLF ) {
+    private static void extraRenderStateSync(LivingEntity living, float partialTicks, PolymorphSigilItem sigil, EntityRenderState state) {
+        if ( sigil.getEntityType() == EntityTypes.WOLF && living instanceof Wolf wolf ) {
             if ( state instanceof WolfRenderState wolfState ) {
                 wolfState.tailAngle = 1.5393804F;
                 wolfState.isAngry = true;

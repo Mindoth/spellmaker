@@ -33,7 +33,7 @@ public class ModCapabilities {
             final double maxMana = player.getAttributeValue(ModAttributes.MANA_MAX);
             final double currentMana = player.getData(MAGICK_DATA);
             final double manaRegen = player.getAttributeValue(ModAttributes.MANA_REGENERATION);
-            if ( player.tickCount % 20 == 0 && currentMana < maxMana ) changeMana(player, manaRegen, maxMana);
+            if ( player.tickCount % 80 == 0 && currentMana < maxMana ) changeMana(player, manaRegen, maxMana);
             if ( player.tickCount > 1 && currentMana > maxMana ) changeMana(holder, maxMana - currentMana, maxMana);
         });
     }
