@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import java.util.List;
 
 public class ChickenFormSigilItem extends PolymorphSigilItem {
+
     public ChickenFormSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier, Identifier uuid, EntityType entityType) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier, uuid, entityType);
     }

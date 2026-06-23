@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import java.util.List;
 
 public class FishFormSigilItem extends PolymorphSigilItem {
+
     public FishFormSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier, Identifier uuid, EntityType entityType) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier, uuid, entityType);
     }
@@ -34,7 +35,7 @@ public class FishFormSigilItem extends PolymorphSigilItem {
     }
 
     @Override
-    protected boolean canSprint(LivingEntity living) {
+    public boolean canSprint(LivingEntity living) {
         boolean isFish = PolymorphSigilItem.isFish(living);
         return isFish && living.isInWater();
     }

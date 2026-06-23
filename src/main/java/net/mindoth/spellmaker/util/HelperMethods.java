@@ -3,9 +3,12 @@ package net.mindoth.spellmaker.util;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
+import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
 import net.mindoth.spellmaker.mobeffect.SyncedMobEffect;
 import net.mindoth.spellmaker.registries.ModEffects;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -19,6 +22,8 @@ public abstract class HelperMethods {
     public static void preventAttackWhilePolymorphed(AttackEntityEvent event) {
         Player player = event.getEntity();
         if ( !player.hasEffect(ModEffects.POLYMORPH) ) return;
+        if ( PolymorphEffect.getFormSigil(player) == null ) return;
+        if ( PolymorphEffect.getFormSigil(player).canAttack(player) ) return;
         event.setCanceled(true);
     }
 
@@ -33,8 +38,10 @@ public abstract class HelperMethods {
     public static void preventPolymorphedRightClickItem(PlayerInteractEvent.RightClickItem event) {
         Player player = event.getEntity();
         if ( !player.hasEffect(ModEffects.POLYMORPH) ) return;
-        if ( event instanceof PlayerInteractEvent.RightClickItem itemEvent
-                && (itemEvent.getItemStack().getItem() instanceof StaffItem || itemEvent.getItemStack().getItem() instanceof SpellBookItem) ) return;
+        Item item = event.getItemStack().getItem();
+        if ( item instanceof StaffItem
+                || item instanceof SpellBookItem
+                || item.components().has(DataComponents.FOOD) ) return;
         event.setCanceled(true);
     }
 

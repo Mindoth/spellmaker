@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "spellmaker:sigil_essence",
+    "spellmaker:alteration_dust",
+    "minecraft:bone"
+  ],
+  "result": {
+    "id": "spellmaker:wolf_form_sigil",
+    "count": 1
+  }
+}

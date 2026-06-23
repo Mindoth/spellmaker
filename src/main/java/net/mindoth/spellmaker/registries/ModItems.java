@@ -161,6 +161,10 @@ public class ModItems {
             (properties) -> new ChickenFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
                     Identifier.parse("baa27f16-774d-4767-99e0-218112d9241f"), EntityTypes.CHICKEN));
 
+    public static final DeferredItem<Item> WOLF_FORM_SIGIL = ITEMS.registerItem("wolf_form_sigil",
+            (properties) -> new WolfFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
+                    Identifier.parse("78b10eca-0e4c-4f77-9ce1-e8f736fb8d0a"), EntityTypes.WOLF));
+
     //Arcane
     public static final DeferredItem<Item> FORCE_SIGIL = ITEMS.registerItem("force_sigil",
             (properties) -> new ForceSigilItem(properties, SpellColor.ARCANE, 0, -10, 10, 10, 0, 0, 0));

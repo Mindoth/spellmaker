@@ -68,6 +68,7 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
     public void addStatModifiers(LivingEntity living) {
         addSpeedModifier(living);
         addHealthModifier(living);
+        addStrengthModifier(living);
         addSwimSpeedModifier(living);
     }
 
@@ -93,6 +94,17 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
         AttributeInstance healthAddition = living.getAttribute(Attributes.MAX_HEALTH);
         if ( healthAddition != null && !healthAddition.hasModifier(getHealthModifier(living.getMaxHealth()).id()) ) {
             healthAddition.addPermanentModifier(getHealthModifier(living.getMaxHealth()));
+        }
+    }
+
+    protected AttributeModifier getStrengthModifier() {
+        return new AttributeModifier(getUUID(), 0.0D, AttributeModifier.Operation.ADD_VALUE);
+    }
+
+    private void addStrengthModifier(LivingEntity living) {
+        AttributeInstance strengthAddition = living.getAttribute(Attributes.ATTACK_DAMAGE);
+        if ( strengthAddition != null && !strengthAddition.hasModifier(getStrengthModifier().id()) ) {
+            strengthAddition.addPermanentModifier(getStrengthModifier());
         }
     }
 
@@ -149,7 +161,11 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
         event.setNewSize(dimensions);
     }
 
-    protected boolean canSprint(LivingEntity living) {
+    public boolean canSprint(LivingEntity living) {
+        return false;
+    }
+
+    public boolean canAttack(LivingEntity living) {
         return false;
     }
 
