@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "spellmaker:forest_cloth",
+    "G": "spellmaker:arcane_gem"
+  },
+  "pattern": [
+    "#G#",
+    "###",
+    "###"
+  ],
+  "result": {
+    "id": "spellmaker:forest_robe_top",
+    "count": 1
+  }
+}

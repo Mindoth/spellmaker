@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "spellmaker:wool_robe_bottom",
-    "spellmaker:arcane_robe_bottom"
+    "spellmaker:arcane_robe_bottom",
+    "spellmaker:forest_robe_bottom"
   ]
 }

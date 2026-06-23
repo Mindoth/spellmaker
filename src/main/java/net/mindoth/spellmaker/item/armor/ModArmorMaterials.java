@@ -35,4 +35,15 @@ public class ModArmorMaterials {
             }), 20, SoundEvents.ARMOR_EQUIP_LEATHER,
             0, 0, ModTags.Items.ARCANE_CLOTH_REPAIRABLE,
             ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "arcane_robe")));
+
+    public static final ArmorMaterial FOREST_ROBE_MATERIAL = new ArmorMaterial(6,
+            Util.make(new EnumMap<>(ArmorType.class), attribute -> {
+                attribute.put(ArmorType.BOOTS, 0);
+                attribute.put(ArmorType.LEGGINGS, 0);
+                attribute.put(ArmorType.CHESTPLATE, 0);
+                attribute.put(ArmorType.HELMET, 0);
+                attribute.put(ArmorType.BODY, 0);
+            }), 20, SoundEvents.ARMOR_EQUIP_LEATHER,
+            0, 0, ModTags.Items.FOREST_CLOTH_REPAIRABLE,
+            ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "forest_robe")));
 }

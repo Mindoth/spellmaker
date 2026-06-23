@@ -11,6 +11,7 @@ public class ModTags {
     public static class Items {
         public static final TagKey<Item> WOOL_CLOTH_REPAIRABLE = createTag("wool_cloth_repairable");
         public static final TagKey<Item> ARCANE_CLOTH_REPAIRABLE = createTag("arcane_cloth_repairable");
+        public static final TagKey<Item> FOREST_CLOTH_REPAIRABLE = createTag("forest_cloth_repairable");
 
         private static TagKey<Item> createTag(String name) {
             return ItemTags.create(Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, name));

@@ -9,6 +9,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.player.Player;
 
@@ -24,6 +25,11 @@ public class ChickenFormSigilItem extends PolymorphSigilItem {
         List<Holder<MobEffect>> list = Lists.newArrayList();
         if ( living instanceof Player && !living.onGround() ) list.add(MobEffects.SLOW_FALLING);
         return list;
+    }
+
+    @Override
+    protected AttributeModifier getHealthModifier(float currentHealth) {
+        return new AttributeModifier(getUUID(), 4.0D - currentHealth, AttributeModifier.Operation.ADD_VALUE);
     }
 
     @Override

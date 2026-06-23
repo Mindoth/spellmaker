@@ -2,8 +2,9 @@ package net.mindoth.spellmaker.client.model;
 
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.item.armor.AdaptiveModelArmor;
 import net.mindoth.spellmaker.item.armor.ArcaneRobeItem;
-import net.mindoth.spellmaker.item.armor.CustomModelArmor;
+import net.mindoth.spellmaker.item.armor.ForestRobeItem;
 import net.mindoth.spellmaker.item.armor.WoolRobeItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
@@ -30,6 +31,7 @@ public class ModLayerEvents {
 
     public static final ArmorModelSet<ModelLayerLocation> WOOL_ROBE = registerArmorSet("wool_robe");
     public static final ArmorModelSet<ModelLayerLocation> ARCANE_ROBE = registerArmorSet("arcane_robe");
+    public static final ArmorModelSet<ModelLayerLocation> FOREST_ROBE = registerArmorSet("forest_robe");
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -44,14 +46,22 @@ public class ModLayerEvents {
         event.registerLayerDefinition(ARCANE_ROBE.chest(), ArcaneRobeModel::createBodyLayer);
         event.registerLayerDefinition(ARCANE_ROBE.legs(), ArcaneRobeModel::createLegsLayer);
         event.registerLayerDefinition(ARCANE_ROBE.feet(), ArcaneRobeModel::createBootsLayer);
+
+        event.registerLayerDefinition(FOREST_ROBE.head(), ForestRobeModel::createHeadLayer);
+        event.registerLayerDefinition(FOREST_ROBE.chest(), ForestRobeModel::createBodyLayer);
+        event.registerLayerDefinition(FOREST_ROBE.legs(), ForestRobeModel::createLegsLayer);
+        event.registerLayerDefinition(FOREST_ROBE.feet(), ForestRobeModel::createBootsLayer);
     }
 
-    private static HumanoidModel<?> getCustomArmorModel(CustomModelArmor item) {
+    private static HumanoidModel<?> getCustomArmorModel(AdaptiveModelArmor item) {
         if ( item instanceof WoolRobeItem armorItem ) {
             return new WoolRobeModel<>(WoolRobeModel.createLayerByType(armorItem).bakeRoot());
         }
         if ( item instanceof ArcaneRobeItem armorItem ) {
             return new ArcaneRobeModel<>(ArcaneRobeModel.createLayerByType(armorItem).bakeRoot());
+        }
+        if ( item instanceof ForestRobeItem armorItem ) {
+            return new ForestRobeModel<>(ForestRobeModel.createLayerByType(armorItem).bakeRoot());
         }
         return null;
     }
@@ -63,8 +73,8 @@ public class ModLayerEvents {
             @NotNull
             public Model getHumanoidArmorModel(@NotNull ItemStack stack, @NotNull EquipmentClientInfo.LayerType type, @NotNull Model original) {
                 Model returnModel = original;
-                if ( original instanceof HumanoidModel<?> humanoid && stack.getItem() instanceof CustomModelArmor item ) {
-                    HumanoidModel<?> customModel = getCustomArmorModel(item);
+                if ( original instanceof HumanoidModel<?> humanoid && stack.getItem() instanceof AdaptiveModelArmor armorItem ) {
+                    HumanoidModel<?> customModel = getCustomArmorModel(armorItem);
                     if ( customModel != null ) {
                         ClientHooks.copyModelProperties(humanoid, customModel);
                         returnModel = customModel;
@@ -74,7 +84,7 @@ public class ModLayerEvents {
             }
         };
         List<Item> items = Lists.newArrayList();
-        for ( Item item : BuiltInRegistries.ITEM ) if ( item instanceof CustomModelArmor ) items.add(item);
+        for ( Item item : BuiltInRegistries.ITEM ) if ( item instanceof AdaptiveModelArmor ) items.add(item);
         event.registerItem(armor, items.toArray(new Item[0]));
     }
 

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": "minecraft:string",
+    "A": "spellmaker:restoration_dust",
+    "L": "minecraft:leather"
+  },
+  "pattern": [
+    "ASA",
+    "SLS",
+    "ASA"
+  ],
+  "result": {
+    "id": "spellmaker:forest_cloth",
+    "count": 4
+  }
+}

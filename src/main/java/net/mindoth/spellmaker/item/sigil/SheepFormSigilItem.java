@@ -14,4 +14,9 @@ public class SheepFormSigilItem extends PolymorphSigilItem {
     protected AttributeModifier getSpeedModifier() {
         return new AttributeModifier(POLYMORPH_SPEED_MODIFIER_UUID, -0.05D, AttributeModifier.Operation.ADD_VALUE);
     }
+
+    @Override
+    protected AttributeModifier getHealthModifier(float currentHealth) {
+        return new AttributeModifier(getUUID(), 8.0D - currentHealth, AttributeModifier.Operation.ADD_VALUE);
+    }
 }

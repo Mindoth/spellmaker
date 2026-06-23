@@ -18,6 +18,7 @@
   "item.spellmaker.sigil_essence": "Sigil Essence",
   "item.spellmaker.wool_cloth": "Wool Cloth",
   "item.spellmaker.arcane_cloth": "Arcane Cloth",
+  "item.spellmaker.forest_cloth": "Forest Cloth",
   "item.spellmaker.arcane_gem": "Arcane Gem",
   "item.spellmaker.parchment": "Parchment",
   "item.spellmaker.plant_fiber": "Plant Fiber",
@@ -47,6 +48,10 @@
   "item.spellmaker.arcane_robe_top": "Arcane Robe Top",
   "item.spellmaker.arcane_robe_bottom": "Arcane Robe Bottom",
   "item.spellmaker.arcane_robe_boots": "Arcane Robe Boots",
+  "item.spellmaker.forest_robe_hood": "Forest Robe Hood",
+  "item.spellmaker.forest_robe_top": "Forest Robe Top",
+  "item.spellmaker.forest_robe_bottom": "Forest Robe Bottom",
+  "item.spellmaker.forest_robe_boots": "Forest Robe Boots",
 
   "item.spellmaker.excavation_sigil": "Excavation Sigil",
   "item.spellmaker.fire_sigil": "Fire Sigil",

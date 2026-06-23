@@ -67,10 +67,12 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
 
     public void addStatModifiers(LivingEntity living) {
         addSpeedModifier(living);
+        addHealthModifier(living);
         addSwimSpeedModifier(living);
     }
 
     public static final Identifier POLYMORPH_SPEED_MODIFIER_UUID = Identifier.parse("0ca369c9-8322-4247-a63d-15a464e0f889");
+
     protected AttributeModifier getSpeedModifier() {
         return new AttributeModifier(POLYMORPH_SPEED_MODIFIER_UUID, 0.0D, AttributeModifier.Operation.ADD_VALUE);
     }
@@ -80,6 +82,17 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
         if ( speedAddition != null && !speedAddition.hasModifier(getSpeedModifier().id()) ) {
             speedAddition.addPermanentModifier(getSpeedModifier());
             if ( living.isSprinting() ) living.setSprinting(false);
+        }
+    }
+
+    protected AttributeModifier getHealthModifier(float currentHealth) {
+        return new AttributeModifier(getUUID(), 0.0D, AttributeModifier.Operation.ADD_VALUE);
+    }
+
+    private void addHealthModifier(LivingEntity living) {
+        AttributeInstance healthAddition = living.getAttribute(Attributes.MAX_HEALTH);
+        if ( healthAddition != null && !healthAddition.hasModifier(getHealthModifier(living.getMaxHealth()).id()) ) {
+            healthAddition.addPermanentModifier(getHealthModifier(living.getMaxHealth()));
         }
     }
 
@@ -153,7 +166,7 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
     public void extraSync(LivingEntity living, Player player, float partialTick) {
     }
 
-    //Because of NeoForge, these methods have to be here instead of in their respective Sigil Classes.
+    //Because of NeoForge, these methods have to be here instead of in their respective Sigil Classes...
     public static boolean isFish(LivingEntity living) {
         if ( !(living instanceof Player player) ) return false;
         return PolymorphEffect.isPolymorphed(player) && PolymorphEffect.getFormSigil(player) == ModItems.FISH_FORM_SIGIL.get();

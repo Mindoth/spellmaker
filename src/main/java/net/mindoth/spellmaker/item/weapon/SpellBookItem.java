@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 public class SpellBookItem extends Item {
 
     public SpellBookItem(Properties pProperties) {
-        super(pProperties.stacksTo(1));
+        super(pProperties.stacksTo(1).fireResistant());
     }
 
     public static final int maxRows = 4;
