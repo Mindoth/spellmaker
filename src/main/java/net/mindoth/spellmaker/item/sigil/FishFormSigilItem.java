@@ -25,8 +25,8 @@ public class FishFormSigilItem extends PolymorphSigilItem {
     }
 
     @Override
-    protected AttributeModifier getHealthModifier(float currentHealth) {
-        return new AttributeModifier(getUUID(), 3.0D - currentHealth, AttributeModifier.Operation.ADD_VALUE);
+    protected AttributeModifier getHealthModifier(float currentMaxHealth) {
+        return new AttributeModifier(getUUID(), 3.0D - currentMaxHealth, AttributeModifier.Operation.ADD_VALUE);
     }
 
     @Override

@@ -29,8 +29,8 @@ public class ChickenFormSigilItem extends PolymorphSigilItem {
     }
 
     @Override
-    protected AttributeModifier getHealthModifier(float currentHealth) {
-        return new AttributeModifier(getUUID(), 4.0D - currentHealth, AttributeModifier.Operation.ADD_VALUE);
+    protected AttributeModifier getHealthModifier(float currentMaxHealth) {
+        return new AttributeModifier(getUUID(), 4.0D - currentMaxHealth, AttributeModifier.Operation.ADD_VALUE);
     }
 
     @Override

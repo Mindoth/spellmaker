@@ -12,7 +12,9 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.entity.state.WolfRenderState;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -31,7 +33,6 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.NeoForgeMod;
 
 import java.util.Objects;
-import java.util.UUID;
 
 @EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
 public abstract class ClientHelperMethods {
@@ -67,12 +68,10 @@ public abstract class ClientHelperMethods {
     private static void renderPolymorphModel(LivingEntity living, Player player, RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
         living.setUUID(player.getUUID());
         living.setId(player.getId());
-        syncEntityWithPlayer(living, player, event.getPartialTick());
-        living.setUUID(living.getUUID());
-        render(living, event);
+        syncEntityWithPlayer(living, player, event);
     }
 
-    private static void syncEntityWithPlayer(LivingEntity living, Player player, float partialTick) {
+    private static void syncEntityWithPlayer(LivingEntity living, Player player, RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
         living.xOld = player.xOld;
         living.yOld = player.yOld;
         living.zOld = player.zOld;
@@ -120,18 +119,21 @@ public abstract class ClientHelperMethods {
         if ( pose != living.getPose() || (living.getDimensions(living.getPose()) != player.getDimensions(player.getPose())) ) living.refreshDimensions();
 
         PolymorphSigilItem sigil = PolymorphEffect.getFormSigil(player);
-        if ( sigil != null ) sigil.extraSync(living, player, partialTick);
+        if ( sigil != null ) {
+            sigil.extraSync(living, player, event.getPartialTick());
+            render(sigil, living, event);
+        }
     }
 
-    private static void render(LivingEntity living, RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
+    private static void render(PolymorphSigilItem sigil, LivingEntity living, RenderPlayerEvent.Pre<AbstractClientPlayer> event) {
         Minecraft instance = Minecraft.getInstance();
         EntityRenderer renderer = instance.getEntityRenderDispatcher().getRenderer(living);
         EntityRenderState state = renderer.createRenderState(living, event.getPartialTick());
-        syncRenderState(state, event.getRenderState());
+        syncRenderState(sigil, state, event.getRenderState());
         renderer.submit(state, event.getPoseStack(), event.getSubmitNodeCollector(), instance.gameRenderer.gameRenderState().levelRenderState.cameraRenderState);
     }
 
-    private static void syncRenderState(EntityRenderState state0, AvatarRenderState state1) {
+    private static void syncRenderState(PolymorphSigilItem sigil, EntityRenderState state0, AvatarRenderState state1) {
         state0.lightCoords = state1.lightCoords;
         state0.shadowRadius = state1.shadowRadius;
         state0.ageInTicks = state1.ageInTicks;
@@ -140,6 +142,18 @@ public abstract class ClientHelperMethods {
             livingState.bodyRot = state1.bodyRot;
             livingState.xRot = state1.xRot;
             livingState.yRot = state1.yRot;
+        }
+        extraRenderStateSync(sigil, state0);
+    }
+
+    //Ideally this would be done in each sigil's class.
+    //I just don't know how to deal with the server-side/client-side issue since NeoForge doesn't have "sidedness" tags for methods anymore.
+    private static void extraRenderStateSync(PolymorphSigilItem sigil, EntityRenderState state) {
+        if ( sigil.getEntityType() == EntityTypes.WOLF ) {
+            if ( state instanceof WolfRenderState wolfState ) {
+                wolfState.tailAngle = 1.5393804F;
+                wolfState.isAngry = true;
+            }
         }
     }
 

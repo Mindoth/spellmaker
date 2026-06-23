@@ -68,7 +68,6 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
     public void addStatModifiers(LivingEntity living) {
         addSpeedModifier(living);
         addHealthModifier(living);
-        addStrengthModifier(living);
         addSwimSpeedModifier(living);
     }
 
@@ -79,33 +78,47 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
     }
 
     private void addSpeedModifier(LivingEntity living) {
+        AttributeModifier modifier = getSpeedModifier();
+        if ( modifier.amount() == 0 ) return;
         AttributeInstance speedAddition = living.getAttribute(Attributes.MOVEMENT_SPEED);
-        if ( speedAddition != null && !speedAddition.hasModifier(getSpeedModifier().id()) ) {
-            speedAddition.addPermanentModifier(getSpeedModifier());
+        if ( speedAddition != null && !speedAddition.hasModifier(modifier.id()) ) {
+            speedAddition.addPermanentModifier(modifier);
             if ( living.isSprinting() ) living.setSprinting(false);
         }
     }
 
-    protected AttributeModifier getHealthModifier(float currentHealth) {
+    protected AttributeModifier getHealthModifier(float currentMaxHealth) {
         return new AttributeModifier(getUUID(), 0.0D, AttributeModifier.Operation.ADD_VALUE);
     }
 
     private void addHealthModifier(LivingEntity living) {
+        AttributeModifier modifier = getHealthModifier(living.getMaxHealth());
+        if ( modifier.amount() == 0 ) return;
         AttributeInstance healthAddition = living.getAttribute(Attributes.MAX_HEALTH);
-        if ( healthAddition != null && !healthAddition.hasModifier(getHealthModifier(living.getMaxHealth()).id()) ) {
-            healthAddition.addPermanentModifier(getHealthModifier(living.getMaxHealth()));
+        if ( healthAddition != null && !healthAddition.hasModifier(modifier.id()) ) {
+            float health = (float)(living.getMaxHealth() + modifier.amount());
+            living.setHealth(Math.min(living.getHealth(), health));
+            healthAddition.addPermanentModifier(modifier);
         }
     }
 
+    //Attack Damage attribute modifiers don't get removed for some reason...
+    /*
     protected AttributeModifier getStrengthModifier() {
         return new AttributeModifier(getUUID(), 0.0D, AttributeModifier.Operation.ADD_VALUE);
     }
 
     private void addStrengthModifier(LivingEntity living) {
+        AttributeModifier modifier = getStrengthModifier();
+        if ( modifier.amount() == 0 ) return;
         AttributeInstance strengthAddition = living.getAttribute(Attributes.ATTACK_DAMAGE);
-        if ( strengthAddition != null && !strengthAddition.hasModifier(getStrengthModifier().id()) ) {
-            strengthAddition.addPermanentModifier(getStrengthModifier());
+        if ( strengthAddition != null && !strengthAddition.hasModifier(modifier.id()) ) {
+            strengthAddition.addPermanentModifier(modifier);
         }
+    }
+    */
+    public int getStrengthModifier() {
+        return 0;
     }
 
     protected AttributeModifier getSwimSpeedModifier() {
@@ -113,9 +126,11 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
     }
 
     private void addSwimSpeedModifier(LivingEntity living) {
+        AttributeModifier modifier = getSwimSpeedModifier();
+        if ( modifier.amount() == 0 ) return;
         AttributeInstance swimSpeedAddition = living.getAttribute(NeoForgeMod.SWIM_SPEED);
-        if ( swimSpeedAddition != null && !swimSpeedAddition.hasModifier(getSwimSpeedModifier().id()) ) {
-            swimSpeedAddition.addPermanentModifier(getSwimSpeedModifier());
+        if ( swimSpeedAddition != null && !swimSpeedAddition.hasModifier(modifier.id()) ) {
+            swimSpeedAddition.addPermanentModifier(modifier);
         }
     }
 
@@ -131,8 +146,10 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
             if ( !list.isEmpty() ) map.put(instance, list);
         }
         for ( AttributeInstance instance : map.keySet() ) {
-            if ( instance != null) {
-                for ( AttributeModifier modifier : map.get(instance) ) instance.removeModifier(modifier);
+            if ( instance != null ) {
+                for ( AttributeModifier modifier : map.get(instance) ) {
+                    instance.removeModifier(modifier);
+                }
             }
         }
     }
