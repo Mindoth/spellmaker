@@ -59,11 +59,12 @@ public class ModArmorItem extends Item {
         return builder.build();
     }
 
-    public static AttributeContainer[] withMagickAttributes(int mana, int manaRegen, double discount) {
+    public static AttributeContainer[] withMagickAttributes(int mana, int manaRegen, double discount, double selfPolymorphDuration) {
         return new AttributeContainer[] {
                 new AttributeContainer(ModAttributes.MANA_MAX, mana, AttributeModifier.Operation.ADD_VALUE),
                 new AttributeContainer(ModAttributes.MANA_REGENERATION, manaRegen, AttributeModifier.Operation.ADD_VALUE),
-                new AttributeContainer(ModAttributes.MANA_COST_MULTIPLIER, discount, AttributeModifier.Operation.ADD_MULTIPLIED_BASE)
+                new AttributeContainer(ModAttributes.MANA_COST_MULTIPLIER, discount, AttributeModifier.Operation.ADD_MULTIPLIED_BASE),
+                new AttributeContainer(ModAttributes.SELF_POLYMORPH_DURATION, selfPolymorphDuration, AttributeModifier.Operation.ADD_MULTIPLIED_BASE)
         };
     }
 

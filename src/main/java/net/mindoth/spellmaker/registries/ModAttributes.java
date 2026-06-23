@@ -30,6 +30,9 @@ public class ModAttributes {
     public static final DeferredHolder<Attribute, Attribute> MANA_COST_MULTIPLIER = ATTRIBUTES.register("mana_cost_multiplier",
             () -> (new MagickAttribute("attribute.spellmaker.mana_cost_multiplier", 1.0D, 1.0D, Integer.MAX_VALUE).setSyncable(true)));
 
+    public static final DeferredHolder<Attribute, Attribute> SELF_POLYMORPH_DURATION = ATTRIBUTES.register("self_polymorph_duration",
+            () -> (new MagickAttribute("attribute.spellmaker.self_polymorph_duration", 1.0D, 1.0D, Integer.MAX_VALUE).setSyncable(true)));
+
     @SubscribeEvent
     public static void modifyEntityAttributes(EntityAttributeModificationEvent event) {
         event.getTypes().forEach(entity -> ATTRIBUTES.getEntries().forEach(attribute -> event.add(entity, attribute)));

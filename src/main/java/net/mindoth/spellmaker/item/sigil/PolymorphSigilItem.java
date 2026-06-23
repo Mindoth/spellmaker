@@ -4,12 +4,14 @@ import com.google.common.collect.Lists;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.mobeffect.PolymorphEffect;
+import net.mindoth.spellmaker.registries.ModAttributes;
 import net.mindoth.spellmaker.registries.ModEffects;
 import net.mindoth.spellmaker.registries.ModItems;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
@@ -56,6 +58,10 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
     public void effectOnAllEntitiesInList(Entity source, Entity directSource, Entity target, List<Integer> stats, DimVec3 location) {
         if ( !(target instanceof LivingEntity living) || !target.isAttackable() || !target.isAlive() ) return;
         int duration = stats.get(1);
+        if ( source == target && source instanceof Player player ) {
+            double durationMultiplier = player.getAttributeValue(ModAttributes.SELF_POLYMORPH_DURATION);
+            duration *= Mth.floor(durationMultiplier);
+        }
         int polymorphTicks = duration * 20;
         MobEffectInstance instance = new MobEffectInstance(ModEffects.POLYMORPH, polymorphTicks, 0, false, false);
         living.addEffect(instance);
