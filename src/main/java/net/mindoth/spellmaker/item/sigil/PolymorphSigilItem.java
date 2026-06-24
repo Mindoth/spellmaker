@@ -63,7 +63,7 @@ public abstract class PolymorphSigilItem extends AbstractSigilItem {
             duration *= Mth.floor(durationMultiplier);
         }
         int polymorphTicks = duration * 20;
-        MobEffectInstance instance = new MobEffectInstance(ModEffects.POLYMORPH, polymorphTicks, 0, false, false);
+        MobEffectInstance instance = new MobEffectInstance(ModEffects.POLYMORPH, polymorphTicks, 0, false, false, true);
         living.addEffect(instance);
         if ( CommonHooks.canMobEffectBeApplied(living, instance, source) ) {
             living.forceAddEffect(instance, null);

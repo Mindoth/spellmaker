@@ -14,6 +14,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class ForceSigilItem extends AbstractSigilItem {
+
     public ForceSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier);
     }

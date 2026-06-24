@@ -169,4 +169,7 @@ public class ModItems {
     public static final DeferredItem<Item> FORCE_SIGIL = ITEMS.registerItem("force_sigil",
             (properties) -> new ForceSigilItem(properties, SpellColor.ARCANE, 0, -10, 10, 10, 0, 0, 0));
 
+    public static final DeferredItem<Item> DISPEL_SIGIL = ITEMS.registerItem("dispel_sigil",
+            (properties) -> new DispelSigilItem(properties, SpellColor.ARCANE, 0, 0, 64, 40, 0, 0, 0));
+
 }

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "spellmaker:sigil_essence",
+    "spellmaker:arcane_dust",
+    "minecraft:milk_bucket"
+  ],
+  "result": {
+    "id": "spellmaker:dispel_sigil",
+    "count": 1
+  }
+}
