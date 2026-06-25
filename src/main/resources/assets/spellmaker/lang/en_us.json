@@ -7,12 +7,15 @@
 
 
   "container.spellmaker.calcinator": "Calcinator",
+  "container.spellmaker.alembic": "Alembic",
   "container.spellmaker.spell_making": "Spell Making Table",
 
 
   "block.spellmaker.calcinator": "Calcinator",
+  "block.spellmaker.alembic": "Alembic",
   "block.spellmaker.spell_making_table": "Spell Making Table",
   "tooltip.recipebook.toggleRecipes.calcinatable": "Showing Calcinatable",
+  "tooltip.recipebook.toggleRecipes.distillable": "Showing Distillable",
 
 
   "item.spellmaker.sigil_essence": "Sigil Essence",

@@ -1,6 +1,7 @@
 package net.mindoth.spellmaker;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.mindoth.spellmaker.client.gui.screen.AlembicScreen;
 import net.mindoth.spellmaker.client.gui.screen.CalcinatorScreen;
 import net.mindoth.spellmaker.client.gui.screen.HudMana;
 import net.mindoth.spellmaker.client.gui.screen.SpellMakingScreen;
@@ -69,8 +70,8 @@ public class SpellMakerClient {
 
     public static final KeyMapping.Category KEY_CATEGORY_SPELLMAKER = new KeyMapping.Category(Identifier.fromNamespaceAndPath(SpellMaker.MOD_ID, "spellmaker"));
 
-    public static final KeyMapping OPEN_SPELL_BOOK = new KeyMapping("key.spellmaker.open_spell_book", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_B, KEY_CATEGORY_SPELLMAKER);
+    public static final KeyMapping OPEN_SPELL_BOOK = new KeyMapping("key.spellmaker.open_spell_book",
+            KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, KEY_CATEGORY_SPELLMAKER);
 
     @EventBusSubscriber(modid = SpellMaker.MOD_ID, value = Dist.CLIENT)
     public static class ClientModBusEvents {
@@ -87,8 +88,9 @@ public class SpellMakerClient {
 
         @SubscribeEvent
         public static void registerScreens(RegisterMenuScreensEvent event) {
-            event.register(ModMenus.CALCINATOR_MENU.get(), CalcinatorScreen::new);
             event.register(ModMenus.SPELL_MAKING_MENU.get(), SpellMakingScreen::new);
+            event.register(ModMenus.CALCINATOR_MENU.get(), CalcinatorScreen::new);
+            event.register(ModMenus.ALEMBIC_MENU.get(), AlembicScreen::new);
         }
     }
 }

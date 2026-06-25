@@ -26,7 +26,6 @@ public class CalcinatorBlock extends AbstractFurnaceBlock {
         super(pProperties);
     }
 
-
     public static final MapCodec<CalcinatorBlock> CODEC = simpleCodec(CalcinatorBlock::new);
 
     @Override

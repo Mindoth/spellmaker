@@ -28,7 +28,9 @@ public class RecipeManagerMixin {
     @Inject(method = "<clinit>", at = @At(value = "TAIL"))
     private static void afterStaticInit(CallbackInfo callback) {
         Map<ResourceKey<RecipePropertySet>, RecipeManager.IngredientExtractor> copy = new LinkedHashMap<>(RECIPE_PROPERTY_SETS);
+
         copy.put(ModRecipes.CALCINATOR_INPUT, recipe -> recipe instanceof CalcinatingRecipe m ? Optional.of(m.input()) : Optional.empty());
+
         RECIPE_PROPERTY_SETS = Map.copyOf(copy);
     }
 }

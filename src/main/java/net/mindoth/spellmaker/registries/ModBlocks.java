@@ -1,8 +1,10 @@
 package net.mindoth.spellmaker.registries;
 
 import net.mindoth.spellmaker.SpellMaker;
+import net.mindoth.spellmaker.block.AlembicBlock;
 import net.mindoth.spellmaker.block.CalcinatorBlock;
 import net.mindoth.spellmaker.block.SpellMakingTableBlock;
+import net.mindoth.spellmaker.block.entity.AlembicBlockEntity;
 import net.mindoth.spellmaker.block.entity.CalcinatorBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
@@ -26,20 +28,25 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(SpellMaker.MOD_ID);
 
 
+    public static final DeferredBlock<Block> SPELL_MAKING_TABLE = registerBlock("spell_making_table",
+            (properties) -> new SpellMakingTableBlock(properties.instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+            ));
 
     public static final DeferredBlock<Block> CALCINATOR = registerBlock("calcinator",
-            (properties) -> new CalcinatorBlock(properties
-                    .instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(3.5F).lightLevel(litBlockEmission(13))
+            (properties) -> new CalcinatorBlock(properties.instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops().strength(3.5F).lightLevel(litBlockEmission(13))
             ));
+
+    public static final DeferredBlock<Block> ALEMBIC = registerBlock("alembic",
+            (properties) -> new AlembicBlock(properties.instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops().strength(3.5F)/*.lightLevel(litBlockEmission(13))*/
+            ));
+
 
     private static ToIntFunction<BlockState> litBlockEmission(int pLightValue) {
         return p_50763_ -> p_50763_.getValue(BlockStateProperties.LIT) ? pLightValue : 0;
     }
-
-    public static final DeferredBlock<Block> SPELL_MAKING_TABLE = registerBlock("spell_making_table",
-            (properties) -> new SpellMakingTableBlock(properties
-                    .instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(1.5F, 6.0F)
-            ));
 
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Function<BlockBehaviour.Properties, T> function) {
@@ -54,7 +61,9 @@ public class ModBlocks {
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, SpellMaker.MOD_ID);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CalcinatorBlockEntity>> CALCINATOR_BLOCK_ENTITY =
-            BLOCK_ENTITIES.register("calcinator_block_entity",
-                    () -> new BlockEntityType<>(CalcinatorBlockEntity::new, ModBlocks.CALCINATOR.get()));
+    public static final Supplier<BlockEntityType<CalcinatorBlockEntity>> CALCINATOR_BLOCK_ENTITY =
+            BLOCK_ENTITIES.register("calcinator_block_entity", () -> new BlockEntityType<>(CalcinatorBlockEntity::new, ModBlocks.CALCINATOR.get()));
+
+    public static final Supplier<BlockEntityType<AlembicBlockEntity>> ALEMBIC_BLOCK_ENTITY =
+            BLOCK_ENTITIES.register("alembic_block_entity", () -> new BlockEntityType<>(AlembicBlockEntity::new, ModBlocks.ALEMBIC.get()));
 }

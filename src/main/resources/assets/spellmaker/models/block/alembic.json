@@ -1,0 +1,10 @@
+{
+  "parent": "spellmaker:block/unique_sides",
+  "textures": {
+    "front": "spellmaker:block/alembic_front",
+    "back": "spellmaker:block/alembic_back",
+    "side": "spellmaker:block/alembic_side",
+    "top": "spellmaker:block/alembic_top",
+    "bottom": "spellmaker:block/alembic_bottom"
+  }
+}

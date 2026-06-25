@@ -1,6 +1,7 @@
 {
   "values": [
-    "spellmaker:spell_making_table",
-    "spellmaker:calcinator"
+    "spellmaker:calcinator",
+    "spellmaker:alembic",
+    "spellmaker:spell_making_table"
   ]
 }
