@@ -50,7 +50,7 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
         }
     };
 
-    private final int defaultCookingTime = 1600;
+    private final int defaultCookingTime = 200;
 
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
         boolean changed = false;
@@ -142,9 +142,9 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
             this.itemHandler.extractItem(INPUT_SLOT_1, input0Amount, false);
         }
         setOutputSlot(OUTPUT_SLOT_0, recipe.getResult0().create());
-        setOutputSlot(OUTPUT_SLOT_1, recipe.getResult1().create());
-        setOutputSlot(OUTPUT_SLOT_2, recipe.getResult2().create());
-        setOutputSlot(OUTPUT_SLOT_3, recipe.getResult3().create());
+        if ( recipe.getResult1().isPresent() ) setOutputSlot(OUTPUT_SLOT_1, recipe.getResult1().get().create());
+        if ( recipe.getResult2().isPresent() ) setOutputSlot(OUTPUT_SLOT_2, recipe.getResult2().get().create());
+        if ( recipe.getResult3().isPresent() ) setOutputSlot(OUTPUT_SLOT_3, recipe.getResult3().get().create());
     }
 
     private void setOutputSlot(int slot, ItemStack output) {
@@ -156,9 +156,9 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
         if ( recipe.isEmpty() ) return false;
 
         boolean slot0 = isFitting(OUTPUT_SLOT_0, recipe.get().value().getResult0().create());
-        boolean slot1 = isFitting(OUTPUT_SLOT_1, recipe.get().value().getResult1().create());
-        boolean slot2 = isFitting(OUTPUT_SLOT_2, recipe.get().value().getResult2().create());
-        boolean slot3 = isFitting(OUTPUT_SLOT_3, recipe.get().value().getResult3().create());
+        boolean slot1 = recipe.get().value().getResult1().isEmpty() || isFitting(OUTPUT_SLOT_1, recipe.get().value().getResult1().get().create());
+        boolean slot2 = recipe.get().value().getResult2().isEmpty() || isFitting(OUTPUT_SLOT_2, recipe.get().value().getResult2().get().create());
+        boolean slot3 = recipe.get().value().getResult3().isEmpty() || isFitting(OUTPUT_SLOT_3, recipe.get().value().getResult3().get().create());
 
         return slot0 && slot1 && slot2 && slot3;
     }

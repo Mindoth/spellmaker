@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.mindoth.spellmaker.registries.ModBlocks;
 import net.mindoth.spellmaker.registries.ModRecipes;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -11,10 +12,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class AlembicRecipe extends MultiIORecipe<AlembicRecipeInput> {
 
@@ -23,15 +27,15 @@ public class AlembicRecipe extends MultiIORecipe<AlembicRecipeInput> {
     private final Ingredient ingredient1;
     private final int ingredient1Amount;
     private final ItemStackTemplate result0;
-    private final ItemStackTemplate result1;
-    private final ItemStackTemplate result2;
-    private final ItemStackTemplate result3;
+    private final Optional<ItemStackTemplate> result1;
+    private final Optional<ItemStackTemplate> result2;
+    private final Optional<ItemStackTemplate> result3;
 
     private AlembicRecipe(Ingredients inputs, ItemStackTemplates results) {
         this(inputs.ingredient0(), inputs.ingredient0Amount(), inputs.ingredient1(), inputs.ingredient1Amount(), results.result0(), results.result1(), results.result2(), results.result3());
     }
 
-    public AlembicRecipe(Ingredient ingredient0, int ingredient0Amount, Ingredient ingredient1, int ingredient1Amount, ItemStackTemplate result0, ItemStackTemplate result1, ItemStackTemplate result2, ItemStackTemplate result3) {
+    public AlembicRecipe(Ingredient ingredient0, int ingredient0Amount, Ingredient ingredient1, int ingredient1Amount, ItemStackTemplate result0, Optional<ItemStackTemplate> result1, Optional<ItemStackTemplate> result2, Optional<ItemStackTemplate> result3) {
         this.ingredient0 = Objects.requireNonNull(ingredient0, "ingredient0");
         this.ingredient0Amount = ingredient0Amount;
         this.ingredient1 = Objects.requireNonNull(ingredient1, "ingredient1");
@@ -52,7 +56,8 @@ public class AlembicRecipe extends MultiIORecipe<AlembicRecipeInput> {
         boolean amountsMatch = false;
         if ( leftRight && input0.count() >= getInput0Amount() && input1.count() >= getInput1Amount() ) amountsMatch = true;
         else if ( rightLeft && input1.count() >= getInput0Amount() && input0.count() >= getInput1Amount() ) amountsMatch = true;
-        return (leftRight || rightLeft) && amountsMatch;
+        boolean match = (leftRight || rightLeft) && amountsMatch;
+        return match;
     }
 
     @Override
@@ -109,38 +114,64 @@ public class AlembicRecipe extends MultiIORecipe<AlembicRecipeInput> {
     }
 
     //Results Codec
-    public record ItemStackTemplates(ItemStackTemplate result0, ItemStackTemplate result1, ItemStackTemplate result2, ItemStackTemplate result3) {
+    public record ItemStackTemplates(ItemStackTemplate result0, Optional<ItemStackTemplate> result1, Optional<ItemStackTemplate> result2, Optional<ItemStackTemplate> result3) {
 
         public static final Codec<ItemStackTemplates> CODEC = RecordCodecBuilder.create(builder -> builder.group(
                 ItemStackTemplate.CODEC.fieldOf("result0").forGetter(ItemStackTemplates::result0),
-                ItemStackTemplate.CODEC.fieldOf("result1").forGetter(ItemStackTemplates::result1),
-                ItemStackTemplate.CODEC.fieldOf("result2").forGetter(ItemStackTemplates::result2),
-                ItemStackTemplate.CODEC.fieldOf("result3").forGetter(ItemStackTemplates::result3)
+                ItemStackTemplate.CODEC.optionalFieldOf("result1").forGetter(ItemStackTemplates::result1),
+                ItemStackTemplate.CODEC.optionalFieldOf("result2").forGetter(ItemStackTemplates::result2),
+                ItemStackTemplate.CODEC.optionalFieldOf("result3").forGetter(ItemStackTemplates::result3)
                 ).apply(builder, ItemStackTemplates::new)
         );
 
         public static final StreamCodec<RegistryFriendlyByteBuf, ItemStackTemplates> STREAM_CODEC = StreamCodec.composite(
                 ItemStackTemplate.STREAM_CODEC, ItemStackTemplates::result0,
-                ItemStackTemplate.STREAM_CODEC, ItemStackTemplates::result1,
-                ItemStackTemplate.STREAM_CODEC, ItemStackTemplates::result2,
-                ItemStackTemplate.STREAM_CODEC, ItemStackTemplates::result3,
+                OPTIONAL_ITEM_STACK_TEMPLATE_CODEC, ItemStackTemplates::result1,
+                OPTIONAL_ITEM_STACK_TEMPLATE_CODEC, ItemStackTemplates::result2,
+                OPTIONAL_ITEM_STACK_TEMPLATE_CODEC, ItemStackTemplates::result3,
                 ItemStackTemplates::new
         );
+    }
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, Optional<ItemStackTemplate>> OPTIONAL_ITEM_STACK_TEMPLATE_CODEC = oISTSC(ByteBufCodecs.optional(ItemStackTemplate.STREAM_CODEC));
+
+    //optionalItemStackTemplateStreamCodec
+    public static StreamCodec<RegistryFriendlyByteBuf, Optional<ItemStackTemplate>> oISTSC(StreamCodec<RegistryFriendlyByteBuf, Optional<ItemStackTemplate>> template) {
+
+        return new StreamCodec<>() {
+            @Override
+            public Optional<ItemStackTemplate> decode(RegistryFriendlyByteBuf buf) {
+                if ( buf.readBoolean() ) {
+                    ItemStackTemplate code = ItemStackTemplate.STREAM_CODEC.decode(buf);
+                    return Optional.of(code);
+                }
+                else return Optional.empty();
+            }
+
+            @Override
+            public void encode(RegistryFriendlyByteBuf buf, Optional<ItemStackTemplate> optional) {
+                if ( optional.isPresent() ) {
+                    buf.writeBoolean(true);
+                    ItemStackTemplate.STREAM_CODEC.encode(buf, optional.get());
+                }
+                else buf.writeBoolean(false);
+            }
+        };
     }
 
     public ItemStackTemplate getResult0() {
         return this.result0;
     }
 
-    public ItemStackTemplate getResult1() {
+    public Optional<ItemStackTemplate> getResult1() {
         return this.result1;
     }
 
-    public ItemStackTemplate getResult2() {
+    public Optional<ItemStackTemplate> getResult2() {
         return this.result2;
     }
 
-    public ItemStackTemplate getResult3() {
+    public Optional<ItemStackTemplate> getResult3() {
         return this.result3;
     }
 
@@ -162,16 +193,17 @@ public class AlembicRecipe extends MultiIORecipe<AlembicRecipeInput> {
             AlembicRecipe::new
     );
 
-    /*
     @Override
     public List<RecipeDisplay> display() {
         return List.of(new AlembicRecipeDisplay(
                 getInput0().display(),
                 getInput1().display(),
                 new SlotDisplay.ItemStackSlotDisplay(getResult0()),
+                new SlotDisplay.ItemStackSlotDisplay(getResult1()),
+                new SlotDisplay.ItemStackSlotDisplay(getResult2()),
+                new SlotDisplay.ItemStackSlotDisplay(getResult3()),
                 new SlotDisplay.ItemSlotDisplay(ModBlocks.ALEMBIC.asItem())));
     }
-    */
 
     public static final RecipeSerializer<AlembicRecipe> SERIALIZER = new RecipeSerializer<>(CODEC, STREAM_CODEC);
 
