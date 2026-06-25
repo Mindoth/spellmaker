@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "minecraft:copper_block",
+    "B": "minecraft:bricks",
+    "G": "minecraft:glass"
+  },
+  "pattern": [
+    "###",
+    "#G#",
+    "BBB"
+  ],
+  "result": {
+    "id": "spellmaker:alembic",
+    "count": 1
+  }
+}

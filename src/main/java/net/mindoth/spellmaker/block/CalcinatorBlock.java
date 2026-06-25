@@ -52,7 +52,7 @@ public class CalcinatorBlock extends AbstractFurnaceBlock {
 
     @Override
     public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
-        if (pState.getValue(LIT)) {
+        if ( pState.getValue(LIT) ) {
             double d0 = (double)pPos.getX() + 0.5D;
             double d1 = (double)pPos.getY();
             double d2 = (double)pPos.getZ() + 0.5D;
