@@ -1,6 +1,7 @@
 package net.mindoth.spellmaker.client.gui.menu;
 
 import net.mindoth.spellmaker.block.entity.AlembicBlockEntity;
+import net.mindoth.spellmaker.recipe.AlembicRecipe;
 import net.mindoth.spellmaker.registries.ModBlocks;
 import net.mindoth.spellmaker.registries.ModMenus;
 import net.minecraft.network.FriendlyByteBuf;
@@ -21,7 +22,7 @@ public class AlembicMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public AlembicMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(4));
+        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(7));
     }
 
     public AlembicMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
@@ -35,12 +36,22 @@ public class AlembicMenu extends AbstractContainerMenu {
 
         int INPUT_Y = 17;
         int OUTPUT_ROW_UPPER = 26;
+        int OUTPUT_COLUMN_LEFT = 106;
+        int OUTPUT_ROW_LOWER = 44;
+        int OUTPUT_COLUMN_RIGHT = 124;
         this.addSlot(new SlotItemHandler(this.blockEntity.itemHandler, 0, 47, INPUT_Y));
         this.addSlot(new SlotItemHandler(this.blockEntity.itemHandler, 1, 65, INPUT_Y));
-        this.addSlot(new SlotItemHandler(this.blockEntity.itemHandler, 2, 106, OUTPUT_ROW_UPPER));
-        this.addSlot(new SlotItemHandler(this.blockEntity.itemHandler, 3, 56, 53)); //Change index to 6.
+        this.addSlot(new AlembicResultSlot(this.blockEntity.itemHandler, 2, OUTPUT_COLUMN_LEFT, OUTPUT_ROW_UPPER));
+        this.addSlot(new AlembicResultSlot(this.blockEntity.itemHandler, 3, OUTPUT_COLUMN_RIGHT, OUTPUT_ROW_UPPER));
+        this.addSlot(new AlembicResultSlot(this.blockEntity.itemHandler, 4, OUTPUT_COLUMN_LEFT, OUTPUT_ROW_LOWER));
+        this.addSlot(new AlembicResultSlot(this.blockEntity.itemHandler, 5, OUTPUT_COLUMN_RIGHT, OUTPUT_ROW_LOWER));
+        this.addSlot(new AlembicFuelSlot(this, this.blockEntity.itemHandler, 6, 56, 53));
 
         addDataSlots(data);
+    }
+
+    protected boolean isFuel(ItemStack itemStack) {
+        return itemStack.getBurnTime(AlembicRecipe.Type.DISTILLING, this.level.fuelValues()) > 0;
     }
 
     public boolean isCrafting() {
@@ -71,7 +82,7 @@ public class AlembicMenu extends AbstractContainerMenu {
     private static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
     private static final int VANILLA_FIRST_SLOT_INDEX = 0;
     private static final int CUSTOM_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
-    private static final int CUSTOM_INVENTORY_SLOT_COUNT = 4;
+    private static final int CUSTOM_INVENTORY_SLOT_COUNT = 7;
 
     @Override
     public ItemStack quickMoveStack(Player playerIn, int pIndex) {

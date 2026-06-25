@@ -1,0 +1,23 @@
+{
+  "type": "spellmaker:distilling",
+  "ingredients": {
+    "ingredient0": "spellmaker:arcane_dust",
+    "ingredient0Amount": 4,
+    "ingredient1": "minecraft:diamond",
+    "ingredient1Amount": 1
+  },
+  "results": {
+    "result0": {
+      "id": "spellmaker:arcane_gem"
+    },
+    "result1": {
+      "id": "spellmaker:alchemical_ash"
+    },
+    "result2": {
+      "id": "spellmaker:alchemical_ash"
+    },
+    "result3": {
+      "id": "spellmaker:alchemical_ash"
+    }
+  }
+}

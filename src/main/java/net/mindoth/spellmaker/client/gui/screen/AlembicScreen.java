@@ -21,6 +21,12 @@ public class AlembicScreen extends AbstractContainerScreen<AlembicMenu> {
     }
 
     @Override
+    public void init() {
+        super.init();
+        this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
+    }
+
+    @Override
     public void extractRenderState(GuiGraphicsExtractor pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.extractRenderState(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         this.extractTooltip(pGuiGraphics, pMouseX, pMouseY);

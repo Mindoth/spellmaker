@@ -21,6 +21,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -39,7 +40,7 @@ import java.util.Optional;
 @SuppressWarnings("removal")
 public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
 
-    public final ItemStackHandler itemHandler = new ItemStackHandler(4) {
+    public final ItemStackHandler itemHandler = new ItemStackHandler(7) {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
@@ -49,7 +50,7 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
         }
     };
 
-    private final int defaultCookingTime = 64;
+    private final int defaultCookingTime = 1600;
 
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
         boolean changed = false;
@@ -92,10 +93,7 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
             }
             else resetProgress();
         }
-        else if ( this.cookingTimer > 0 ) {
-            //this.cookingTimer = Mth.clamp(this.cookingTimer - 2, 0, this.cookingTotalTime);
-            resetProgress();
-        }
+        else if ( this.cookingTimer > 0 ) resetProgress();
         if ( wasLit != isLit ) {
             changed = true;
             blockState = blockState.setValue(AlembicBlock.LIT, isLit);
@@ -124,27 +122,49 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
     private static final int OUTPUT_SLOT_1 = 3;
     private static final int OUTPUT_SLOT_2 = 4;
     private static final int OUTPUT_SLOT_3 = 5;
-    private static final int FUEL_SLOT = 3; //Change to 6.
+    private static final int FUEL_SLOT = 6;
 
     private void craftItem() {
-        Optional<RecipeHolder<AlembicRecipe>> recipe = getCurrentRecipe();
-        ItemStack output = recipe.get().value().result().create();
+        Optional<RecipeHolder<AlembicRecipe>> recipeOptional = getCurrentRecipe();
+        AlembicRecipe recipe = recipeOptional.get().value();
+        Item stackItem0 = this.itemHandler.getStackInSlot(0).getItem();
+        Item stackItem1 = this.itemHandler.getStackInSlot(1).getItem();
+        Item recipeItem0 = recipe.getInput0().getValues().get(0).value();
+        Item recipeItem1 = recipe.getInput1().getValues().get(0).value();
+        int input0Amount = recipe.getInput0Amount();
+        int input1Amount = recipe.getInput1Amount();
+        if ( stackItem0 == recipeItem0 && stackItem1 == recipeItem1 ) {
+            this.itemHandler.extractItem(INPUT_SLOT_0, input0Amount, false);
+            this.itemHandler.extractItem(INPUT_SLOT_1, input1Amount, false);
+        }
+        else {
+            this.itemHandler.extractItem(INPUT_SLOT_0, input1Amount, false);
+            this.itemHandler.extractItem(INPUT_SLOT_1, input0Amount, false);
+        }
+        setOutputSlot(OUTPUT_SLOT_0, recipe.getResult0().create());
+        setOutputSlot(OUTPUT_SLOT_1, recipe.getResult1().create());
+        setOutputSlot(OUTPUT_SLOT_2, recipe.getResult2().create());
+        setOutputSlot(OUTPUT_SLOT_3, recipe.getResult3().create());
+    }
 
-        this.itemHandler.extractItem(INPUT_SLOT_0, 1, false);
-        this.itemHandler.extractItem(INPUT_SLOT_1, 1, false);
-        this.itemHandler.setStackInSlot(OUTPUT_SLOT_0, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(OUTPUT_SLOT_0).getCount() + output.getCount()));
-        /*
-        this.itemHandler.setStackInSlot(OUTPUT_SLOT_1, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(OUTPUT_SLOT_1).getCount() + output.getCount()));
-        this.itemHandler.setStackInSlot(OUTPUT_SLOT_2, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(OUTPUT_SLOT_2).getCount() + output.getCount()));
-        this.itemHandler.setStackInSlot(OUTPUT_SLOT_3, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(OUTPUT_SLOT_3).getCount() + output.getCount()));
-        */
+    private void setOutputSlot(int slot, ItemStack output) {
+        if ( !output.isEmpty() ) this.itemHandler.setStackInSlot(slot, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(slot).getCount() + output.getCount()));
     }
 
     private boolean hasRecipe() {
         Optional<RecipeHolder<AlembicRecipe>> recipe = getCurrentRecipe();
         if ( recipe.isEmpty() ) return false;
-        ItemStack output = recipe.get().value().result().create();
-        return canInsertAmountIntoOutputSlot(output.getCount()) && canInsertItemIntoOutputSlot(output);
+
+        boolean slot0 = isFitting(OUTPUT_SLOT_0, recipe.get().value().getResult0().create());
+        boolean slot1 = isFitting(OUTPUT_SLOT_1, recipe.get().value().getResult1().create());
+        boolean slot2 = isFitting(OUTPUT_SLOT_2, recipe.get().value().getResult2().create());
+        boolean slot3 = isFitting(OUTPUT_SLOT_3, recipe.get().value().getResult3().create());
+
+        return slot0 && slot1 && slot2 && slot3;
+    }
+
+    private boolean isFitting(int slot, ItemStack output) {
+        return output.isEmpty() || (canInsertAmountIntoOutputSlot(slot, output) && canInsertItemIntoOutputSlot(slot, output));
     }
 
     private Optional<RecipeHolder<AlembicRecipe>> getCurrentRecipe() {
@@ -155,15 +175,15 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
                 .getRecipeFor(AlembicRecipe.Type.DISTILLING, new AlembicRecipeInput(inputs), getLevel());
     }
 
-    private boolean canInsertItemIntoOutputSlot(ItemStack output) {
-        return this.itemHandler.getStackInSlot(OUTPUT_SLOT_0).isEmpty() || this.itemHandler.getStackInSlot(OUTPUT_SLOT_0).getItem() == output.getItem();
+    private boolean canInsertItemIntoOutputSlot(int slot, ItemStack output) {
+        return this.itemHandler.getStackInSlot(slot).isEmpty() || this.itemHandler.getStackInSlot(slot).getItem() == output.getItem();
     }
 
-    private boolean canInsertAmountIntoOutputSlot(int count) {
-        ItemStack stack = this.itemHandler.getStackInSlot(OUTPUT_SLOT_0);
+    private boolean canInsertAmountIntoOutputSlot(int slot, ItemStack output) {
+        ItemStack stack = this.itemHandler.getStackInSlot(slot);
         int maxCount = stack.isEmpty() ? 64 : stack.getMaxStackSize();
         int currentCount = stack.getCount();
-        return maxCount >= currentCount + count;
+        return maxCount >= currentCount + output.getCount();
     }
 
     protected final ContainerData data;
