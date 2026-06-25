@@ -48,15 +48,16 @@ public class AbstractCalcinatorScreen<T extends AbstractFurnaceMenu> extends Abs
         int i = this.leftPos;
         int j = this.topPos;
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, this.texture, i, j, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
-        boolean i1;
-        int j1;
+
+        int burnProgressWidth;
         if ( this.menu.isLit() ) {
-            i1 = true;
-            j1 = Mth.ceil(this.menu.getLitProgress() * 13.0F) + 1;
-            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, this.litProgressSprite, i + 56, j + 36 + 14 - j1, 0, 14 - j1, 14, j1, 14, 14);
+            burnProgressWidth = Mth.ceil(this.menu.getLitProgress() * 13.0F) + 1;
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, this.litProgressSprite, i + 56, j + 36 + 14 - burnProgressWidth, 0, 14 - burnProgressWidth,
+                    14, burnProgressWidth, 14, 14);
         }
-        i1 = true;
-        j1 = Mth.ceil(this.menu.getBurnProgress() * 24.0F);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, this.burnProgressSprite, i + 79, j + 34, 0, 0, j1, 16, 24, 16);
+
+        burnProgressWidth = Mth.ceil(this.menu.getBurnProgress() * 24.0F);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, this.burnProgressSprite, i + 79, j + 34, 0, 0,
+                burnProgressWidth, 16, 24, 16);
     }
 }

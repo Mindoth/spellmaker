@@ -1,9 +1,11 @@
 package net.mindoth.spellmaker.block.entity;
 
+import com.google.common.collect.Lists;
+import net.mindoth.spellmaker.block.AlembicBlock;
 import net.mindoth.spellmaker.client.gui.menu.AlembicMenu;
 import net.mindoth.spellmaker.recipe.AlembicRecipe;
+import net.mindoth.spellmaker.recipe.AlembicRecipeInput;
 import net.mindoth.spellmaker.registries.ModBlocks;
-import net.mindoth.spellmaker.registries.ModRecipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -20,22 +22,24 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.FuelValues;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("removal")
 public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
 
-    public final ItemStackHandler itemHandler = new ItemStackHandler(2) {
+    public final ItemStackHandler itemHandler = new ItemStackHandler(4) {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
@@ -45,9 +49,128 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
         }
     };
 
+    private final int defaultCookingTime = 64;
+
+    public void tick(Level level, BlockPos blockPos, BlockState blockState) {
+        boolean changed = false;
+        boolean isLit;
+        boolean wasLit;
+        if ( this.litTimeRemaining > 0 ) {
+            wasLit = true;
+            --this.litTimeRemaining;
+            isLit = this.litTimeRemaining > 0;
+        }
+        else {
+            wasLit = false;
+            isLit = false;
+        }
+        ItemStack fuel = this.itemHandler.getStackInSlot(FUEL_SLOT);
+        boolean hasFuel = !fuel.isEmpty();
+        boolean hasRecipe = hasRecipe();
+        if ( isLit || hasFuel && hasRecipe ) {
+            if ( hasRecipe() ) {
+                if ( !isLit ) {
+                    int newLitTime = getBurnDuration(level.fuelValues(), fuel);
+                    this.litTimeRemaining = newLitTime;
+                    this.litTotalTime = newLitTime;
+                    if ( newLitTime > 0 ) {
+                        consumeFuel(FUEL_SLOT, fuel);
+                        isLit = true;
+                        changed = true;
+                    }
+                }
+                if ( isLit ) {
+                    ++this.cookingTimer;
+                    if ( this.cookingTimer >= this.cookingTotalTime ) {
+                        resetProgress();
+                        this.cookingTotalTime = defaultCookingTime;
+                        craftItem();
+                        changed = true;
+                    }
+                }
+                else resetProgress();
+            }
+            else resetProgress();
+        }
+        else if ( this.cookingTimer > 0 ) {
+            //this.cookingTimer = Mth.clamp(this.cookingTimer - 2, 0, this.cookingTotalTime);
+            resetProgress();
+        }
+        if ( wasLit != isLit ) {
+            changed = true;
+            blockState = blockState.setValue(AlembicBlock.LIT, isLit);
+            level.setBlock(blockPos, blockState, 3);
+        }
+        if ( changed ) setChanged(level, blockPos, blockState);
+    }
+
+    private void resetProgress() {
+        this.cookingTimer = 0;
+    }
+
+    private int getBurnDuration(FuelValues fuelValues, ItemStack itemStack) {
+        return itemStack.getBurnTime(AlembicRecipe.Type.DISTILLING, fuelValues);
+    }
+
+    private void consumeFuel(int slot, ItemStack fuel) {
+        ItemStackTemplate remainder = fuel.getCraftingRemainder();
+        fuel.shrink(1);
+        if ( fuel.isEmpty() ) this.itemHandler.setStackInSlot(slot, remainder != null ? remainder.create() : ItemStack.EMPTY);
+    }
+
+    private static final int INPUT_SLOT_0 = 0;
+    private static final int INPUT_SLOT_1 = 1;
+    private static final int OUTPUT_SLOT_0 = 2;
+    private static final int OUTPUT_SLOT_1 = 3;
+    private static final int OUTPUT_SLOT_2 = 4;
+    private static final int OUTPUT_SLOT_3 = 5;
+    private static final int FUEL_SLOT = 3; //Change to 6.
+
+    private void craftItem() {
+        Optional<RecipeHolder<AlembicRecipe>> recipe = getCurrentRecipe();
+        ItemStack output = recipe.get().value().result().create();
+
+        this.itemHandler.extractItem(INPUT_SLOT_0, 1, false);
+        this.itemHandler.extractItem(INPUT_SLOT_1, 1, false);
+        this.itemHandler.setStackInSlot(OUTPUT_SLOT_0, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(OUTPUT_SLOT_0).getCount() + output.getCount()));
+        /*
+        this.itemHandler.setStackInSlot(OUTPUT_SLOT_1, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(OUTPUT_SLOT_1).getCount() + output.getCount()));
+        this.itemHandler.setStackInSlot(OUTPUT_SLOT_2, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(OUTPUT_SLOT_2).getCount() + output.getCount()));
+        this.itemHandler.setStackInSlot(OUTPUT_SLOT_3, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(OUTPUT_SLOT_3).getCount() + output.getCount()));
+        */
+    }
+
+    private boolean hasRecipe() {
+        Optional<RecipeHolder<AlembicRecipe>> recipe = getCurrentRecipe();
+        if ( recipe.isEmpty() ) return false;
+        ItemStack output = recipe.get().value().result().create();
+        return canInsertAmountIntoOutputSlot(output.getCount()) && canInsertItemIntoOutputSlot(output);
+    }
+
+    private Optional<RecipeHolder<AlembicRecipe>> getCurrentRecipe() {
+        List<ItemStack> inputs = Lists.newArrayList();
+        inputs.add(this.itemHandler.getStackInSlot(INPUT_SLOT_0));
+        inputs.add(this.itemHandler.getStackInSlot(INPUT_SLOT_1));
+        return ((ServerLevel)this.getLevel()).recipeAccess()
+                .getRecipeFor(AlembicRecipe.Type.DISTILLING, new AlembicRecipeInput(inputs), getLevel());
+    }
+
+    private boolean canInsertItemIntoOutputSlot(ItemStack output) {
+        return this.itemHandler.getStackInSlot(OUTPUT_SLOT_0).isEmpty() || this.itemHandler.getStackInSlot(OUTPUT_SLOT_0).getItem() == output.getItem();
+    }
+
+    private boolean canInsertAmountIntoOutputSlot(int count) {
+        ItemStack stack = this.itemHandler.getStackInSlot(OUTPUT_SLOT_0);
+        int maxCount = stack.isEmpty() ? 64 : stack.getMaxStackSize();
+        int currentCount = stack.getCount();
+        return maxCount >= currentCount + count;
+    }
+
     protected final ContainerData data;
-    private int progress = 0;
-    private int maxProgress = 72;
+    private int litTimeRemaining = 0;
+    private int litTotalTime = 0;
+    private int cookingTimer = 0;
+    private int cookingTotalTime = defaultCookingTime;
 
     public AlembicBlockEntity(BlockPos pos, BlockState blockState) {
         super(ModBlocks.ALEMBIC_BLOCK_ENTITY.get(), pos, blockState);
@@ -55,8 +178,10 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
             @Override
             public int get(int i) {
                 return switch (i) {
-                    case 0 -> AlembicBlockEntity.this.progress;
-                    case 1 -> AlembicBlockEntity.this.maxProgress;
+                    case 0 -> AlembicBlockEntity.this.litTimeRemaining;
+                    case 1 -> AlembicBlockEntity.this.litTotalTime;
+                    case 2 -> AlembicBlockEntity.this.cookingTimer;
+                    case 3 -> AlembicBlockEntity.this.cookingTotalTime;
                     default -> 0;
                 };
             }
@@ -64,14 +189,16 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
             @Override
             public void set(int i, int value) {
                 switch (i) {
-                    case 0: AlembicBlockEntity.this.progress = value;
-                    case 1: AlembicBlockEntity.this.maxProgress = value;
+                    case 0: AlembicBlockEntity.this.litTimeRemaining = value;
+                    case 1: AlembicBlockEntity.this.litTotalTime = value;
+                    case 2: AlembicBlockEntity.this.cookingTimer = value;
+                    case 3: AlembicBlockEntity.this.cookingTotalTime = value;
                 }
             }
 
             @Override
             public int getCount() {
-                return 2;
+                return 4;
             }
         };
     }
@@ -95,10 +222,18 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        drops();
+        super.preRemoveSideEffects(pos, state);
+    }
+
+    @Override
     protected void saveAdditional(ValueOutput output) {
         this.itemHandler.serialize(output);
-        output.putInt("alembic.progress", this.progress);
-        output.putInt("alembic.max_progress", this.maxProgress);
+        output.putInt("alembic.lit_time_remaining", this.litTimeRemaining);
+        output.putInt("alembic.lit_total_time", this.litTotalTime);
+        output.putInt("alembic.cooking_time_spent", this.cookingTimer);
+        output.putInt("alembic.cooking_total_time", this.cookingTotalTime);
         super.saveAdditional(output);
     }
 
@@ -106,93 +241,10 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         this.itemHandler.deserialize(input);
-        this.progress = input.getIntOr("alembic.progress", 0);
-        this.maxProgress = input.getIntOr("alembic.max_progress", 0);
-    }
-
-    public void tick(Level level, BlockPos blockPos, BlockState blockState) {
-        if ( hasRecipe() ) {
-            increaseCraftingProgress();
-            setChanged(level, blockPos, blockState);
-            if ( hasCraftingFinished() ) {
-                craftItem();
-                resetProgress();
-            }
-        }
-        else {
-            resetProgress();
-        }
-    }
-
-    private static final int INPUT_SLOT_0 = 0;
-    private static final int INPUT_SLOT_1 = 1;
-    private static final int OUTPUT_SLOT_0 = 1; //Change to 2.
-    private static final int OUTPUT_SLOT_1 = 3;
-    private static final int OUTPUT_SLOT_2 = 4;
-    private static final int OUTPUT_SLOT_3 = 5;
-    private static final int FUEL_SLOT = 6;
-
-    private void craftItem() {
-        /*
-        Optional<RecipeHolder<AlembicRecipe>> recipe = getCurrentRecipe();
-        ItemStack output = recipe.get().value().result().create();
-        */
-        ItemStack output = new ItemStack(Items.DIAMOND);
-
-        this.itemHandler.extractItem(INPUT_SLOT_0, 1, false);
-        //this.itemHandler.extractItem(INPUT_SLOT_1, 1, false);
-        this.itemHandler.setStackInSlot(OUTPUT_SLOT_0, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(OUTPUT_SLOT_0).getCount() + output.getCount()));
-        /*
-        this.itemHandler.setStackInSlot(OUTPUT_SLOT_1, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(OUTPUT_SLOT_1).getCount() + output.getCount()));
-        this.itemHandler.setStackInSlot(OUTPUT_SLOT_2, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(OUTPUT_SLOT_2).getCount() + output.getCount()));
-        this.itemHandler.setStackInSlot(OUTPUT_SLOT_3, new ItemStack(output.getItem(), this.itemHandler.getStackInSlot(OUTPUT_SLOT_3).getCount() + output.getCount()));
-        */
-    }
-
-    private void resetProgress() {
-        this.progress = 0;
-        this.maxProgress = 72;
-    }
-
-    private boolean hasCraftingFinished() {
-        return this.progress >= this.maxProgress;
-    }
-
-    private void increaseCraftingProgress() {
-        this.progress++;
-    }
-
-    private boolean hasRecipe() {
-        ItemStack output = new ItemStack(Items.DIAMOND);
-        return this.itemHandler.getStackInSlot(INPUT_SLOT_0).getItem() == Items.DIRT &&
-                canInsertAmountIntoOutputSlot(output.getCount()) && canInsertItemIntoOutputSlot(output);
-    }
-
-    /*
-    private boolean hasRecipe() {
-        Optional<RecipeHolder<AlembicRecipe>> recipe = getCurrentRecipe();
-        if ( recipe.isEmpty() ) {
-            return false;
-        }
-        ItemStack output = recipe.get().value().result().create();
-        return canInsertAmountIntoOutputSlot(output.getCount()) && canInsertItemIntoOutputSlot(output);
-    }
-
-    private Optional<RecipeHolder<AlembicRecipe>> getCurrentRecipe() {
-        return ((ServerLevel)this.level).recipeAccess()
-                .getRecipeFor(AlembicRecipe.Type.DISTILLING, new AlembicRecipeInput(this.itemHandler.getStackInSlot(INPUT_SLOT_0)), level);
-    }
-    */
-
-    private boolean canInsertItemIntoOutputSlot(ItemStack output) {
-        return this.itemHandler.getStackInSlot(OUTPUT_SLOT_0).isEmpty() || this.itemHandler.getStackInSlot(OUTPUT_SLOT_0).getItem() == output.getItem();
-    }
-
-    private boolean canInsertAmountIntoOutputSlot(int count) {
-        ItemStack stack = this.itemHandler.getStackInSlot(OUTPUT_SLOT_0);
-        int maxCount = stack.isEmpty() ? 64 : stack.getMaxStackSize();
-        int currentCount = stack.getCount();
-        return maxCount >= currentCount + count;
+        this.litTimeRemaining = input.getIntOr("alembic.lit_time_remaining", 0);
+        this.litTotalTime = input.getIntOr("alembic.lit_total_time", 0);
+        this.cookingTimer = input.getIntOr("alembic.cooking_time_spent", 0);
+        this.cookingTotalTime = input.getIntOr("alembic.cooking_total_time", 0);
     }
 
     @Override

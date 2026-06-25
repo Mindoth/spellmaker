@@ -4,6 +4,7 @@ import net.mindoth.spellmaker.block.entity.AlembicBlockEntity;
 import net.mindoth.spellmaker.registries.ModBlocks;
 import net.mindoth.spellmaker.registries.ModMenus;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -20,7 +21,7 @@ public class AlembicMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public AlembicMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
+        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(4));
     }
 
     public AlembicMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
@@ -32,22 +33,35 @@ public class AlembicMenu extends AbstractContainerMenu {
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
 
-        this.addSlot(new SlotItemHandler(this.blockEntity.itemHandler, 0, 54, 34));
-        this.addSlot(new SlotItemHandler(this.blockEntity.itemHandler, 1, 104, 34));
+        int INPUT_Y = 17;
+        int OUTPUT_ROW_UPPER = 26;
+        this.addSlot(new SlotItemHandler(this.blockEntity.itemHandler, 0, 47, INPUT_Y));
+        this.addSlot(new SlotItemHandler(this.blockEntity.itemHandler, 1, 65, INPUT_Y));
+        this.addSlot(new SlotItemHandler(this.blockEntity.itemHandler, 2, 106, OUTPUT_ROW_UPPER));
+        this.addSlot(new SlotItemHandler(this.blockEntity.itemHandler, 3, 56, 53)); //Change index to 6.
 
         addDataSlots(data);
     }
 
     public boolean isCrafting() {
-        return data.get(0) > 0;
+        return data.get(2) > 0;
     }
 
-    public int getScaledArrowProgress() {
-        int progress = this.data.get(0);
-        int maxProgress = this.data.get(1);
-        int arrowPixelSize = 24;
+    public float getBurnProgress() {
+        int current = this.data.get(2);
+        int total = this.data.get(3);
+        return total != 0 && current != 0 ? Mth.clamp((float)current / (float)total, 0.0F, 1.0F) : 0.0F;
+    }
 
-        return maxProgress != 0 && progress != 0 ? progress * arrowPixelSize / maxProgress : 0;
+    public boolean isLit() {
+        return this.data.get(0) > 0;
+    }
+
+    public float getLitProgress() {
+        int litDuration = this.data.get(1);
+        if ( litDuration == 0 ) litDuration = 200;
+
+        return Mth.clamp((float)this.data.get(0) / (float)litDuration, 0.0F, 1.0F);
     }
 
     private static final int HOTBAR_SLOT_COUNT = 9;
@@ -56,22 +70,22 @@ public class AlembicMenu extends AbstractContainerMenu {
     private static final int PLAYER_INVENTORY_SLOT_COUNT = PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT;
     private static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
     private static final int VANILLA_FIRST_SLOT_INDEX = 0;
-    private static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
-    private static final int TE_INVENTORY_SLOT_COUNT = 2;
+    private static final int CUSTOM_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
+    private static final int CUSTOM_INVENTORY_SLOT_COUNT = 4;
 
     @Override
     public ItemStack quickMoveStack(Player playerIn, int pIndex) {
         Slot sourceSlot = slots.get(pIndex);
-        if ( sourceSlot == null || !sourceSlot.hasItem() ) return ItemStack.EMPTY;  //EMPTY_ITEM
+        if ( sourceSlot == null || !sourceSlot.hasItem() ) return ItemStack.EMPTY;
         ItemStack sourceStack = sourceSlot.getItem();
         ItemStack copyOfSourceStack = sourceStack.copy();
 
         if ( pIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT ) {
-            if ( !moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT, false) ) {
+            if ( !moveItemStackTo(sourceStack, CUSTOM_INVENTORY_FIRST_SLOT_INDEX, CUSTOM_INVENTORY_FIRST_SLOT_INDEX + CUSTOM_INVENTORY_SLOT_COUNT, false) ) {
                 return ItemStack.EMPTY;
             }
         }
-        else if ( pIndex < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT ) {
+        else if ( pIndex < CUSTOM_INVENTORY_FIRST_SLOT_INDEX + CUSTOM_INVENTORY_SLOT_COUNT) {
             if ( !moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false) ) {
                 return ItemStack.EMPTY;
             }

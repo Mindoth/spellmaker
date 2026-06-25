@@ -40,7 +40,7 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> ALEMBIC = registerBlock("alembic",
             (properties) -> new AlembicBlock(properties.instrument(NoteBlockInstrument.BASEDRUM)
-                    .requiresCorrectToolForDrops().strength(3.5F)/*.lightLevel(litBlockEmission(13))*/
+                    .requiresCorrectToolForDrops().strength(3.5F).lightLevel(litBlockEmission(13))
             ));
 
 

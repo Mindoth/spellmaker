@@ -40,5 +40,5 @@ public class ModRecipes {
     public static final DeferredRegister<RecipeBookCategory> RECIPE_BOOK_CATEGORIES = DeferredRegister.create(Registries.RECIPE_BOOK_CATEGORY, SpellMaker.MOD_ID);
 
     public static final Supplier<RecipeBookCategory> CALCINATOR_CATEGORY = RECIPE_BOOK_CATEGORIES.register(CalcinatingRecipe.Type.ID, RecipeBookCategory::new);
-    //public static final Supplier<RecipeBookCategory> ALEMBIC_CATEGORY = RECIPE_BOOK_CATEGORIES.register(AlembicRecipe.Type.ID, RecipeBookCategory::new);
+    public static final Supplier<RecipeBookCategory> ALEMBIC_CATEGORY = RECIPE_BOOK_CATEGORIES.register(AlembicRecipe.Type.ID, RecipeBookCategory::new);
 }

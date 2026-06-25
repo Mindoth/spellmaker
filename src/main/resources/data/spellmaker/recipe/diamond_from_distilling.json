@@ -1,0 +1,10 @@
+{
+  "type": "spellmaker:distilling",
+  "ingredients": {
+    "ingredient0": "minecraft:dirt",
+    "ingredient1": "minecraft:stone"
+  },
+  "result": {
+    "id": "minecraft:diamond"
+  }
+}
