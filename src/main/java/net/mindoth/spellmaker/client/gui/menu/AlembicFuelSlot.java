@@ -7,9 +7,9 @@ import net.neoforged.neoforge.items.SlotItemHandler;
 
 @SuppressWarnings("removal")
 public class AlembicFuelSlot extends SlotItemHandler {
-    private final AlembicMenu menu;
+    private final AbstractAlembicMenu menu;
 
-    public AlembicFuelSlot(AlembicMenu menu, IItemHandler itemHandler, int slot, int x, int y) {
+    public AlembicFuelSlot(AbstractAlembicMenu menu, IItemHandler itemHandler, int slot, int x, int y) {
         super(itemHandler, slot, x, y);
         this.menu = menu;
     }

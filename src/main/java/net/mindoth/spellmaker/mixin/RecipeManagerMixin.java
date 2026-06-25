@@ -1,5 +1,6 @@
 package net.mindoth.spellmaker.mixin;
 
+import net.mindoth.spellmaker.recipe.AlembicRecipe;
 import net.mindoth.spellmaker.recipe.CalcinatingRecipe;
 import net.mindoth.spellmaker.registries.ModRecipes;
 import net.minecraft.resources.ResourceKey;
@@ -30,6 +31,8 @@ public class RecipeManagerMixin {
         Map<ResourceKey<RecipePropertySet>, RecipeManager.IngredientExtractor> copy = new LinkedHashMap<>(RECIPE_PROPERTY_SETS);
 
         copy.put(ModRecipes.CALCINATOR_INPUT, recipe -> recipe instanceof CalcinatingRecipe m ? Optional.of(m.input()) : Optional.empty());
+        copy.put(ModRecipes.ALEMBIC_INPUT_0, recipe -> recipe instanceof AlembicRecipe m ? Optional.of(m.getInput0()) : Optional.empty());
+        copy.put(ModRecipes.ALEMBIC_INPUT_1, recipe -> recipe instanceof AlembicRecipe m ? Optional.of(m.getInput1()) : Optional.empty());
 
         RECIPE_PROPERTY_SETS = Map.copyOf(copy);
     }

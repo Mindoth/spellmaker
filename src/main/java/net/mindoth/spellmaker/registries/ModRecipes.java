@@ -33,7 +33,8 @@ public class ModRecipes {
     }
 
     public static final ResourceKey<RecipePropertySet> CALCINATOR_INPUT = register("calcinator_input");
-    //public static final ResourceKey<RecipePropertySet> ALEMBIC_INPUT = register("alembic_input");
+    public static final ResourceKey<RecipePropertySet> ALEMBIC_INPUT_0 = register("alembic_input_0");
+    public static final ResourceKey<RecipePropertySet> ALEMBIC_INPUT_1 = register("alembic_input_1");
 
 
 

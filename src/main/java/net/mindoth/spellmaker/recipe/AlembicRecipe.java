@@ -11,6 +11,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
@@ -199,10 +200,15 @@ public class AlembicRecipe extends MultiIORecipe<AlembicRecipeInput> {
                 getInput0().display(),
                 getInput1().display(),
                 new SlotDisplay.ItemStackSlotDisplay(getResult0()),
-                new SlotDisplay.ItemStackSlotDisplay(getResult1()),
-                new SlotDisplay.ItemStackSlotDisplay(getResult2()),
-                new SlotDisplay.ItemStackSlotDisplay(getResult3()),
+                new SlotDisplay.ItemStackSlotDisplay(optionalToTemplate(getResult1())),
+                new SlotDisplay.ItemStackSlotDisplay(optionalToTemplate(getResult2())),
+                new SlotDisplay.ItemStackSlotDisplay(optionalToTemplate(getResult3())),
                 new SlotDisplay.ItemSlotDisplay(ModBlocks.ALEMBIC.asItem())));
+    }
+
+    //TODO: don't use sticks
+    private ItemStackTemplate optionalToTemplate(Optional<ItemStackTemplate> template) {
+        return template.orElseGet(() -> ItemStackTemplate.fromStack(new ItemStack(Items.STICK)));
     }
 
     public static final RecipeSerializer<AlembicRecipe> SERIALIZER = new RecipeSerializer<>(CODEC, STREAM_CODEC);

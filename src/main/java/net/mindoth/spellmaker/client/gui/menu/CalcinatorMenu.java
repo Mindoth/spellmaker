@@ -11,11 +11,11 @@ import net.minecraft.world.inventory.RecipeBookType;
 
 public class CalcinatorMenu extends AbstractFurnaceMenu {
 
-    public CalcinatorMenu(int pContainerId, Inventory pPlayerInventory, FriendlyByteBuf buf) {
-        super(ModMenus.CALCINATOR_MENU.get(), ModRecipes.CALCINATOR_INPUT, RecipeBookType.FURNACE, pContainerId, pPlayerInventory);
+    public CalcinatorMenu(int containerId, Inventory inventory, FriendlyByteBuf buf) {
+        super(ModMenus.CALCINATOR_MENU.get(), ModRecipes.CALCINATOR_INPUT, RecipeBookType.FURNACE, containerId, inventory);
     }
 
-    public CalcinatorMenu(int pContainerId, Inventory pPlayerInventory, Container pFurnaceContainer, ContainerData pFurnaceData) {
-        super(ModMenus.CALCINATOR_MENU.get(), ModRecipes.CALCINATOR_INPUT, RecipeBookType.FURNACE, pContainerId, pPlayerInventory, pFurnaceContainer, pFurnaceData);
+    public CalcinatorMenu(int containerId, Inventory inventory, Container container, ContainerData data) {
+        super(ModMenus.CALCINATOR_MENU.get(), ModRecipes.CALCINATOR_INPUT, RecipeBookType.FURNACE, containerId, inventory, container, data);
     }
 }
