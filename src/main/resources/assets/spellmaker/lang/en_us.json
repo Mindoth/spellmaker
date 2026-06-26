@@ -22,15 +22,14 @@
   "tooltip.recipebook.toggleRecipes.distillable": "Showing Distillable",
 
 
-  "item.spellmaker.sigil_essence": "Sigil Essence",
-  "item.spellmaker.wool_cloth": "Wool Cloth",
-  "item.spellmaker.arcane_cloth": "Arcane Cloth",
-  "item.spellmaker.forest_cloth": "Forest Cloth",
-  "item.spellmaker.arcane_gem": "Arcane Gem",
-  "item.spellmaker.parchment": "Parchment",
   "item.spellmaker.plant_fiber": "Plant Fiber",
+
   "item.spellmaker.wood_ash": "Wood Ash",
   "item.spellmaker.alchemical_ash": "Alchemical Ash",
+
+  "item.spellmaker.basic_sigil_essence": "Basic Sigil Essence",
+  "item.spellmaker.refined_sigil_essence": "Refined Sigil Essence",
+
   "item.spellmaker.destruction_dust": "Destruction Dust",
   "item.spellmaker.alteration_dust": "Alteration Dust",
   "item.spellmaker.restoration_dust": "Restoration Dust",
@@ -38,14 +37,28 @@
   "item.spellmaker.illusion_dust": "Illusion Dust",
   "item.spellmaker.arcane_dust": "Arcane Dust",
 
+  "item.spellmaker.arcane_gem": "Arcane Gem",
+  "item.spellmaker.mana_essence": "Mana Essence",
+  "item.spellmaker.living_essence": "Living Essence",
+
+  "item.spellmaker.parchment": "Parchment",
+
+  "item.spellmaker.wool_cloth": "Wool Cloth",
+  "item.spellmaker.arcane_cloth": "Arcane Cloth",
+  "item.spellmaker.forest_cloth": "Forest Cloth",
+
+
   "item.spellmaker.golden_bread": "Golden Bread",
 
+
   "item.spellmaker.sickle": "Sickle",
+
+  "item.spellmaker.spell_book": "Spell Book",
 
   "item.spellmaker.wooden_staff": "Wooden Staff",
   "item.spellmaker.golden_staff": "Golden Staff",
   "item.spellmaker.netherite_staff": "Netherite Staff",
-  "item.spellmaker.spell_book": "Spell Book",
+
   "item.spellmaker.wool_robe_hood": "Wool Robe Hood",
   "item.spellmaker.wool_robe_hat": "Wool Robe Hat",
   "item.spellmaker.wool_robe_top": "Wool Robe Top",
@@ -60,6 +73,7 @@
   "item.spellmaker.forest_robe_top": "Forest Robe Top",
   "item.spellmaker.forest_robe_bottom": "Forest Robe Bottom",
   "item.spellmaker.forest_robe_boots": "Forest Robe Boots",
+
 
   "item.spellmaker.excavation_sigil": "Excavation Sigil",
   "item.spellmaker.fire_sigil": "Fire Sigil",
@@ -96,8 +110,8 @@
   "tooltip.spellmaker.magnitude": "Magnitude",
   "tooltip.spellmaker.duration": "Duration",
 
-  "attribute.spellmaker.mana_max": "\u00A79Magick\u00A7r",
-  "attribute.spellmaker.mana_cost_multiplier": "\u00A79Magick Discount\u00A7r",
-  "attribute.spellmaker.mana_regeneration": "\u00A79Magick Regeneration\u00A7r",
+  "attribute.spellmaker.mana_max": "\u00A79Mana Maximum\u00A7r",
+  "attribute.spellmaker.mana_cost_multiplier": "\u00A79Mana Discount\u00A7r",
+  "attribute.spellmaker.mana_regeneration": "\u00A79Mana Regeneration\u00A7r",
   "attribute.spellmaker.self_polymorph_duration": "\u00A79Self Polymorph Duration\u00A7r"
 }

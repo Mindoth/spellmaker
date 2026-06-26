@@ -2,13 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "key": {
     "S": "minecraft:string",
-    "A": "spellmaker:arcane_dust",
+    "E": "spellmaker:mana_essence",
     "W": "#minecraft:wool"
   },
   "pattern": [
-    "ASA",
+    "ESE",
     "SWS",
-    "ASA"
+    "ESE"
   ],
   "result": {
     "id": "spellmaker:arcane_cloth",

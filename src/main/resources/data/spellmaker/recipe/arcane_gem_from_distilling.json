@@ -11,9 +11,11 @@
       "id": "spellmaker:arcane_gem"
     },
     "result1": {
-      "id": "spellmaker:alchemical_ash"
+      "count": 4,
+      "id": "spellmaker:mana_essence"
     },
     "result2": {
+      "count": 2,
       "id": "spellmaker:alchemical_ash"
     }
   }

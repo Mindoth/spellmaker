@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "spellmaker:sigil_essence",
+    "spellmaker:basic_sigil_essence",
     "spellmaker:destruction_dust",
     "minecraft:prismarine_shard"
   ],

@@ -2,13 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "key": {
     "S": "minecraft:string",
-    "A": "spellmaker:restoration_dust",
+    "E": "spellmaker:living_essence",
     "L": "minecraft:leather"
   },
   "pattern": [
-    "ASA",
+    "ESE",
     "SLS",
-    "ASA"
+    "ESE"
   ],
   "result": {
     "id": "spellmaker:forest_cloth",

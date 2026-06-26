@@ -5,7 +5,7 @@ import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.ModCapabilities;
 import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.armor.AttributeContainer;
-import net.mindoth.spellmaker.item.armor.ModArmorItem;
+import net.mindoth.spellmaker.item.armor.MagickArmorItem;
 import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
 import net.mindoth.spellmaker.registries.ModData;
@@ -189,10 +189,10 @@ public class StaffItem extends MagickWeapon {
 
     private List<EquipmentSlot> getSlotList(Player player) {
         List<EquipmentSlot> list = Lists.newArrayList();
-        if ( player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof ModArmorItem && player.getItemBySlot(EquipmentSlot.HEAD).isDamaged() ) list.add(EquipmentSlot.HEAD);
-        if ( player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof ModArmorItem && player.getItemBySlot(EquipmentSlot.CHEST).isDamaged() ) list.add(EquipmentSlot.CHEST);
-        if ( player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof ModArmorItem && player.getItemBySlot(EquipmentSlot.LEGS).isDamaged() ) list.add(EquipmentSlot.LEGS);
-        if ( player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof ModArmorItem && player.getItemBySlot(EquipmentSlot.FEET).isDamaged() ) list.add(EquipmentSlot.FEET);
+        if ( player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof MagickArmorItem && player.getItemBySlot(EquipmentSlot.HEAD).isDamaged() ) list.add(EquipmentSlot.HEAD);
+        if ( player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof MagickArmorItem && player.getItemBySlot(EquipmentSlot.CHEST).isDamaged() ) list.add(EquipmentSlot.CHEST);
+        if ( player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof MagickArmorItem && player.getItemBySlot(EquipmentSlot.LEGS).isDamaged() ) list.add(EquipmentSlot.LEGS);
+        if ( player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof MagickArmorItem && player.getItemBySlot(EquipmentSlot.FEET).isDamaged() ) list.add(EquipmentSlot.FEET);
         if ( player.getItemBySlot(EquipmentSlot.MAINHAND).getItem() instanceof StaffItem && player.getItemBySlot(EquipmentSlot.MAINHAND).isDamaged() ) list.add(EquipmentSlot.MAINHAND);
         if ( player.getItemBySlot(EquipmentSlot.OFFHAND).getItem() instanceof StaffItem && player.getItemBySlot(EquipmentSlot.OFFHAND).isDamaged() ) list.add(EquipmentSlot.OFFHAND);
         return list;

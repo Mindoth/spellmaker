@@ -3,7 +3,7 @@ package net.mindoth.spellmaker.client.gui.screen;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.capability.ClientMagickData;
 import net.mindoth.spellmaker.config.ModClientConfig;
-import net.mindoth.spellmaker.item.armor.ModArmorItem;
+import net.mindoth.spellmaker.item.armor.MagickArmorItem;
 import net.mindoth.spellmaker.item.sigil.FishFormSigilItem;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
@@ -51,7 +51,7 @@ public class HudMana implements GuiLayer {
         int barWidth = Math.max(0, Math.min(barPercentage, 79));
         graphics.blit(RenderPipelines.GUI_TEXTURED, MANA_EMPTY_BAR, posX, posY, 0, 0, 81, 9, 81, 9);
         graphics.blit(RenderPipelines.GUI_TEXTURED, MANA_FULL_BAR, posX + 1, posY + 1, 0, 0, barWidth, 7, 79, 7);
-        if ( ModClientConfig.SHOW_MAGICK_NUMBER_VALUE.get() ) {
+        if ( ModClientConfig.SHOW_MANA_NUMBER_VALUE.get() ) {
             graphics.text(MINECRAFT.font, mana, posX + 20, posY - 9, ARGB.opaque(7641066));
         }
     }
@@ -64,10 +64,10 @@ public class HudMana implements GuiLayer {
     }
 
     public static boolean isWearingMagicArmor(Player player) {
-        if ( player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof ModArmorItem ) return true;
-        if ( player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof ModArmorItem ) return true;
-        if ( player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof ModArmorItem ) return true;
-        if ( player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof ModArmorItem ) return true;
+        if ( player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof MagickArmorItem ) return true;
+        if ( player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof MagickArmorItem ) return true;
+        if ( player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof MagickArmorItem ) return true;
+        if ( player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof MagickArmorItem ) return true;
         return false;
     }
 }

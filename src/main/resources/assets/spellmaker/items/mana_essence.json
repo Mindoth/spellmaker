@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "spellmaker:item/sigil_essence"
+    "model": "spellmaker:item/mana_essence"
   }
 }

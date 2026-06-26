@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "spellmaker:sigil_essence",
+    "spellmaker:refined_sigil_essence",
     "spellmaker:alteration_dust",
     "minecraft:feather"
   ],

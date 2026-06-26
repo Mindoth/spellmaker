@@ -25,21 +25,30 @@ public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(SpellMaker.MOD_ID);
 
     //Materials
-    public static final DeferredItem<Item> SIGIL_ESSENCE = ITEMS.registerItem("sigil_essence", (properties) -> new Item(properties));
-    public static final DeferredItem<Item> WOOL_CLOTH = ITEMS.registerItem("wool_cloth", (properties) -> new Item(properties));
-    public static final DeferredItem<Item> ARCANE_CLOTH = ITEMS.registerItem("arcane_cloth", (properties) -> new Item(properties));
-    public static final DeferredItem<Item> FOREST_CLOTH = ITEMS.registerItem("forest_cloth", (properties) -> new Item(properties));
-    public static final DeferredItem<Item> ARCANE_GEM = ITEMS.registerItem("arcane_gem", (properties) -> new Item(properties));
-    public static final DeferredItem<Item> PARCHMENT = ITEMS.registerItem("parchment", (properties) -> new ParchmentItem(properties, 3));
     public static final DeferredItem<Item> PLANT_FIBER = ITEMS.registerItem("plant_fiber", (properties) -> new Item(properties));
+
     public static final DeferredItem<Item> WOOD_ASH = ITEMS.registerItem("wood_ash", (properties) -> new Item(properties));
     public static final DeferredItem<Item> ALCHEMICAL_ASH = ITEMS.registerItem("alchemical_ash", (properties) -> new Item(properties));
+
+    public static final DeferredItem<Item> BASIC_SIGIL_ESSENCE = ITEMS.registerItem("basic_sigil_essence", (properties) -> new Item(properties));
+    public static final DeferredItem<Item> REFINED_SIGIL_ESSENCE = ITEMS.registerItem("refined_sigil_essence", (properties) -> new Item(properties));
+
     public static final DeferredItem<Item> DESTRUCTION_DUST = ITEMS.registerItem("destruction_dust", (properties) -> new Item(properties));
     public static final DeferredItem<Item> ALTERATION_DUST = ITEMS.registerItem("alteration_dust", (properties) -> new Item(properties));
     public static final DeferredItem<Item> RESTORATION_DUST = ITEMS.registerItem("restoration_dust", (properties) -> new Item(properties));
     public static final DeferredItem<Item> CONJURATION_DUST = ITEMS.registerItem("conjuration_dust", (properties) -> new Item(properties));
     public static final DeferredItem<Item> ILLUSION_DUST = ITEMS.registerItem("illusion_dust", (properties) -> new Item(properties));
     public static final DeferredItem<Item> ARCANE_DUST = ITEMS.registerItem("arcane_dust", (properties) -> new Item(properties));
+
+    public static final DeferredItem<Item> ARCANE_GEM = ITEMS.registerItem("arcane_gem", (properties) -> new Item(properties));
+    public static final DeferredItem<Item> MANA_ESSENCE = ITEMS.registerItem("mana_essence", (properties) -> new Item(properties));
+    public static final DeferredItem<Item> LIVING_ESSENCE = ITEMS.registerItem("living_essence", (properties) -> new Item(properties));
+
+    public static final DeferredItem<Item> PARCHMENT = ITEMS.registerItem("parchment", (properties) -> new ParchmentItem(properties, 3));
+
+    public static final DeferredItem<Item> WOOL_CLOTH = ITEMS.registerItem("wool_cloth", (properties) -> new Item(properties));
+    public static final DeferredItem<Item> ARCANE_CLOTH = ITEMS.registerItem("arcane_cloth", (properties) -> new Item(properties));
+    public static final DeferredItem<Item> FOREST_CLOTH = ITEMS.registerItem("forest_cloth", (properties) -> new Item(properties));
 
     //Consumables
     public static final DeferredItem<Item> GOLDEN_BREAD = ITEMS.registerItem("golden_bread",

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": "spellmaker:alchemical_ash",
+    "C": "minecraft:clay_ball"
+  },
+  "pattern": [
+    "AC ",
+    "CA ",
+    "   "
+  ],
+  "result": {
+    "id": "spellmaker:refined_sigil_essence",
+    "count": 1
+  }
+}
