@@ -1,7 +1,10 @@
 package net.mindoth.spellmaker;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import net.mindoth.spellmaker.client.gui.screen.*;
+import net.mindoth.spellmaker.client.gui.screen.AlembicScreen;
+import net.mindoth.spellmaker.client.gui.screen.CalcinatorScreen;
+import net.mindoth.spellmaker.client.gui.screen.HudMana;
+import net.mindoth.spellmaker.client.gui.screen.SpellMakingScreen;
 import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.entity.ProjectileSpellMultiRenderer;
 import net.mindoth.spellmaker.entity.ProjectileSpellSingleRenderer;

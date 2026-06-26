@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "#": "minecraft:copper_block",
+    "#": "minecraft:copper_ingot",
     "B": "minecraft:bricks",
     "G": "minecraft:glass"
   },

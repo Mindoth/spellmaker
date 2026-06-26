@@ -5,7 +5,7 @@ import net.minecraft.world.item.crafting.RecipeInput;
 
 import java.util.List;
 
-public record AlembicRecipeInput(List<ItemStack> inputs) implements RecipeInput {
+public record DistillingRecipeInput(List<ItemStack> inputs) implements RecipeInput {
 
     @Override
     public ItemStack getItem(int i) {

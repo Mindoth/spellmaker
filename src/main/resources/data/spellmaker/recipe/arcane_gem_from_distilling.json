@@ -1,10 +1,10 @@
 {
   "type": "spellmaker:distilling",
   "ingredients": {
-    "ingredient0": "spellmaker:arcane_dust",
-    "ingredient0Amount": 4,
-    "ingredient1": "minecraft:diamond",
-    "ingredient1Amount": 1
+    "ingredient0": "minecraft:diamond",
+    "ingredient0Amount": 1,
+    "ingredient1": "spellmaker:arcane_dust",
+    "ingredient1Amount": 4
   },
   "results": {
     "result0": {

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class AlembicRecipe extends MultiIORecipe<AlembicRecipeInput> {
+public class DistillingRecipe extends MultiIORecipe<DistillingRecipeInput> {
 
     private final Ingredient ingredient0;
     private final int ingredient0Amount;
@@ -32,11 +32,11 @@ public class AlembicRecipe extends MultiIORecipe<AlembicRecipeInput> {
     private final Optional<ItemStackTemplate> result2;
     private final Optional<ItemStackTemplate> result3;
 
-    private AlembicRecipe(Ingredients inputs, ItemStackTemplates results) {
+    private DistillingRecipe(Ingredients inputs, ItemStackTemplates results) {
         this(inputs.ingredient0(), inputs.ingredient0Amount(), inputs.ingredient1(), inputs.ingredient1Amount(), results.result0(), results.result1(), results.result2(), results.result3());
     }
 
-    public AlembicRecipe(Ingredient ingredient0, int ingredient0Amount, Ingredient ingredient1, int ingredient1Amount, ItemStackTemplate result0, Optional<ItemStackTemplate> result1, Optional<ItemStackTemplate> result2, Optional<ItemStackTemplate> result3) {
+    public DistillingRecipe(Ingredient ingredient0, int ingredient0Amount, Ingredient ingredient1, int ingredient1Amount, ItemStackTemplate result0, Optional<ItemStackTemplate> result1, Optional<ItemStackTemplate> result2, Optional<ItemStackTemplate> result3) {
         this.ingredient0 = Objects.requireNonNull(ingredient0, "ingredient0");
         this.ingredient0Amount = ingredient0Amount;
         this.ingredient1 = Objects.requireNonNull(ingredient1, "ingredient1");
@@ -48,7 +48,7 @@ public class AlembicRecipe extends MultiIORecipe<AlembicRecipeInput> {
     }
 
     @Override
-    public boolean matches(AlembicRecipeInput input, Level level) {
+    public boolean matches(DistillingRecipeInput input, Level level) {
         if ( level.isClientSide() ) return false;
         ItemStack input0 = input.getItem(0);
         ItemStack input1 = input.getItem(1);
@@ -62,7 +62,7 @@ public class AlembicRecipe extends MultiIORecipe<AlembicRecipeInput> {
     }
 
     @Override
-    public ItemStack assemble(AlembicRecipeInput alembicRecipeInput) {
+    public ItemStack assemble(DistillingRecipeInput distillingRecipeInput) {
         return getResult0().create();
     }
 
@@ -181,22 +181,22 @@ public class AlembicRecipe extends MultiIORecipe<AlembicRecipeInput> {
     }
 
     //Recipe Codec
-    public static final MapCodec<AlembicRecipe> CODEC = RecordCodecBuilder.mapCodec(
+    public static final MapCodec<DistillingRecipe> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
-                    Ingredients.CODEC.fieldOf("ingredients").forGetter(AlembicRecipe::getSerializedIngredients),
-                    ItemStackTemplates.CODEC.fieldOf("results").forGetter(AlembicRecipe::getSerializedResults)
-                    ).apply(builder, AlembicRecipe::new)
+                    Ingredients.CODEC.fieldOf("ingredients").forGetter(DistillingRecipe::getSerializedIngredients),
+                    ItemStackTemplates.CODEC.fieldOf("results").forGetter(DistillingRecipe::getSerializedResults)
+                    ).apply(builder, DistillingRecipe::new)
     );
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, AlembicRecipe> STREAM_CODEC = StreamCodec.composite(
-            Ingredients.STREAM_CODEC, AlembicRecipe::getSerializedIngredients,
-            ItemStackTemplates.STREAM_CODEC, AlembicRecipe::getSerializedResults,
-            AlembicRecipe::new
+    public static final StreamCodec<RegistryFriendlyByteBuf, DistillingRecipe> STREAM_CODEC = StreamCodec.composite(
+            Ingredients.STREAM_CODEC, DistillingRecipe::getSerializedIngredients,
+            ItemStackTemplates.STREAM_CODEC, DistillingRecipe::getSerializedResults,
+            DistillingRecipe::new
     );
 
     @Override
     public List<RecipeDisplay> display() {
-        return List.of(new AlembicRecipeDisplay(
+        return List.of(new DistillingRecipeDisplay(
                 getInput0().display(),
                 getInput1().display(),
                 new SlotDisplay.ItemStackSlotDisplay(getResult0()),
@@ -211,21 +211,16 @@ public class AlembicRecipe extends MultiIORecipe<AlembicRecipeInput> {
         return template.orElseGet(() -> ItemStackTemplate.fromStack(new ItemStack(Items.STICK)));
     }
 
-    public static final RecipeSerializer<AlembicRecipe> SERIALIZER = new RecipeSerializer<>(CODEC, STREAM_CODEC);
-
-    public static class Type implements RecipeType<AlembicRecipe> {
-        public static final AlembicRecipe.Type DISTILLING = new AlembicRecipe.Type();
-        public static final String ID = "distilling";
-    }
+    public static final RecipeSerializer<DistillingRecipe> SERIALIZER = new RecipeSerializer<>(CODEC, STREAM_CODEC);
 
     @Override
-    public RecipeSerializer<AlembicRecipe> getSerializer() {
+    public RecipeSerializer<DistillingRecipe> getSerializer() {
         return SERIALIZER;
     }
 
     @Override
-    public RecipeType<AlembicRecipe> getType() {
-        return Type.DISTILLING;
+    public RecipeType<DistillingRecipe> getType() {
+        return ModRecipes.DISTILLING_RECIPE_TYPE.get();
     }
 
     @Override

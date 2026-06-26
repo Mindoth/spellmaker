@@ -1,8 +1,9 @@
 package net.mindoth.spellmaker.client.gui.menu;
 
 import net.mindoth.spellmaker.block.entity.AlembicBlockEntity;
-import net.mindoth.spellmaker.recipe.AlembicRecipe;
+import net.mindoth.spellmaker.recipe.DistillingRecipe;
 import net.mindoth.spellmaker.registries.ModBlocks;
+import net.mindoth.spellmaker.registries.ModRecipes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
@@ -62,7 +63,7 @@ public abstract class AbstractAlembicMenu extends AbstractContainerMenu {
     }
 
     protected boolean isFuel(ItemStack itemStack) {
-        return itemStack.getBurnTime(AlembicRecipe.Type.DISTILLING, this.level.fuelValues()) > 0;
+        return itemStack.getBurnTime(ModRecipes.DISTILLING_RECIPE_TYPE.get(), this.level.fuelValues()) > 0;
     }
 
     public boolean isCrafting() {

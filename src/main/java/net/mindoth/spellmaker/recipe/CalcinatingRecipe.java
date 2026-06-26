@@ -31,14 +31,13 @@ public class CalcinatingRecipe extends AbstractCookingRecipe {
         return SERIALIZER;
     }
 
-    public static class Type implements RecipeType<CalcinatingRecipe> {
-        public static final Type CALCINATING = new Type();
-        public static final String ID = "calcinating";
-    }
-
     @Override
     public RecipeType<CalcinatingRecipe> getType() {
-        return Type.CALCINATING;
+        return ModRecipes.CALCINATING_RECIPE_TYPE.get();
+    }
+
+    public ItemStackTemplate result() {
+        return output;
     }
 
     @Override

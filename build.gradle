@@ -30,6 +30,10 @@ repositories {
     maven {
         url 'https://cursemaven.com'
     }
+    maven {
+        name "Jared's maven"
+        url "https://maven.blamejared.com/"
+    }
 }
 
 base {
@@ -116,6 +120,12 @@ configurations {
 
 dependencies {
     implementation "curse.maven:shadowizardlib-887125:8297381"
+
+    // compile against the JEI API but do not include it at runtime
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
+    // at runtime, use the full JEI jar for NeoForge
+    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
+
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

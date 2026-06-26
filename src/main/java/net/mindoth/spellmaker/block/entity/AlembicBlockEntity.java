@@ -3,9 +3,10 @@ package net.mindoth.spellmaker.block.entity;
 import com.google.common.collect.Lists;
 import net.mindoth.spellmaker.block.AlembicBlock;
 import net.mindoth.spellmaker.client.gui.menu.AlembicMenu;
-import net.mindoth.spellmaker.recipe.AlembicRecipe;
-import net.mindoth.spellmaker.recipe.AlembicRecipeInput;
+import net.mindoth.spellmaker.recipe.DistillingRecipe;
+import net.mindoth.spellmaker.recipe.DistillingRecipeInput;
 import net.mindoth.spellmaker.registries.ModBlocks;
+import net.mindoth.spellmaker.registries.ModRecipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -107,7 +108,7 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private int getBurnDuration(FuelValues fuelValues, ItemStack itemStack) {
-        return itemStack.getBurnTime(AlembicRecipe.Type.DISTILLING, fuelValues);
+        return itemStack.getBurnTime(ModRecipes.DISTILLING_RECIPE_TYPE.get(), fuelValues);
     }
 
     private void consumeFuel(int slot, ItemStack fuel) {
@@ -125,8 +126,8 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
     private static final int FUEL_SLOT = 6;
 
     private void craftItem() {
-        Optional<RecipeHolder<AlembicRecipe>> recipeOptional = getCurrentRecipe();
-        AlembicRecipe recipe = recipeOptional.get().value();
+        Optional<RecipeHolder<DistillingRecipe>> recipeOptional = getCurrentRecipe();
+        DistillingRecipe recipe = recipeOptional.get().value();
         Item stackItem0 = this.itemHandler.getStackInSlot(0).getItem();
         Item stackItem1 = this.itemHandler.getStackInSlot(1).getItem();
         Item recipeItem0 = recipe.getInput0().getValues().get(0).value();
@@ -152,7 +153,7 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private boolean hasRecipe() {
-        Optional<RecipeHolder<AlembicRecipe>> recipe = getCurrentRecipe();
+        Optional<RecipeHolder<DistillingRecipe>> recipe = getCurrentRecipe();
         if ( recipe.isEmpty() ) return false;
 
         boolean slot0 = isFitting(OUTPUT_SLOT_0, recipe.get().value().getResult0().create());
@@ -167,12 +168,12 @@ public class AlembicBlockEntity extends BlockEntity implements MenuProvider {
         return output.isEmpty() || (canInsertAmountIntoOutputSlot(slot, output) && canInsertItemIntoOutputSlot(slot, output));
     }
 
-    private Optional<RecipeHolder<AlembicRecipe>> getCurrentRecipe() {
+    private Optional<RecipeHolder<DistillingRecipe>> getCurrentRecipe() {
         List<ItemStack> inputs = Lists.newArrayList();
         inputs.add(this.itemHandler.getStackInSlot(INPUT_SLOT_0));
         inputs.add(this.itemHandler.getStackInSlot(INPUT_SLOT_1));
         return ((ServerLevel)this.getLevel()).recipeAccess()
-                .getRecipeFor(AlembicRecipe.Type.DISTILLING, new AlembicRecipeInput(inputs), getLevel());
+                .getRecipeFor(ModRecipes.DISTILLING_RECIPE_TYPE.get(), new DistillingRecipeInput(inputs), getLevel());
     }
 
     private boolean canInsertItemIntoOutputSlot(int slot, ItemStack output) {
