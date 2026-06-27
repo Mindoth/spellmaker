@@ -2,13 +2,16 @@ package net.mindoth.spellmaker.util.spellform;
 
 import com.google.common.collect.Lists;
 import net.mindoth.shadowizardlib.event.LightEvents;
-import net.mindoth.shadowizardlib.event.ShadowEvents;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
+import net.mindoth.spellmaker.entity.AbstractSpellEntity;
+import net.mindoth.spellmaker.entity.ProjectileSpellMultiEntity;
 import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
+import net.mindoth.spellmaker.util.DataHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -19,9 +22,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class AreaAroundCasterForm extends AbstractSpellForm {
+public class AreaOnCaster extends AbstractSpellForm {
 
-    public AreaAroundCasterForm(float cost) {
+    public AreaOnCaster(float cost) {
         super(cost);
     }
 
@@ -29,7 +32,7 @@ public class AreaAroundCasterForm extends AbstractSpellForm {
     public boolean castMagick(Entity source, Entity directSource, LinkedHashMap<AbstractSigilItem, List<Integer>> map) {
         Level level = source.level();
         AABB box = source.getBoundingBox().inflate(1.5D, 0.0D, 1.5D);
-        List<Entity> list = level.getEntities(source, box).stream().filter((entity -> entity instanceof LivingEntity)).toList();
+        List<Entity> list = level.getEntities(null, box).stream().filter((entity -> entity instanceof LivingEntity)).toList();
         MultiEntityHitResult mEntityResult = new MultiEntityHitResult(source, list, new DimVec3(source.position(), source.level()));
         for ( AbstractSigilItem sigil : map.keySet() ) sigil.effectOnEntity(source, directSource, map.get(sigil), mEntityResult);
 
@@ -38,41 +41,27 @@ public class AreaAroundCasterForm extends AbstractSpellForm {
             for ( int y = source.getBlockY(); y < source.getBlockY() + 2; y++ ) {
                 for ( int z = source.getBlockZ() - 1; z < source.getBlockZ() + 2; z++ ) {
                     BlockPos newPos = new BlockPos(x, y, z);
-                    if ( !newPos.equals(source.getOnPos()) && !newPos.equals(source.getOnPos().above()) ) blocks.add(newPos);
+                    blocks.add(newPos);
                 }
             }
         }
-        MultiBlockHitResult mBlockResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(source.position(), level));
+        MultiBlockHitResult mBlockResult = new MultiBlockHitResult(Direction.UP, true, blocks, new DimVec3(source.position(), level));
         for ( AbstractSigilItem sigil : map.keySet() ) sigil.effectOnBlock(source, directSource, map.get(sigil), mBlockResult);
-        aoeCircleSpellParticles(Direction.UP, ShadowEvents.getEntityCenter(directSource), box, level, getColorStats(map));
+        aoeEntitySpellParticles(level, box, (float)box.getYsize() * 0.5F, getColorStats(map));
 
         return true;
     }
 
-    public static void aoeCircleSpellParticles(Direction dir, Vec3 pos, AABB box, Level level, HashMap<String, Float> stats) {
-        int numOfPoints = 32;
-        double speed = 0.25D;
-        for ( int i = 0; i < numOfPoints; ++i ) {
-            double angle = Math.toRadians(((double) i / numOfPoints) * 360);
-            double x;
-            double y;
-            double z;
-            if ( dir == Direction.NORTH || dir == Direction.SOUTH ) {
-                x = Math.cos(angle);
-                y = Math.sin(angle);
-                z = 0;
-            }
-            else if ( dir == Direction.EAST || dir == Direction.WEST ) {
-                x = 0;
-                y = Math.sin(angle);
-                z = Math.cos(angle);
-            }
-            else {
-                x = Math.cos(angle);
-                y = 0;
-                z = Math.sin(angle);
-            }
-            LightEvents.generateParticles(pos, box.getCenter(), level, 0.15F, 10, x * speed, y * speed, z * speed, stats);
+    public static void aoeEntitySpellParticles(Level level, AABB box, float range, HashMap<String, Float> stats) {
+        Vec3 center = box.getCenter();
+        BlockPos pos = new BlockPos(Mth.floor(center.x), Mth.floor(center.y), Mth.floor(center.z));
+        double tempY = center.y;
+        for ( int i = pos.getY(); i >= Mth.floor(center.y - range); i-- ) {
+            BlockPos tempPos = new BlockPos(pos.getX(), i, pos.getZ());
+            if ( level.getBlockState(tempPos).isSolid() ) break;
+            else tempY = i;
         }
+        box = box.move(0, -(center.y - tempY), 0);
+        LightEvents.addAoeParticles(false, level, box, 0.15F, 8, stats);
     }
 }

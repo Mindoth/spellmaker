@@ -30,6 +30,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -157,15 +158,16 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         return this.duration;
     }
 
-    public final List<AbstractSpellForm> initFormList = Arrays.asList(
-            ModSpellForms.CASTER_ONLY.get(),
-            ModSpellForms.BY_TOUCH.get(),
-            ModSpellForms.SINGLE_TARGET_AT_RANGE.get(),
-            ModSpellForms.AREA_AROUND_CASTER.get(),
-            ModSpellForms.AREA_AT_RANGE.get());
+    public List<AbstractSpellForm> initFormList() {
+        List<AbstractSpellForm> list = Lists.newArrayList();
+        for ( DeferredHolder<AbstractSpellForm, ? extends AbstractSpellForm> holder : ModSpellForms.SPELL_FORMS.getEntries() ) {
+            list.add(holder.get());
+        }
+        return list;
+    }
 
     public void dataInit() {
-        this.formList = this.initFormList;
+        this.formList = initFormList();
         this.spellForm = this.formList.getFirst();
         this.magnitude = Arrays.asList(0, 0, 0);
         this.duration = Arrays.asList(0, 0, 0);
@@ -327,7 +329,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             else {
                 if ( level.isClientSide() ) {
                     CompoundTag tag = new CompoundTag();
-                    tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(this.initFormList.getFirst()));
+                    tag.putString(ParchmentItem.NBT_KEY_SPELL_FORM, DataHelper.getStringFromForm(initFormList().getFirst()));
                     editSpellForm(tag);
                 }
                 for ( Slot slot : this.slots ) {

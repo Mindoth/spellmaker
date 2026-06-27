@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 import java.util.List;
 
 public abstract class AbstractSigilItem extends Item {
+
     private final SpellColor color;
     public SpellColor getColor() {
         return this.color;

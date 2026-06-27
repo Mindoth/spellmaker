@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class SingleTargetAtRangeForm extends AbstractSpellForm {
+
     public SingleTargetAtRangeForm(float cost) {
         super(cost);
     }

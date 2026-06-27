@@ -9,10 +9,10 @@ import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
 import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
 import net.mindoth.spellmaker.registries.ModEntities;
+import net.mindoth.spellmaker.util.spellform.AreaAroundCasterForm;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,7 +23,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -40,7 +39,7 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
     @Override
     protected void doMobEffects(EntityHitResult result) {
         Level level = level();
-        AABB box = this.getBoundingBox().inflate(2.2D, 2.2D, 2.2D).move(result.getEntity().getBoundingBox().getCenter().subtract(this.getBoundingBox().getCenter()));
+        AABB box = this.getBoundingBox().inflate(1.5D, 1.5D, 1.5D).move(result.getEntity().getBoundingBox().getCenter().subtract(this.getBoundingBox().getCenter()));
         List<Entity> list = new ArrayList<>(level.getEntities(this, box).stream().filter((entity -> entity instanceof LivingEntity)).toList());
         if ( !list.contains(result.getEntity()) ) list.add(result.getEntity());
         MultiEntityHitResult mEntityResult = new MultiEntityHitResult(this, list, new DimVec3(this.position(), this.level()));
@@ -56,13 +55,13 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
         }
         MultiBlockHitResult mBlockResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(position(), level));
         for ( AbstractSigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(this.getOwner(), this, getMap().get(sigil), mBlockResult);
-        aoeEntitySpellParticles(level, box, (float)box.getYsize() * 0.5F, getParticleStats());
+        AreaAroundCasterForm.aoeCircleSpellParticles(Direction.UP, ShadowEvents.getEntityCenter(this), box, level, getParticleStats());
     }
 
     @Override
     protected void doBlockEffects(BlockHitResult result) {
         Level level = level();
-        AABB box = this.getBoundingBox().inflate(2.2D, 2.2D, 2.2D);
+        AABB box = this.getBoundingBox().inflate(1.5D, 1.5D, 1.5D);
         List<Entity> list = new ArrayList<>(level.getEntities(this, box).stream().filter((entity -> entity instanceof LivingEntity)).toList());
         MultiEntityHitResult mEntityResult = new MultiEntityHitResult(this, list, new DimVec3(this.position(), this.level()));
         for ( AbstractSigilItem sigil : getMap().keySet() ) sigil.effectOnEntity(this.getOwner(), this, getMap().get(sigil), mEntityResult);
@@ -78,7 +77,7 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
         }
         MultiBlockHitResult mBlockResult = new MultiBlockHitResult(Direction.UP, false, blocks, new DimVec3(position(), level));
         for ( AbstractSigilItem sigil : getMap().keySet() ) sigil.effectOnBlock(this.getOwner(), this, getMap().get(sigil), mBlockResult);
-        aoeEntitySpellParticles(level, box, (float)box.getYsize() * 0.5F, getParticleStats());
+        AreaAroundCasterForm.aoeCircleSpellParticles(result.getDirection(), new Vec3(blockPos.getX() + 0.5F, blockPos.getY() + 0.5F, blockPos.getZ() + 0.5F), box, level, getParticleStats());
     }
 
     public static BlockPos getPosOfFace(BlockPos blockPos, Direction face) {
@@ -127,18 +126,5 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
                         true, true, pos.x, pos.y, pos.z, vecX * speed, vecY * speed, vecZ * speed);
             }
         }
-    }
-
-    public static void aoeEntitySpellParticles(Level level, AABB box, float range, HashMap<String, Float> stats) {
-        Vec3 center = box.getCenter();
-        BlockPos pos = new BlockPos(Mth.floor(center.x), Mth.floor(center.y), Mth.floor(center.z));
-        double tempY = center.y;
-        for ( int i = pos.getY(); i >= Mth.floor(center.y - range); i-- ) {
-            BlockPos tempPos = new BlockPos(pos.getX(), i, pos.getZ());
-            if ( level.getBlockState(tempPos).isSolid() ) break;
-            else tempY = i;
-        }
-        box = box.move(0, -(center.y - tempY), 0);
-        LightEvents.addAoeParticles(false, level, box, 0.15F, 8, stats);
     }
 }

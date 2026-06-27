@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class CasterOnlyForm extends AbstractSpellForm {
+
     public CasterOnlyForm(float cost) {
         super(cost);
     }

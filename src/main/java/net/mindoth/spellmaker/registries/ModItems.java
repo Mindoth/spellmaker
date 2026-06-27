@@ -117,42 +117,59 @@ public class ModItems {
 
     //Destruction
     public static final DeferredItem<Item> FIRE_SIGIL = ITEMS.registerItem("fire_sigil",
-            (properties) -> new FireSigilItem(properties, SpellColor.FIRE, 0, 0, 64, 2, 0, 64, 1));
+            (properties) -> new FireSigilItem(properties, SpellColor.FIRE,
+                    0, 0, 64, 2, 0, 64, 1));
 
     public static final DeferredItem<Item> FROST_SIGIL = ITEMS.registerItem("frost_sigil",
-            (properties) -> new FrostSigilItem(properties, SpellColor.FROST, 0, 0, 64, 2, 0, 64, 1));
+            (properties) -> new FrostSigilItem(properties, SpellColor.FROST,
+                    0, 0, 64, 2, 0, 64, 1));
 
     public static final DeferredItem<Item> SHOCK_SIGIL = ITEMS.registerItem("shock_sigil",
-            (properties) -> new ShockSigilItem(properties, SpellColor.LIGHTNING, 0, 0, 64, 2, 0, 64, 4));
+            (properties) -> new ShockSigilItem(properties, SpellColor.LIGHTNING,
+                    0, 0, 64, 2, 0, 64, 4));
 
     public static final DeferredItem<Item> SLEEP_SIGIL = ITEMS.registerItem("sleep_sigil",
-            (properties) -> new SleepSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1));
+            (properties) -> new SleepSigilItem(properties, SpellColor.ARCANE,
+                    0, 0, 0, 0, 0, 64, 1));
 
     //Alteration
-    public static final DeferredItem<Item> EXCAVATION_SIGIL = ITEMS.registerItem("excavation_sigil",
-            (properties) -> new ExcavationSigilItem(properties, SpellColor.NATURE, 0, 0, 4, 5, 0, 0, 0));
-
     public static final DeferredItem<Item> SHEEP_FORM_SIGIL = ITEMS.registerItem("sheep_form_sigil",
-            (properties) -> new SheepFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
+            (properties) -> new SheepFormSigilItem(properties, SpellColor.ARCANE,
+                    0, 0, 0, 0, 0, 64, 1,
                     Identifier.parse("84527dc5-d3e5-4550-98ed-c8186c5d3089"), EntityTypes.SHEEP));
 
     public static final DeferredItem<Item> FISH_FORM_SIGIL = ITEMS.registerItem("fish_form_sigil",
-            (properties) -> new FishFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
+            (properties) -> new FishFormSigilItem(properties, SpellColor.ARCANE,
+                    0, 0, 0, 0, 0, 64, 1,
                     Identifier.parse("b2bc1fd5-a121-42cf-b7cb-d29c61e3211c"), EntityTypes.COD));
 
     public static final DeferredItem<Item> CHICKEN_FORM_SIGIL = ITEMS.registerItem("chicken_form_sigil",
-            (properties) -> new ChickenFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
+            (properties) -> new ChickenFormSigilItem(properties, SpellColor.ARCANE,
+                    0, 0, 0, 0, 0, 64, 1,
                     Identifier.parse("baa27f16-774d-4767-99e0-218112d9241f"), EntityTypes.CHICKEN));
 
     public static final DeferredItem<Item> WOLF_FORM_SIGIL = ITEMS.registerItem("wolf_form_sigil",
-            (properties) -> new WolfFormSigilItem(properties, SpellColor.ARCANE, 0, 0, 0, 0, 0, 64, 1,
+            (properties) -> new WolfFormSigilItem(properties, SpellColor.ARCANE,
+                    0, 0, 0, 0, 0, 64, 1,
                     Identifier.parse("78b10eca-0e4c-4f77-9ce1-e8f736fb8d0a"), EntityTypes.WOLF));
 
+    //Restoration
+    public static final DeferredItem<Item> GROWTH_SIGIL = ITEMS.registerItem("growth_sigil",
+            (properties) -> new GrowthSigilItem(properties, SpellColor.NATURE,
+                    15, 0, 0, 0, 0, 0, 0));
+
+
     //Arcane
+    public static final DeferredItem<Item> EXCAVATION_SIGIL = ITEMS.registerItem("excavation_sigil",
+            (properties) -> new ExcavationSigilItem(properties, SpellColor.ARCANE,
+                    0, 0, 4, 5, 0, 0, 0));
+
     public static final DeferredItem<Item> FORCE_SIGIL = ITEMS.registerItem("force_sigil",
-            (properties) -> new ForceSigilItem(properties, SpellColor.ARCANE, 0, -10, 10, 10, 0, 0, 0));
+            (properties) -> new ForceSigilItem(properties, SpellColor.ARCANE,
+                    0, -10, 10, 10, 0, 0, 0));
 
     public static final DeferredItem<Item> DISPEL_SIGIL = ITEMS.registerItem("dispel_sigil",
-            (properties) -> new DispelSigilItem(properties, SpellColor.ARCANE, 0, 0, 64, 40, 0, 0, 0));
+            (properties) -> new DispelSigilItem(properties, SpellColor.ARCANE,
+                    0, 0, 64, 40, 0, 0, 0));
 
 }

@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import java.util.List;
 
 public class FireSigilItem extends AbstractSigilItem {
+
     public FireSigilItem(Properties pProperties, SpellColor color, int cost, int minMagnitude, int maxMagnitude, int magnitudeMultiplier, int minDuration, int maxDuration, int durationMultiplier) {
         super(pProperties, color, cost, minMagnitude, maxMagnitude, magnitudeMultiplier, minDuration, maxDuration, durationMultiplier);
     }
@@ -36,6 +37,7 @@ public class FireSigilItem extends AbstractSigilItem {
 
     @Override
     public void effectOnAllBlocksInList(Entity source, Entity directSource, BlockPos target, List<Integer> stats, DimVec3 location, Direction direction, boolean isInside) {
+        if ( stats.get(0) <= 0 && stats.get(1) <= 0 ) return;
         Level level = location.getLevel();
         BlockState blockState = level.getBlockState(target);
         if ( !CampfireBlock.canLight(blockState) && !CandleBlock.canLight(blockState) && !CandleCakeBlock.canLight(blockState) ) {

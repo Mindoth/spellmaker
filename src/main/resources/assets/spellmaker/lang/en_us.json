@@ -86,6 +86,7 @@
   "item.spellmaker.force_sigil": "Force Sigil",
   "item.spellmaker.wolf_form_sigil": "Wolf Form Sigil",
   "item.spellmaker.dispel_sigil": "Dispel Sigil",
+  "item.spellmaker.growth_sigil": "Growth Sigil",
 
 
   "spellform.spellmaker.caster_only": "Caster only",
@@ -93,6 +94,7 @@
   "spellform.spellmaker.single_target_at_range": "Single target at range",
   "spellform.spellmaker.area_around_caster": "Area around caster",
   "spellform.spellmaker.area_at_range": "Area at range",
+  "spellform.spellmaker.area_on_caster": "Area on caster",
 
 
   "effect.spellmaker.paralysis": "Paralysis",
