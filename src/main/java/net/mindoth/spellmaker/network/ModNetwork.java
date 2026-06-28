@@ -5,7 +5,6 @@ import net.mindoth.spellmaker.registries.ModData;
 import net.minecraft.core.IdMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -23,6 +22,9 @@ public class ModNetwork {
     public static void register(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar payloadRegistrar = event.registrar(SpellMaker.MOD_ID).versioned("1.0.0").optional();
 
+        //Removed sided sound packet
+        payloadRegistrar.playToClient(PlayClientNotifySoundPacket.TYPE, PlayClientNotifySoundPacket.STREAM_CODEC, PlayClientNotifySoundPacket::handle);
+
         //Mana system
         payloadRegistrar.playToClient(SyncClientManaPacket.TYPE, SyncClientManaPacket.STREAM_CODEC, SyncClientManaPacket::handle);
 
@@ -32,7 +34,7 @@ public class ModNetwork {
         payloadRegistrar.playToServer(MakeSpellPacket.TYPE, MakeSpellPacket.STREAM_CODEC, MakeSpellPacket::handle);
         payloadRegistrar.playToServer(DumpSpellPacket.TYPE, DumpSpellPacket.STREAM_CODEC, DumpSpellPacket::handle);
 
-        //Spell book
+        //Spell Book
         payloadRegistrar.playToServer(AskToOpenSpellBookPacket.TYPE, AskToOpenSpellBookPacket.STREAM_CODEC, AskToOpenSpellBookPacket::handle);
         payloadRegistrar.playToClient(OpenSpellBookPacket.TYPE, OpenSpellBookPacket.STREAM_CODEC, OpenSpellBookPacket::handle);
         payloadRegistrar.playToServer(RemoveScrollFromBookPacket.TYPE, RemoveScrollFromBookPacket.STREAM_CODEC, RemoveScrollFromBookPacket::handle);

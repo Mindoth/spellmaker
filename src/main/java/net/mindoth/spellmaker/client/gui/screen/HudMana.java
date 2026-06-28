@@ -5,6 +5,7 @@ import net.mindoth.spellmaker.capability.ClientMagickData;
 import net.mindoth.spellmaker.config.ModClientConfig;
 import net.mindoth.spellmaker.item.armor.MagickArmorItem;
 import net.mindoth.spellmaker.item.sigil.FishFormSigilItem;
+import net.mindoth.spellmaker.item.weapon.MagickWeaponItem;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.registries.ModAttributes;
 import net.minecraft.client.DeltaTracker;
@@ -60,10 +61,12 @@ public class HudMana implements GuiLayer {
         Player player = MINECRAFT.player;
         return !(player.isSpectator() || player.isCreative())
                 && (ClientMagickData.getCurrentMana() < player.getAttributeValue(ModAttributes.MANA_MAX)
-                || !StaffItem.getHeldCastingItem(player).isEmpty() || isWearingMagicArmor(player));
+                || !StaffItem.getHeldCastingItem(player).isEmpty() || hasMagickEquipment(player));
     }
 
-    public static boolean isWearingMagicArmor(Player player) {
+    public static boolean hasMagickEquipment(Player player) {
+        if ( player.getItemBySlot(EquipmentSlot.MAINHAND).getItem() instanceof MagickWeaponItem ) return true;
+        if ( player.getItemBySlot(EquipmentSlot.OFFHAND).getItem() instanceof MagickWeaponItem ) return true;
         if ( player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof MagickArmorItem ) return true;
         if ( player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof MagickArmorItem ) return true;
         if ( player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof MagickArmorItem ) return true;

@@ -13,14 +13,13 @@ import net.mindoth.spellmaker.util.spellform.AreaAroundCasterForm;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +88,11 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
             case NORTH -> blockPos.north();
             case DOWN -> blockPos.below();
         };
+    }
+
+    @Override
+    protected void playHitSound(HitResult result) {
+        this.level().playSound(null, this.blockPosition(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.PLAYERS, 1.0F, 1.0F);
     }
 
     @Override

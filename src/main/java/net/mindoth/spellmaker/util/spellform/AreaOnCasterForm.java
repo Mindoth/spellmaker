@@ -5,10 +5,7 @@ import net.mindoth.shadowizardlib.event.LightEvents;
 import net.mindoth.shadowizardlib.util.DimVec3;
 import net.mindoth.shadowizardlib.util.MultiBlockHitResult;
 import net.mindoth.shadowizardlib.util.MultiEntityHitResult;
-import net.mindoth.spellmaker.entity.AbstractSpellEntity;
-import net.mindoth.spellmaker.entity.ProjectileSpellMultiEntity;
 import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
-import net.mindoth.spellmaker.util.DataHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -22,9 +19,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class AreaOnCaster extends AbstractSpellForm {
+public class AreaOnCasterForm extends AbstractSpellForm {
 
-    public AreaOnCaster(float cost) {
+    public AreaOnCasterForm(float cost) {
         super(cost);
     }
 

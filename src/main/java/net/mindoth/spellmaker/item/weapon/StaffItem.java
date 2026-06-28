@@ -7,15 +7,18 @@ import net.mindoth.spellmaker.item.ParchmentItem;
 import net.mindoth.spellmaker.item.armor.AttributeContainer;
 import net.mindoth.spellmaker.item.armor.MagickArmorItem;
 import net.mindoth.spellmaker.item.sigil.AbstractSigilItem;
+import net.mindoth.spellmaker.network.PlayClientNotifySoundPacket;
 import net.mindoth.spellmaker.registries.ModAttributes;
 import net.mindoth.spellmaker.registries.ModData;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -32,6 +35,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,7 +43,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 @EventBusSubscriber(modid = SpellMaker.MOD_ID)
-public class StaffItem extends MagickWeapon {
+public class StaffItem extends MagickWeaponItem {
 
     public StaffItem(Properties properties, float damage, float speed, AttributeContainer... extraAttributes) {
         super(properties, damage, speed, extraAttributes);
@@ -130,28 +134,30 @@ public class StaffItem extends MagickWeapon {
         }
     }
 
+    private static void playSidedSound(Level level, ServerPlayer player, BlockPos pos, byte type, float volume, float pitch) {
+        SoundEvent sound = getSoundByByte(type);
+        if ( sound == null ) return;
+        PacketDistributor.sendToPlayer(player, new PlayClientNotifySoundPacket(type, volume, pitch));
+        level.playSound(player, pos, sound, SoundSource.PLAYERS, volume, pitch);
+    }
+
+    public static @Nullable SoundEvent getSoundByByte(byte type) {
+        if ( type == 0 ) return SoundEvents.NOTE_BLOCK_SNARE.value();
+        else if ( type == 1 ) return SoundEvents.ENDER_PEARL_THROW;
+        else if ( type == 2 ) return SoundEvents.ENCHANTMENT_TABLE_USE;
+        else return null;
+    }
+
     private static void playWhiffSound(Entity caster) {
-        if ( caster instanceof Player player && !player.level().isClientSide() && player.level() instanceof ServerLevel level ) {
-            /*
-            player.playNotifySound(SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
-            level.playSound(player, player.getOnPos(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
-            */
-            level.playSound(null, player.getOnPos(), SoundEvents.NOTE_BLOCK_SNARE.value(), SoundSource.PLAYERS, 0.5F, 1.0F);
+        if ( caster instanceof ServerPlayer player && !player.level().isClientSide() && player.level() instanceof ServerLevel level ) {
+            playSidedSound(level, player, player.getOnPos(), (byte)0, 0.5F, 1.0F);
         }
     }
 
     private static void playCastingSound(Entity caster) {
-        if ( caster instanceof Player player && !player.level().isClientSide() && player.level() instanceof ServerLevel level ) {
-            /*
-            player.playNotifySound(SoundEvents.ENDER_PEARL_THROW, SoundSource.PLAYERS, 0.5F, 1.0F);
-            level.playSound(player, player.getOnPos(), SoundEvents.ENDER_PEARL_THROW, SoundSource.PLAYERS, 0.5F, 1.0F);
-            */
-            level.playSound(null, player.getOnPos(), SoundEvents.ENDER_PEARL_THROW, SoundSource.PLAYERS, 0.5F, 1.0F);
-            /*
-            player.playNotifySound(SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.5F, 2.0F);
-            level.playSound(player, player.getOnPos(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.5F, 2.0F);
-            */
-            level.playSound(null, player.getOnPos(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.5F, 2.0F);
+        if ( caster instanceof ServerPlayer player && !player.level().isClientSide() && player.level() instanceof ServerLevel level ) {
+            playSidedSound(level, player, player.getOnPos(), (byte)1, 0.5F, 1.0F);
+            playSidedSound(level, player, player.getOnPos(), (byte)2, 0.5F, 2.0F);
         }
     }
 

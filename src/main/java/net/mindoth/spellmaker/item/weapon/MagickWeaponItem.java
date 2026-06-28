@@ -9,9 +9,9 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
-public class MagickWeapon extends Item {
+public class MagickWeaponItem extends Item {
 
-    public MagickWeapon(Properties properties, float damage, float speed, AttributeContainer... extraAttributes) {
+    public MagickWeaponItem(Properties properties, float damage, float speed, AttributeContainer... extraAttributes) {
         super(properties.attributes(magickWeapon(damage, speed, extraAttributes)));
     }
 
