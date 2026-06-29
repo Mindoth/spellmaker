@@ -42,10 +42,12 @@ public class SickleItem extends Item {
         if ( level instanceof ServerLevel serverLevel ) {
             List<ItemStack> drops = Block.getDrops(blockState, serverLevel, blockPos, blockEntity, player, player.getMainHandItem());
             for ( ItemStack itemStack : drops ) {
-                ItemEntity drop = new ItemEntity(level, playerPos.x, playerPos.y, playerPos.z, itemStack);
-                drop.setDeltaMovement(0, 0, 0);
-                drop.setNoPickUpDelay();
-                level.addFreshEntity(drop);
+                if ( !player.getInventory().add(itemStack) ) {
+                    ItemEntity drop = new ItemEntity(level, playerPos.x, playerPos.y, playerPos.z, itemStack);
+                    drop.setDeltaMovement(0, 0, 0);
+                    drop.setNoPickUpDelay();
+                    level.addFreshEntity(drop);
+                }
             }
         }
         level.removeBlock(blockPos, false);

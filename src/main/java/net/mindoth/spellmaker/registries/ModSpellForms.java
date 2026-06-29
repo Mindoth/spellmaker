@@ -32,5 +32,5 @@ public class ModSpellForms {
             () -> new AreaAtRangeForm(2.0F));
 
     public static final Supplier<AbstractSpellForm> AREA_ON_CASTER = SPELL_FORMS.register("area_on_caster",
-            () -> new AreaOnCasterForm(2.5F));
+            () -> new AreaOnCasterForm(1.5F));
 }

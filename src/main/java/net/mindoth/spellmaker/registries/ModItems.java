@@ -158,6 +158,10 @@ public class ModItems {
             (properties) -> new GrowthSigilItem(properties, SpellColor.NATURE,
                     15, 0, 0, 0, 0, 0, 0));
 
+    public static final DeferredItem<Item> HEALING_SIGIL = ITEMS.registerItem("healing_sigil",
+            (properties) -> new HealingSigilItem(properties, SpellColor.NATURE,
+                    0, 0, 64, 8, 0, 0, 0));
+
 
     //Arcane
     public static final DeferredItem<Item> EXCAVATION_SIGIL = ITEMS.registerItem("excavation_sigil",
