@@ -9,7 +9,6 @@ import net.mindoth.spellmaker.registries.ModData;
 import net.mindoth.spellmaker.util.DataHelper;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.mindoth.spellmaker.util.spellform.AbstractSpellForm;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -130,7 +129,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     }
 
     private void handleCraftButton(Button button) {
-        Slot slot = this.menu.getSlot(0);
+        Slot slot = this.menu.getSlot(this.menu.getParchmentMenuSlot());
         if ( !slot.hasItem() ) return;
         if ( this.menu.isReadyToMake() ) {
             String string = this.name.getValue();
@@ -215,9 +214,9 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
     }
 
     @Override
-    public void slotChanged(AbstractContainerMenu pContainerToSend, int pSlotInd, ItemStack pStack) {
-        if ( pSlotInd == 0 ) {
-            boolean isEditable = this.menu.isCleanParchment(pStack);
+    public void slotChanged(AbstractContainerMenu container, int index, ItemStack stack) {
+        if ( index == this.menu.getParchmentMenuSlot() ) {
+            boolean isEditable = this.menu.isCleanParchment(stack);
             this.name.setEditable(isEditable);
             this.setFocused(this.name);
             if ( !isEditable ) this.name.setValue("");
@@ -365,7 +364,7 @@ public class SpellMakingScreen extends AbstractContainerScreen<SpellMakingMenu> 
             CompoundTag tag = ModData.getLegacyTag(scroll);
             int cost = ParchmentItem.calculateSpellCost(this.menu.getSpellForm(), DataHelper.createMapFromTag(tag));
             Component component = Component.literal(String.valueOf(cost)).setStyle(Style.EMPTY.withBold(true));
-            graphics.text(this.font, component, x + 16 - this.font.width(String.valueOf(cost)) / 2, y + 66, ARGB.opaque(5804213), false);
+            graphics.text(this.font, component, x + 16 - this.font.width(String.valueOf(cost)) / 2, y + 66, ARGB.opaque(7641066), false);
         }
         //Action button
         if ( this.menu.isReadyToMake() || this.menu.isReadyToDump() ) {

@@ -39,8 +39,8 @@ public class UpdateBookDataPacket implements CustomPacketPayload {
 
     public UpdateBookDataPacket(ItemStack book, List<ItemStack> scrollList, int index, boolean refresh, boolean isRemoval) {
         this.book = book;
-        this.size = scrollList.size();
         this.scrollList = scrollList;
+        this.size = scrollList.size();
         this.index = index;
         this.refresh = refresh;
         this.isRemoval = isRemoval;
@@ -78,9 +78,11 @@ public class UpdateBookDataPacket implements CustomPacketPayload {
                         PacketDistributor.sendToPlayer(player, new UpdateBookDataClientPacket(packet.index, packet.refresh, packet.isRemoval));
                     }
                     else {
-                        newTag.putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, -1);
+                        int index = packet.index;
+                        if ( !packet.refresh ) index = -1;
+                        newTag.putInt(SpellBookItem.NBT_KEY_BOOK_SLOT, index);
                         ModData.setLegacyTag(book, newTag);
-                        PacketDistributor.sendToPlayer(player, new UpdateBookDataClientPacket(-1, packet.refresh, packet.isRemoval));
+                        PacketDistributor.sendToPlayer(player, new UpdateBookDataClientPacket(index, packet.refresh, packet.isRemoval));
                     }
                 }
             }

@@ -87,14 +87,6 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         }
     }
 
-    private static final int RESULT_SLOT = 0;
-    private static final int CRAFT_SLOT_START = 0;
-    private static final int CRAFT_SLOT_END = 4;
-    private static final int INV_SLOT_START = 4;
-    private static final int INV_SLOT_END = 31;
-    private static final int USE_ROW_SLOT_START = 31;
-    private static final int USE_ROW_SLOT_END = 40;
-
     private final Container craftSlots = new SimpleContainer(4) {
         @Override
         public void setChanged() {
@@ -103,6 +95,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             SpellMakingMenu.this.broadcastChanges();
         }
     };
+
     public Container getCraftSlots() {
         return this.craftSlots;
     }
@@ -114,31 +107,37 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         this(containerId, inventory, ContainerLevelAccess.create(inventory.player.level(), buf.readBlockPos()));
     }
 
-    public SpellMakingMenu(int containerId, Inventory playerInventory, ContainerLevelAccess access) {
+    public SpellMakingMenu(int containerId, Inventory inventory, ContainerLevelAccess access) {
         super(ModMenus.SPELL_MAKING_MENU.get(), containerId);
         this.access = access;
-        this.player = playerInventory.player;
+        this.player = inventory.player;
+
+        addPlayerInventory(inventory);
+        addPlayerHotbar(inventory);
 
         //Parchment slot
-        this.addSlot(new ParchmentSlot(this.craftSlots, 0, 8, 44));
+        this.addSlot(new ParchmentSlot(getCraftSlots(), 0, 8, 44));
 
         //Rune slots
         for ( int i = 0; i < 3; ++i ) {
-            this.addSlot(new SigilSlot(this.craftSlots, 1 + i, 35, 62 + i * 18, !this.craftSlots.getItem(0).isEmpty()));
+            this.addSlot(new SigilSlot(getCraftSlots(), 1 + i, 35, 62 + i * 18, !getCraftSlots().getItem(getParchmentSlot()).isEmpty()));
         }
 
-        //Player inventory
+        dataInit();
+    }
+
+    private void addPlayerInventory(Inventory inventory) {
         for ( int i = 0; i < 3; ++i ) {
             for ( int j = 0; j < 9; ++j ) {
-                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 129 + i * 18));
+                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 129 + i * 18));
             }
         }
+    }
 
-        //Player hotbar
+    private void addPlayerHotbar(Inventory inventory) {
         for ( int i = 0; i < 9; ++i ) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 187));
+            this.addSlot(new Slot(inventory, i, 8 + i * 18, 187));
         }
-        dataInit();
     }
 
     private List<AbstractSpellForm> formList;
@@ -189,11 +188,11 @@ public class SpellMakingMenu extends AbstractContainerMenu {
             if ( tag.contains(ParchmentItem.NBT_KEY_SPELL_DURATIONS) ) tag.remove(ParchmentItem.NBT_KEY_SPELL_DURATIONS);
             if ( tag.isEmpty() ) stack.remove(ModData.LEGACY_TAG);
         }
-        setSlotContent(level, 0, stack);
+        setSlotContent(level, getParchmentSlot(), stack);
     }
 
     public boolean isReadyToMake() {
-        return isCleanParchment(this.craftSlots.getItem(0)) && !assemble(this.craftSlots).isEmpty();
+        return isCleanParchment(getCraftSlots().getItem(getParchmentSlot())) && !assemble(getCraftSlots()).isEmpty();
     }
 
     public boolean makeSpell(String string) {
@@ -208,12 +207,12 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         this.access.execute((level, pos) -> {
             if ( !level.isClientSide() ) {
                 if ( isReadyToMake() ) {
-                    ItemStack stack = assemble(this.craftSlots);
+                    ItemStack stack = assemble(getCraftSlots());
                     if ( isEmpty(name) || isBlank(name) ) {
                         if ( stack.has(DataComponents.CUSTOM_NAME) ) stack.remove(DataComponents.CUSTOM_NAME);
                     }
                     else stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
-                    setSlotContent(level, 0, stack);
+                    setSlotContent(level, getParchmentSlot(), stack);
                 }
             }
         });
@@ -232,14 +231,14 @@ public class SpellMakingMenu extends AbstractContainerMenu {
     }
 
     public boolean isReadyToDump() {
-        ItemStack stack = this.craftSlots.getItem(0);
+        ItemStack stack = getCraftSlots().getItem(getParchmentSlot());
         CompoundTag tag = ModData.getLegacyTag(stack);
         return !stack.isEmpty() && stack.getItem() instanceof ParchmentItem && tag != null && tag.contains(ParchmentItem.NBT_KEY_SPELL_FORM);
     }
 
     public boolean dumpSpell() {
         if ( isReadyToDump() ) {
-            ItemStack stack = this.craftSlots.getItem(0);
+            ItemStack stack = getCraftSlots().getItem(getParchmentSlot());
             CompoundTag tag = ModData.getLegacyTag(stack);
             this.spellForm = DataHelper.getFormFromNbt(tag);
             this.magnitude = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES).get());
@@ -254,19 +253,16 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         this.access.execute((level, pos) -> {
             if ( !level.isClientSide() ) {
                 if ( isReadyToDump() ) {
-                    ItemStack stack = this.craftSlots.getItem(0);
+                    ItemStack stack = getCraftSlots().getItem(getParchmentSlot());
                     CompoundTag tag = ModData.getLegacyTag(stack);
                     List<ItemStack> list = DataHelper.getSpellStackFromTag(tag);
                     AbstractSpellForm form = DataHelper.getFormFromNbt(tag);
                     List<Integer> magnitude = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_MAGNITUDES).get());
                     List<Integer> duration = DataHelper.getStatsFromString(tag.getString(ParchmentItem.NBT_KEY_SPELL_DURATIONS).get());
                     cleanScroll(level, stack);
-                    for ( int i = 1; i < this.slots.size(); i++ ) {
-                        Slot slot = this.slots.get(i);
-                        if ( slot instanceof SigilSlot ) {
-                            ItemStack sigil = list.get(i - 1);
-                            setSlotContent(level, i, sigil);
-                        }
+                    for ( int i = 1; i < getCraftSlots().getContainerSize(); i++ ) {
+                        ItemStack sigil = list.get(i - 1);
+                        setSlotContent(level, i, sigil);
                     }
                     this.spellForm = form;
                     this.magnitude = magnitude;
@@ -277,7 +273,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
     }
 
     public ItemStack assemble(Container container) {
-        ItemStack scroll = this.craftSlots.getItem(0).copy();
+        ItemStack scroll = getCraftSlots().getItem(getParchmentSlot()).copy();
         List<ItemStack> sigilStackList = Lists.newArrayList();
         List<ItemStack> restList = Lists.newArrayList();
         for ( int i = 1; i < container.getContainerSize(); i++ ) {
@@ -303,7 +299,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
     private void setSlotContent(Level level, int slot, ItemStack stack) {
         if ( !level.isClientSide() ) {
             ServerPlayer serverplayer = (ServerPlayer)this.player;
-            this.craftSlots.setItem(slot, stack);
+            getCraftSlots().setItem(slot, stack);
             this.setRemoteSlot(slot, stack);
             serverplayer.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, this.incrementStateId(), slot, stack));
         }
@@ -318,7 +314,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
     @Override
     public void slotsChanged(Container pInventory) {
         this.access.execute((level, pos) -> {
-            ItemStack stack = getCraftSlots().getItem(0);
+            ItemStack stack = getCraftSlots().getItem(getParchmentSlot());
             if ( isReadyToMake() ) {
                 final int slotsToOpen = ((ParchmentItem)stack.getItem()).getSize();
                 for ( Slot slot : this.slots ) {
@@ -333,7 +329,7 @@ public class SpellMakingMenu extends AbstractContainerMenu {
                     editSpellForm(tag);
                 }
                 for ( Slot slot : this.slots ) {
-                    if ( slot instanceof SigilSlot sigilSlot) {
+                    if ( slot instanceof SigilSlot sigilSlot ) {
                         if ( !level.isClientSide() && !sigilSlot.getItem().isEmpty() ) {
                             if ( stack.isEmpty() ) quickMoveStack(this.player, sigilSlot.index);
                             else setSlotContent(level, sigilSlot.getSlotIndex(), ItemStack.EMPTY);
@@ -371,41 +367,82 @@ public class SpellMakingMenu extends AbstractContainerMenu {
         });
     }
 
+    private static final int HOTBAR_SLOT_COUNT = 9;
+    private static final int PLAYER_INVENTORY_ROW_COUNT = 3;
+    private static final int PLAYER_INVENTORY_COLUMN_COUNT = 9;
+    private static final int PLAYER_INVENTORY_SLOT_COUNT = PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT;
+    private static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
+    private static final int VANILLA_FIRST_SLOT_INDEX = 0;
+    private static final int CUSTOM_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
+    private static final int CUSTOM_INVENTORY_SLOT_COUNT = 4;
+    private static final int CUSTOM_INVENTORY_LAST_SLOT_INDEX = CUSTOM_INVENTORY_FIRST_SLOT_INDEX + CUSTOM_INVENTORY_SLOT_COUNT - 1;
+
+    public int getParchmentSlot() {
+        return 0;
+    }
+
+    public int getParchmentMenuSlot() {
+        return CUSTOM_INVENTORY_FIRST_SLOT_INDEX;
+    }
+
+    //TODO: Fix shift-clicking parchment to not move whole stack
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        ItemStack itemStack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(index);
-        if ( slot != null && slot.hasItem() ) {
-            ItemStack stack = slot.getItem();
-            itemStack = stack.copy();
-            if ( index == 0 ) {
-                if ( !this.moveItemStackTo(stack, INV_SLOT_START, USE_ROW_SLOT_END, true) ) return ItemStack.EMPTY;
+        Slot slot = slots.get(index);
+        if ( slot == null || !slot.hasItem() ) return ItemStack.EMPTY;
+        ItemStack stack = slot.getItem();
+        ItemStack copy = stack.copy();
+
+        if ( index == CUSTOM_INVENTORY_FIRST_SLOT_INDEX ) {
+            if ( !moveItemStackTo(stack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, true) ) {
+                return ItemStack.EMPTY;
             }
-            else if ( index >= INV_SLOT_START && index < USE_ROW_SLOT_END ) {
-                if ( !this.moveItemStackTo(stack, CRAFT_SLOT_START, CRAFT_SLOT_END, false) ) {
-                    if ( index < INV_SLOT_END ) {
-                        if ( !this.moveItemStackTo(stack, USE_ROW_SLOT_START, USE_ROW_SLOT_END, false) ) return ItemStack.EMPTY;
-                    }
-                    else if ( !this.moveItemStackTo(stack, INV_SLOT_START, INV_SLOT_END, false) ) return ItemStack.EMPTY;
+        }
+        else if ( index < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT ) {
+            if ( stack.getItem() instanceof ParchmentItem ) {
+                if ( !moveItemStackTo(stack, CUSTOM_INVENTORY_FIRST_SLOT_INDEX, CUSTOM_INVENTORY_FIRST_SLOT_INDEX + 1, false) ) {
+                    return ItemStack.EMPTY;
                 }
             }
-            else if ( !this.moveItemStackTo(stack, INV_SLOT_START, USE_ROW_SLOT_END, false) ) return ItemStack.EMPTY;
-
-            if ( stack.isEmpty() ) slot.setByPlayer(ItemStack.EMPTY);
-            else slot.setChanged();
-
-            if ( stack.getCount() == itemStack.getCount() ) return ItemStack.EMPTY;
-
-            slot.onTake(player, stack);
-            if ( index == RESULT_SLOT ) player.drop(stack, false);
+            else if ( isSigilItem(stack) ) {
+                if ( !moveItemStackTo(stack, CUSTOM_INVENTORY_FIRST_SLOT_INDEX + 1, CUSTOM_INVENTORY_FIRST_SLOT_INDEX + CUSTOM_INVENTORY_SLOT_COUNT, false) ) {
+                    return ItemStack.EMPTY;
+                }
+            }
+            else if ( index >= VANILLA_FIRST_SLOT_INDEX && index < PLAYER_INVENTORY_SLOT_COUNT ) {
+                if ( !moveItemStackTo(stack, PLAYER_INVENTORY_SLOT_COUNT, VANILLA_SLOT_COUNT, false) ) {
+                    return ItemStack.EMPTY;
+                }
+            }
+            else if ( index >= PLAYER_INVENTORY_SLOT_COUNT && index < VANILLA_SLOT_COUNT ) {
+                if ( !moveItemStackTo(stack, VANILLA_FIRST_SLOT_INDEX, PLAYER_INVENTORY_SLOT_COUNT, false) ) {
+                    return ItemStack.EMPTY;
+                }
+            }
         }
-        return itemStack;
+        else if ( index < CUSTOM_INVENTORY_FIRST_SLOT_INDEX + CUSTOM_INVENTORY_SLOT_COUNT) {
+            if ( !moveItemStackTo(stack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false) ) {
+                return ItemStack.EMPTY;
+            }
+        }
+        else {
+            System.out.println("Invalid index:" + index);
+            return ItemStack.EMPTY;
+        }
+        if ( stack.getCount() == 0 ) slot.set(ItemStack.EMPTY);
+        else slot.setChanged();
+        slot.onTake(player, stack);
+        return copy;
+    }
+
+    private boolean isSigilItem(ItemStack stack) {
+        return stack.getItem() instanceof AbstractSigilItem;
     }
 
     @Override
     public void removed(Player pPlayer) {
         super.removed(pPlayer);
-        this.access.execute((level, pos) -> this.clearContainer(pPlayer, this.craftSlots));
+        this.access.execute((level, pos) -> this.clearContainer(pPlayer, getCraftSlots()));
     }
 
     @Override

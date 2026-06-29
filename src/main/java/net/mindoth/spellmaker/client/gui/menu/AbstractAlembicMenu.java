@@ -30,17 +30,17 @@ public abstract class AbstractAlembicMenu extends AbstractContainerMenu {
     private final RecipePropertySet acceptedInputs0;
     private final RecipePropertySet acceptedInputs1;
 
-    public AbstractAlembicMenu(MenuType<?> menuType, ResourceKey<RecipePropertySet> acceptedInputs0, ResourceKey<RecipePropertySet> acceptedInputs1, int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
+    public AbstractAlembicMenu(MenuType<?> menuType, ResourceKey<RecipePropertySet> acceptedInputs0, ResourceKey<RecipePropertySet> acceptedInputs1, int pContainerId, Inventory inventory, BlockEntity entity, ContainerData data) {
         super(menuType, pContainerId);
         this.blockEntity = ((AlembicBlockEntity) entity);
-        this.level = inv.player.level();
+        this.level = inventory.player.level();
         this.data = data;
 
         this.acceptedInputs0 = this.level.recipeAccess().propertySet(acceptedInputs0);
         this.acceptedInputs1 = this.level.recipeAccess().propertySet(acceptedInputs1);
 
-        addPlayerInventory(inv);
-        addPlayerHotbar(inv);
+        addPlayerInventory(inventory);
+        addPlayerHotbar(inventory);
 
         int INPUT_Y = 17;
         int OUTPUT_ROW_UPPER = 26;
@@ -58,12 +58,18 @@ public abstract class AbstractAlembicMenu extends AbstractContainerMenu {
         addDataSlots(data);
     }
 
-    protected boolean canDistill(ItemStack itemStack) {
-        return this.acceptedInputs0.test(itemStack) || this.acceptedInputs1.test(itemStack);
+    private void addPlayerInventory(Inventory inventory) {
+        for ( int i = 0; i < 3; ++i ) {
+            for ( int l = 0; l < 9; ++l ) {
+                this.addSlot(new Slot(inventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
+            }
+        }
     }
 
-    protected boolean isFuel(ItemStack itemStack) {
-        return itemStack.getBurnTime(ModRecipes.DISTILLING_RECIPE_TYPE.get(), this.level.fuelValues()) > 0;
+    private void addPlayerHotbar(Inventory inventory) {
+        for ( int i = 0; i < 9; ++i ) {
+            this.addSlot(new Slot(inventory, i, 8 + i * 18, 142));
+        }
     }
 
     public boolean isCrafting() {
@@ -94,23 +100,23 @@ public abstract class AbstractAlembicMenu extends AbstractContainerMenu {
     private static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
     private static final int VANILLA_FIRST_SLOT_INDEX = 0;
     private static final int CUSTOM_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
-    private static final int CUSTOM_INVENTORY_SLOT_COUNT = 7;
+    private static final int CUSTOM_INVENTORY_SLOT_COUNT = 5;
     private static final int CUSTOM_INVENTORY_LAST_SLOT_INDEX = CUSTOM_INVENTORY_FIRST_SLOT_INDEX + CUSTOM_INVENTORY_SLOT_COUNT - 1;
 
     @Override
-    public ItemStack quickMoveStack(Player playerIn, int slotIndex) {
-        Slot sourceSlot = slots.get(slotIndex);
-        if ( sourceSlot == null || !sourceSlot.hasItem() ) return ItemStack.EMPTY;
-        ItemStack stack = sourceSlot.getItem();
+    public ItemStack quickMoveStack(Player player, int index) {
+        Slot slot = slots.get(index);
+        if ( slot == null || !slot.hasItem() ) return ItemStack.EMPTY;
+        ItemStack stack = slot.getItem();
         ItemStack copy = stack.copy();
 
-        if ( slotIndex >= 38 && slotIndex < 42 ) {
+        if ( index >= 38 && index < 42 ) {
             if ( !moveItemStackTo(stack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, true) ) {
                 return ItemStack.EMPTY;
             }
-            sourceSlot.onQuickCraft(stack, copy);
+            slot.onQuickCraft(stack, copy);
         }
-        else if ( slotIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT ) {
+        else if ( index < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT ) {
             if ( canDistill(stack) ) {
                 if ( !moveItemStackTo(stack, CUSTOM_INVENTORY_FIRST_SLOT_INDEX, CUSTOM_INVENTORY_FIRST_SLOT_INDEX + CUSTOM_INVENTORY_SLOT_COUNT, false) ) {
                     return ItemStack.EMPTY;
@@ -121,48 +127,42 @@ public abstract class AbstractAlembicMenu extends AbstractContainerMenu {
                     return ItemStack.EMPTY;
                 }
             }
-            else if ( slotIndex >= VANILLA_FIRST_SLOT_INDEX && slotIndex < PLAYER_INVENTORY_SLOT_COUNT ) {
+            else if ( index >= VANILLA_FIRST_SLOT_INDEX && index < PLAYER_INVENTORY_SLOT_COUNT ) {
                 if ( !moveItemStackTo(stack, PLAYER_INVENTORY_SLOT_COUNT, VANILLA_SLOT_COUNT, false) ) {
                     return ItemStack.EMPTY;
                 }
             }
-            else if ( slotIndex >= PLAYER_INVENTORY_SLOT_COUNT && slotIndex < VANILLA_SLOT_COUNT ) {
+            else if ( index >= PLAYER_INVENTORY_SLOT_COUNT && index < VANILLA_SLOT_COUNT ) {
                 if ( !moveItemStackTo(stack, VANILLA_FIRST_SLOT_INDEX, PLAYER_INVENTORY_SLOT_COUNT, false) ) {
                     return ItemStack.EMPTY;
                 }
             }
         }
-        else if ( slotIndex < CUSTOM_INVENTORY_FIRST_SLOT_INDEX + CUSTOM_INVENTORY_SLOT_COUNT) {
+        else if ( index < CUSTOM_INVENTORY_FIRST_SLOT_INDEX + CUSTOM_INVENTORY_SLOT_COUNT) {
             if ( !moveItemStackTo(stack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false) ) {
                 return ItemStack.EMPTY;
             }
         }
         else {
-            System.out.println("Invalid slotIndex:" + slotIndex);
+            System.out.println("Invalid index:" + index);
             return ItemStack.EMPTY;
         }
-        if ( stack.getCount() == 0 ) sourceSlot.set(ItemStack.EMPTY);
-        else sourceSlot.setChanged();
-        sourceSlot.onTake(playerIn, stack);
+        if ( stack.getCount() == 0 ) slot.set(ItemStack.EMPTY);
+        else slot.setChanged();
+        slot.onTake(player, stack);
         return copy;
+    }
+
+    protected boolean canDistill(ItemStack itemStack) {
+        return this.acceptedInputs0.test(itemStack) || this.acceptedInputs1.test(itemStack);
+    }
+
+    protected boolean isFuel(ItemStack itemStack) {
+        return itemStack.getBurnTime(ModRecipes.DISTILLING_RECIPE_TYPE.get(), this.level.fuelValues()) > 0;
     }
 
     @Override
     public boolean stillValid(Player pPlayer) {
         return stillValid(ContainerLevelAccess.create(level, this.blockEntity.getBlockPos()), pPlayer, ModBlocks.ALEMBIC.get());
-    }
-
-    private void addPlayerInventory(Inventory playerInventory) {
-        for ( int i = 0; i < 3; ++i ) {
-            for ( int l = 0; l < 9; ++l ) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
-            }
-        }
-    }
-
-    private void addPlayerHotbar(Inventory playerInventory) {
-        for ( int i = 0; i < 9; ++i ) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
-        }
     }
 }
