@@ -1,0 +1,6 @@
+{
+  "parent": "item/spear_in_hand",
+  "textures": {
+    "layer0": "spellmaker:item/arcanum_spear_in_hand"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "spellmaker:arcanum"
+      }
+    ],
+    "humanoid_baby": [
+      {
+        "texture": "spellmaker:arcanum"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "spellmaker:arcanum"
+      }
+    ]
+  }
+}

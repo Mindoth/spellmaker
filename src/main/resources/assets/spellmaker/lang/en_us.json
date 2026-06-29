@@ -38,6 +38,7 @@
   "item.spellmaker.arcane_dust": "Arcane Dust",
 
   "item.spellmaker.arcane_gem": "Arcane Gem",
+  "item.spellmaker.arcanum_ingot": "Arcanum Ingot",
   "item.spellmaker.mana_essence": "Mana Essence",
   "item.spellmaker.living_essence": "Living Essence",
 
@@ -53,12 +54,23 @@
 
   "item.spellmaker.sickle": "Sickle",
 
+  "item.spellmaker.arcanum_pickaxe": "Arcanum Pickaxe",
+  "item.spellmaker.arcanum_shovel": "Arcanum Shovel",
+  "item.spellmaker.arcanum_axe": "Arcanum Axe",
+  "item.spellmaker.arcanum_hoe": "Arcanum Hoe",
+  "item.spellmaker.arcanum_sword": "Arcanum Sword",
+  "item.spellmaker.arcanum_spear": "Arcanum Spear",
+
   "item.spellmaker.spell_book": "Spell Book",
 
   "item.spellmaker.wooden_staff": "Wooden Staff",
   "item.spellmaker.golden_staff": "Golden Staff",
   "item.spellmaker.netherite_staff": "Netherite Staff",
 
+  "item.spellmaker.arcanum_helmet": "Arcanum Helmet",
+  "item.spellmaker.arcanum_chestplate": "Arcanum Chestplate",
+  "item.spellmaker.arcanum_leggings": "Arcanum Leggings",
+  "item.spellmaker.arcanum_boots": "Arcanum Boots",
   "item.spellmaker.wool_robe_hood": "Wool Robe Hood",
   "item.spellmaker.wool_robe_hat": "Wool Robe Hat",
   "item.spellmaker.wool_robe_top": "Wool Robe Top",

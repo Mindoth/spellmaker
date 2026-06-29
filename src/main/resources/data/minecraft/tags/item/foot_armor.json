@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "spellmaker:arcanum_boots",
     "spellmaker:wool_robe_boots",
     "spellmaker:arcane_robe_boots",
     "spellmaker:forest_robe_boots"

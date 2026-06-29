@@ -3,18 +3,19 @@ package net.mindoth.spellmaker.registries;
 import net.mindoth.spellmaker.SpellMaker;
 import net.mindoth.spellmaker.consumable.ModFood;
 import net.mindoth.spellmaker.item.ParchmentItem;
-import net.mindoth.spellmaker.item.armor.ArcaneRobeItem;
-import net.mindoth.spellmaker.item.armor.ForestRobeItem;
-import net.mindoth.spellmaker.item.armor.ModArmorMaterials;
-import net.mindoth.spellmaker.item.armor.WoolRobeItem;
+import net.mindoth.spellmaker.item.armor.*;
 import net.mindoth.spellmaker.item.sigil.*;
 import net.mindoth.spellmaker.item.tool.SickleItem;
+import net.mindoth.spellmaker.item.weapon.ModToolTiers;
 import net.mindoth.spellmaker.item.weapon.SpellBookItem;
 import net.mindoth.spellmaker.item.weapon.StaffItem;
 import net.mindoth.spellmaker.util.SpellColor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -41,6 +42,7 @@ public class ModItems {
     public static final DeferredItem<Item> ARCANE_DUST = ITEMS.registerItem("arcane_dust", (properties) -> new Item(properties));
 
     public static final DeferredItem<Item> ARCANE_GEM = ITEMS.registerItem("arcane_gem", (properties) -> new Item(properties));
+    public static final DeferredItem<Item> ARCANUM_INGOT = ITEMS.registerItem("arcanum_ingot", (properties) -> new Item(properties));
     public static final DeferredItem<Item> MANA_ESSENCE = ITEMS.registerItem("mana_essence", (properties) -> new Item(properties));
     public static final DeferredItem<Item> LIVING_ESSENCE = ITEMS.registerItem("living_essence", (properties) -> new Item(properties));
 
@@ -54,11 +56,41 @@ public class ModItems {
     public static final DeferredItem<Item> GOLDEN_BREAD = ITEMS.registerItem("golden_bread",
             (properties) -> new Item(properties.food(ModFood.GOLDEN_BREAD)));
 
-    //Tools
+    //Equipment
     public static final DeferredItem<Item> SICKLE = ITEMS.registerItem("sickle",
             (properties) -> new SickleItem(properties.durability(238)));
 
-    //Equipment
+    public static final DeferredItem<Item> ARCANUM_SWORD = ITEMS.registerItem("arcanum_sword",
+            (properties -> new Item(properties.sword(ModToolTiers.ARCANUM, 3.0F, -2.4F))));
+
+    public static final DeferredItem<Item> ARCANUM_PICKAXE = ITEMS.registerItem("arcanum_pickaxe",
+            (properties -> new Item(properties.pickaxe(ModToolTiers.ARCANUM, 1.0F, -2.8F))));
+
+    public static final DeferredItem<Item> ARCANUM_SHOVEL = ITEMS.registerItem("arcanum_shovel",
+            (properties -> new ShovelItem(ModToolTiers.ARCANUM, 1.5F, -3.0F, properties)));
+
+    public static final DeferredItem<Item> ARCANUM_AXE = ITEMS.registerItem("arcanum_axe",
+            (properties -> new AxeItem(ModToolTiers.ARCANUM, 6.0F, -3.2F, properties)));
+
+    public static final DeferredItem<Item> ARCANUM_HOE = ITEMS.registerItem("arcanum_hoe",
+            (properties -> new HoeItem(ModToolTiers.ARCANUM, -3.0F, 0.0F, properties)));
+
+    public static final DeferredItem<Item> ARCANUM_SPEAR = ITEMS.registerItem("arcanum_spear",
+            (properties -> new Item(properties.spear(ModToolTiers.ARCANUM, 0.95F,
+                    0.7F, 0.7F, 3.5F, 13.0F, 8.5F, 5.1F, 13.37F, 4.67F))));
+
+    public static final DeferredItem<Item> ARCANUM_HELMET = ITEMS.registerItem("arcanum_helmet",
+            (properties) -> new MagickArmorItem(properties, ModArmorMaterials.ARCANUM_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 0, 0, 0)));
+
+    public static final DeferredItem<Item> ARCANUM_CHESTPLATE = ITEMS.registerItem("arcanum_chestplate",
+            (properties) -> new MagickArmorItem(properties, ModArmorMaterials.ARCANUM_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(40, 0, 0, 0)));
+
+    public static final DeferredItem<Item> ARCANUM_LEGGINGS = ITEMS.registerItem("arcanum_leggings",
+            (properties) -> new MagickArmorItem(properties, ModArmorMaterials.ARCANUM_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(30, 0, 0, 0)));
+
+    public static final DeferredItem<Item> ARCANUM_BOOTS = ITEMS.registerItem("arcanum_boots",
+            (properties) -> new MagickArmorItem(properties, ModArmorMaterials.ARCANUM_MATERIAL, ArmorType.BOOTS, withMagickAttributes(15, 0, 0, 0)));
+
     public static final DeferredItem<Item> SPELL_BOOK = ITEMS.registerItem("spell_book",
             (properties) -> new SpellBookItem(properties));
 
@@ -72,19 +104,19 @@ public class ModItems {
             (properties) -> new StaffItem(properties.durability(1024).fireResistant(), 0, 0, withMagickAttributes(0, 0, 0.1D, 0)));
 
     public static final DeferredItem<Item> WOOL_ROBE_HOOD = ITEMS.registerItem("wool_robe_hood",
-            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 1, 0.0D, 0)));
+            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 1, 0, 0)));
 
     public static final DeferredItem<Item> WOOL_ROBE_HAT = ITEMS.registerItem("wool_robe_hat",
-            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 1, 0.0D, 0)));
+            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(15, 1, 0, 0)));
 
     public static final DeferredItem<Item> WOOL_ROBE_TOP = ITEMS.registerItem("wool_robe_top",
-            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(40, 1, 0.0D, 0)));
+            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(40, 1, 0, 0)));
 
     public static final DeferredItem<Item> WOOL_ROBE_BOTTOM = ITEMS.registerItem("wool_robe_bottom",
-            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(30, 1, 0.0D, 0)));
+            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(30, 1, 0, 0)));
 
     public static final DeferredItem<Item> WOOL_ROBE_BOOTS = ITEMS.registerItem("wool_robe_boots",
-            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(15, 1, 0.0D, 0)));
+            (properties) -> new WoolRobeItem(properties, ModArmorMaterials.WOOL_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(15, 1, 0, 0)));
 
     public static final DeferredItem<Item> ARCANE_ROBE_HOOD = ITEMS.registerItem("arcane_robe_hood",
             (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(30, 1, 0.05D, 0)));
@@ -102,16 +134,16 @@ public class ModItems {
             (properties) -> new ArcaneRobeItem(properties, ModArmorMaterials.ARCANE_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(30, 1, 0.05D, 0)));
 
     public static final DeferredItem<Item> FOREST_ROBE_HOOD = ITEMS.registerItem("forest_robe_hood",
-            (properties) -> new ForestRobeItem(properties, ModArmorMaterials.FOREST_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(30, 2, 0.0D, 0.5D)));
+            (properties) -> new ForestRobeItem(properties, ModArmorMaterials.FOREST_ROBE_MATERIAL, ArmorType.HELMET, withMagickAttributes(30, 2, 0, 0.5D)));
 
     public static final DeferredItem<Item> FOREST_ROBE_TOP = ITEMS.registerItem("forest_robe_top",
-            (properties) -> new ForestRobeItem(properties, ModArmorMaterials.FOREST_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(80, 2, 0.0D, 0.5D)));
+            (properties) -> new ForestRobeItem(properties, ModArmorMaterials.FOREST_ROBE_MATERIAL, ArmorType.CHESTPLATE, withMagickAttributes(80, 2, 0, 0.5D)));
 
     public static final DeferredItem<Item> FOREST_ROBE_BOTTOM = ITEMS.registerItem("forest_robe_bottom",
-            (properties) -> new ForestRobeItem(properties, ModArmorMaterials.FOREST_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(60, 2, 0.0D, 0.5D)));
+            (properties) -> new ForestRobeItem(properties, ModArmorMaterials.FOREST_ROBE_MATERIAL, ArmorType.LEGGINGS, withMagickAttributes(60, 2, 0, 0.5D)));
 
     public static final DeferredItem<Item> FOREST_ROBE_BOOTS = ITEMS.registerItem("forest_robe_boots",
-            (properties) -> new ForestRobeItem(properties, ModArmorMaterials.FOREST_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(30, 2, 0.0D, 0.5D)));
+            (properties) -> new ForestRobeItem(properties, ModArmorMaterials.FOREST_ROBE_MATERIAL, ArmorType.BOOTS, withMagickAttributes(30, 2, 0, 0.5D)));
 
     //Sigils
 
@@ -127,10 +159,6 @@ public class ModItems {
     public static final DeferredItem<Item> SHOCK_SIGIL = ITEMS.registerItem("shock_sigil",
             (properties) -> new ShockSigilItem(properties, SpellColor.LIGHTNING,
                     0, 0, 64, 2, 0, 64, 4));
-
-    public static final DeferredItem<Item> SLEEP_SIGIL = ITEMS.registerItem("sleep_sigil",
-            (properties) -> new SleepSigilItem(properties, SpellColor.ARCANE,
-                    0, 0, 0, 0, 0, 64, 1));
 
     //Alteration
     public static final DeferredItem<Item> SHEEP_FORM_SIGIL = ITEMS.registerItem("sheep_form_sigil",
@@ -162,6 +190,11 @@ public class ModItems {
             (properties) -> new HealingSigilItem(properties, SpellColor.NATURE,
                     0, 0, 64, 8, 0, 0, 0));
 
+    //Illusion
+    public static final DeferredItem<Item> SLEEP_SIGIL = ITEMS.registerItem("sleep_sigil",
+            (properties) -> new SleepSigilItem(properties, SpellColor.ARCANE,
+                    0, 0, 0, 0, 0, 64, 1));
+
 
     //Arcane
     public static final DeferredItem<Item> EXCAVATION_SIGIL = ITEMS.registerItem("excavation_sigil",
@@ -175,5 +208,4 @@ public class ModItems {
     public static final DeferredItem<Item> DISPEL_SIGIL = ITEMS.registerItem("dispel_sigil",
             (properties) -> new DispelSigilItem(properties, SpellColor.ARCANE,
                     0, 0, 64, 40, 0, 0, 0));
-
 }

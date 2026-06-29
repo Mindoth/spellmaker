@@ -1,0 +1,8 @@
+{
+  "remove": [
+    "#spellmaker:needs_arcanum_tool"
+  ],
+  "values": [
+    "#minecraft:incorrect_for_iron_tool"
+  ]
+}

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
   "key": {
     "#": "spellmaker:forest_cloth",
     "G": "spellmaker:arcane_gem"

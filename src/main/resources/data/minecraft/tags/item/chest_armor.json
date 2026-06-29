@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "spellmaker:arcanum_chestplate",
     "spellmaker:wool_robe_top",
     "spellmaker:arcane_robe_top",
     "spellmaker:forest_robe_top"
