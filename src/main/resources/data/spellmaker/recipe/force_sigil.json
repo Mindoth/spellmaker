@@ -6,7 +6,6 @@
     "minecraft:piston"
   ],
   "result": {
-    "id": "spellmaker:force_sigil",
-    "count": 1
+    "id": "spellmaker:force_sigil"
   }
 }

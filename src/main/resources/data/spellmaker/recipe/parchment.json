@@ -5,7 +5,6 @@
     "minecraft:water_bucket"
   ],
   "result": {
-    "id": "spellmaker:parchment",
-    "count": 1
+    "id": "spellmaker:parchment"
   }
 }

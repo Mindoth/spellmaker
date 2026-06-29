@@ -2,10 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     "spellmaker:refined_sigil_essence",
-    "spellmaker:alteration_dust",
-    "minecraft:feather"
+    "spellmaker:restoration_dust",
+    "minecraft:bone_meal"
   ],
   "result": {
-    "id": "spellmaker:chicken_form_sigil"
+    "id": "spellmaker:growth_sigil"
   }
 }

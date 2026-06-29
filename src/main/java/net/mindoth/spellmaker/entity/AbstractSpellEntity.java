@@ -31,6 +31,10 @@ public abstract class AbstractSpellEntity extends Projectile {
         super(entityType, level);
     }
 
+    public boolean isMultiTarget() {
+        return false;
+    }
+
     @Override
     public void tick() {
         super.tick();

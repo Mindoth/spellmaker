@@ -6,7 +6,6 @@
     "minecraft:powder_snow_bucket"
   ],
   "result": {
-    "id": "spellmaker:frost_sigil",
-    "count": 1
+    "id": "spellmaker:frost_sigil"
   }
 }

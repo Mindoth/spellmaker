@@ -2,11 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     "spellmaker:refined_sigil_essence",
-    "spellmaker:alteration_dust",
+    "spellmaker:arcane_dust",
     "minecraft:wooden_pickaxe"
   ],
   "result": {
-    "id": "spellmaker:excavation_sigil",
-    "count": 1
+    "id": "spellmaker:excavation_sigil"
   }
 }

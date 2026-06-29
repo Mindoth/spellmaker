@@ -36,6 +36,11 @@ public class ProjectileSpellMultiEntity extends AbstractSpellEntity {
     }
 
     @Override
+    public boolean isMultiTarget() {
+        return true;
+    }
+
+    @Override
     protected void doMobEffects(EntityHitResult result) {
         Level level = level();
         AABB box = this.getBoundingBox().inflate(1.5D, 1.5D, 1.5D).move(result.getEntity().getBoundingBox().getCenter().subtract(this.getBoundingBox().getCenter()));

@@ -6,7 +6,6 @@
     "#minecraft:fishes"
   ],
   "result": {
-    "id": "spellmaker:fish_form_sigil",
-    "count": 1
+    "id": "spellmaker:fish_form_sigil"
   }
 }

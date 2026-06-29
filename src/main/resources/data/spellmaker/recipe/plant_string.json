@@ -6,7 +6,6 @@
     "spellmaker:plant_fiber"
   ],
   "result": {
-    "id": "minecraft:string",
-    "count": 1
+    "id": "minecraft:string"
   }
 }

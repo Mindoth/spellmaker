@@ -6,7 +6,6 @@
     "minecraft:prismarine_shard"
   ],
   "result": {
-    "id": "spellmaker:shock_sigil",
-    "count": 1
+    "id": "spellmaker:shock_sigil"
   }
 }
